@@ -19,6 +19,13 @@ interface HeadUnitBridge {
     /** Shown in the settings / about line. */
     val name: String
 
+    /**
+     * True when the head unit arbitrates the audio sources itself and takes the Android audio focus on the radio's
+     * behalf (Jancar ivi-services does when the radio opens). The app must then not request the focus, or it
+     * immediately loses it to the head unit and stops.
+     */
+    val managesAudioFocus: Boolean get() = false
+
     companion object {
         fun create(context: Context): HeadUnitBridge =
             if (isInstalled(context, "com.jancar.services")) IviRadioBridge(context) else NoHeadUnit
