@@ -15,6 +15,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 
 ## Branches
 
+Cette branche : **`ivi`** (Jancar ivi-services).
+
+
 | Branche | Intégration autoradio |
 |---|---|
 | `main` | aucune (Android générique) |
