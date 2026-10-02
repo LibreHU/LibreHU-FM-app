@@ -47,6 +47,14 @@
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
+            android:name=".ThemeChangedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.librehu.action.THEME_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".RadioWidget"
             android:exported="true"
             android:label="@string/app_name">

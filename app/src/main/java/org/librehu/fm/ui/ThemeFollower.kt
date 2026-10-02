@@ -50,20 +50,8 @@ class ThemeFollower(
 
     /** Reads the launcher theme, or the system one when the launcher is missing. */
     fun refresh() {
-        val fromLauncher =
-            try {
-                context.contentResolver.query(URI, null, null, null, null)?.use { c ->
-                    if (c.moveToFirst()) (c.getInt(0) != 0) to c.getInt(1) else null
-                }
-            } catch (_: Exception) {
-                null
-            }
-        if (fromLauncher != null) {
-            apply(fromLauncher.first, fromLauncher.second)
-        } else {
-            val night = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            apply(night != Configuration.UI_MODE_NIGHT_NO, 0)
-        }
+        val (dark, accent) = current(context)
+        apply(dark, accent)
     }
 
     private fun apply(
@@ -74,6 +62,21 @@ class ThemeFollower(
     }
 
     companion object {
+        /** (dark, accent ARGB or 0): LibreHU Launcher's theme, or Android's night mode without it. */
+        fun current(context: Context): Pair<Boolean, Int> {
+            val fromLauncher =
+                try {
+                    context.contentResolver.query(URI, null, null, null, null)?.use { c ->
+                        if (c.moveToFirst()) (c.getInt(0) != 0) to c.getInt(1) else null
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+            if (fromLauncher != null) return fromLauncher
+            val night = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return (night != Configuration.UI_MODE_NIGHT_NO) to 0
+        }
+
         const val ACTION_THEME_CHANGED = "org.librehu.action.THEME_CHANGED"
         val URI: Uri = Uri.parse("content://org.librehu.launcher.theme/theme")
     }
