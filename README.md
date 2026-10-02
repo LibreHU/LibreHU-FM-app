@@ -15,6 +15,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 
 ## Branches
 
+Cette branche : **`librehu-service`** (installer LibreHU-service avant l'app radio).
+
+
 | Branche | Intégration autoradio |
 |---|---|
 | `main` | aucune (Android générique) |

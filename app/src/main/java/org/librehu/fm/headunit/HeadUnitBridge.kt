@@ -20,7 +20,19 @@ interface HeadUnitBridge {
     val name: String
 
     companion object {
-        fun create(context: Context): HeadUnitBridge = NoHeadUnit
+        fun create(context: Context): HeadUnitBridge =
+            if (isInstalled(context, "org.librehu.service")) LibreHuBridge(context) else NoHeadUnit
+
+        private fun isInstalled(
+            context: Context,
+            pkg: String,
+        ): Boolean =
+            try {
+                context.packageManager.getPackageInfo(pkg, 0)
+                true
+            } catch (_: Exception) {
+                false
+            }
     }
 }
 
