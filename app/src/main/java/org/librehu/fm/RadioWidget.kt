@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import org.librehu.fm.ui.ThemeFollower
 
 /** Home screen / launcher widget: station, RDS text and previous / play / next. */
 class RadioWidget : AppWidgetProvider() {
@@ -20,6 +21,12 @@ class RadioWidget : AppWidgetProvider() {
     }
 
     companion object {
+        /** Redraws the widgets with the last known state (theme change while the radio is off). */
+        fun refresh(context: Context) {
+            val s = FmService.state.value
+            updateAll(context, if (!s.poweredOn) withStore(context, s) else s)
+        }
+
         fun updateAll(
             context: Context,
             s: RadioState,
@@ -41,8 +48,32 @@ class RadioWidget : AppWidgetProvider() {
         private fun views(
             context: Context,
             s: RadioState,
-        ): RemoteViews =
-            RemoteViews(context.packageName, R.layout.widget_radio).apply {
+        ): RemoteViews {
+            val dark = ThemeFollower.current(context).first
+            val text = if (dark) 0xFFE8EAED.toInt() else 0xFF202124.toInt()
+            val dim = if (dark) 0xFF9AA0A6.toInt() else 0xFF5F6368.toInt()
+            val accent = if (dark) 0xFF8AB4F8.toInt() else 0xFF1A73E8.toInt()
+            val onAccent = if (dark) 0xFF062E6F.toInt() else 0xFFFFFFFF.toInt()
+            return RemoteViews(context.packageName, R.layout.widget_radio).apply {
+                setInt(
+                    R.id.widget_root,
+                    "setBackgroundResource",
+                    if (dark) R.drawable.widget_background else R.drawable.widget_background_light,
+                )
+                setTextColor(R.id.widget_title, text)
+                setTextColor(R.id.widget_frequency, text)
+                setTextColor(R.id.widget_text, dim)
+                val button = if (dark) R.drawable.widget_button else R.drawable.widget_button_light
+                setInt(R.id.widget_previous, "setBackgroundResource", button)
+                setInt(R.id.widget_next, "setBackgroundResource", button)
+                setInt(R.id.widget_previous, "setColorFilter", text)
+                setInt(R.id.widget_next, "setColorFilter", text)
+                setInt(
+                    R.id.widget_toggle,
+                    "setBackgroundResource",
+                    if (dark) R.drawable.widget_button_accent else R.drawable.widget_button_accent_light,
+                )
+                setInt(R.id.widget_toggle, "setColorFilter", onAccent)
                 setTextViewText(R.id.widget_frequency, Band.format(s.frequency))
                 setTextViewText(R.id.widget_title, s.title.ifBlank { context.getString(R.string.app_name) })
                 setTextViewText(
@@ -58,7 +89,7 @@ class RadioWidget : AppWidgetProvider() {
                     setInt(R.id.widget_logo, "setColorFilter", 0)
                 } else {
                     setImageViewResource(R.id.widget_logo, R.drawable.ic_radio)
-                    setInt(R.id.widget_logo, "setColorFilter", 0xFF8AB4F8.toInt())
+                    setInt(R.id.widget_logo, "setColorFilter", accent)
                 }
                 setImageViewResource(R.id.widget_toggle, if (s.poweredOn) R.drawable.ic_pause else R.drawable.ic_play)
                 setOnClickPendingIntent(R.id.widget_previous, FmService.servicePending(context, FmService.ACTION_PREVIOUS))
@@ -74,5 +105,6 @@ class RadioWidget : AppWidgetProvider() {
                     ),
                 )
             }
+        }
     }
 }

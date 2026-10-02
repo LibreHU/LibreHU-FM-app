@@ -75,8 +75,7 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/widget_button_accent"
             android:contentDescription="@string/play"
-            android:src="@drawable/ic_play"
-            android:tint="#FF062E6F" />
+            android:src="@drawable/ic_play" />
 
         <ImageButton
             android:id="@+id/widget_next"
