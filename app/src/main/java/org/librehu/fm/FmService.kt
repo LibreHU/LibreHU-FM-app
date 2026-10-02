@@ -165,12 +165,16 @@ class FmService : Service() {
     private fun powerOn() =
         chip.execute {
             if (state.value.poweredOn || FmNative.loadError != null) return@execute
-            if (!requestFocus()) return@execute
+            if (!bridge.managesAudioFocus && !requestFocus()) {
+                fail(getString(R.string.error_focus))
+                return@execute
+            }
             setBusy(true)
             if (!deviceOpen) deviceOpen = FmNative.openDev()
             val freq = state.value.frequency
             if (!deviceOpen || !FmNative.powerUp(Band.mhz(freq))) {
-                fail(getString(R.string.error_power_up))
+                abandonFocus()
+                fail(getString(if (deviceOpen) R.string.error_power_up else R.string.error_open))
                 return@execute
             }
             bridge.onRadioOn()
@@ -334,10 +338,22 @@ class FmService : Service() {
     private val focusListener =
         AudioManager.OnAudioFocusChangeListener { change ->
             when (change) {
-                AudioManager.AUDIOFOCUS_LOSS -> powerOff()
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> audio.volume = 0f
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> audio.volume = DUCK_VOLUME
-                AudioManager.AUDIOFOCUS_GAIN -> audio.volume = 1f
+                AudioManager.AUDIOFOCUS_LOSS -> {
+                    Log.i(TAG, "audio focus lost: radio stopped")
+                    powerOff()
+                }
+
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                    audio.volume = 0f
+                }
+
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                    audio.volume = DUCK_VOLUME
+                }
+
+                AudioManager.AUDIOFOCUS_GAIN -> {
+                    audio.volume = 1f
+                }
             }
         }
 

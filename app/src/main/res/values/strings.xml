@@ -21,4 +21,6 @@
     <string name="off">Radio off</string>
     <string name="error_power_up">The FM chip did not start (/dev/fm). See the installation notes.</string>
     <string name="error_driver">FM driver library unavailable on this device.</string>
+    <string name="error_focus">Audio focus refused (another source, phone call?).</string>
+    <string name="error_open">Cannot open /dev/fm: install the app as a privileged app (see the README).</string>
 </resources>
