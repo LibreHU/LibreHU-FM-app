@@ -20,6 +20,11 @@ class IviRadioBridge(
 ) : HeadUnitBridge {
     override val name = "Jancar ivi-services"
 
+    // IRadio.open() makes ivi-services request the Android audio focus for its radio source
+    // (AudioFocusManager.onRequestAudioFocus); the stock radio app never requests it. Requesting it ourselves made
+    // us lose it right after open and stop ("Radio off").
+    override val managesAudioFocus = true
+
     @Volatile
     private var radio: IBinder? = null
     private var wantOpen = false
