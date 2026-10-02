@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Radio FM</string>
+    <string name="notif_channel">Lecture radio</string>
+    <string name="widget_description">Station en cours avec précédente, lecture et suivante</string>
+    <string name="play">Lecture</string>
+    <string name="pause">Pause</string>
+    <string name="next">Station suivante</string>
+    <string name="previous">Station précédente</string>
+    <string name="seek_up">Recherche vers le haut</string>
+    <string name="seek_down">Recherche vers le bas</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Balayer la bande</string>
+    <string name="scanning">Balayage…</string>
+    <string name="favorites">Favoris</string>
+    <string name="stations">Stations</string>
+    <string name="toggle_favorite">Ajouter / retirer des favoris</string>
+    <string name="no_favorites">Aucun favori : réglez une station et touchez l\'étoile.</string>
+    <string name="no_stations">Allumez la radio et balayez la bande pour lister les stations.</string>
+    <string name="off">Radio éteinte</string>
+    <string name="error_power_up">La puce FM n\'a pas démarré (/dev/fm). Voir les notes d\'installation.</string>
+    <string name="error_driver">Bibliothèque du pilote FM indisponible sur cet appareil.</string>
+</resources>

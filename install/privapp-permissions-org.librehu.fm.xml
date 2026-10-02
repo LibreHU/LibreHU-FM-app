@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copy to /system/etc/permissions/ (or /product/etc/permissions/) with the APK in /system/priv-app/LibreHU-FM/. -->
+<permissions>
+    <privapp-permissions package="org.librehu.fm">
+        <permission name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+        <permission name="android.permission.ACCESS_BROADCAST_RADIO" />
+    </privapp-permissions>
+</permissions>

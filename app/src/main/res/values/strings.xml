@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FM Radio</string>
+    <string name="notif_channel">Radio playback</string>
+    <string name="widget_description">Current station with previous, play and next</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="next">Next station</string>
+    <string name="previous">Previous station</string>
+    <string name="seek_up">Seek up</string>
+    <string name="seek_down">Seek down</string>
+    <string name="step_up">+0.1 MHz</string>
+    <string name="step_down">−0.1 MHz</string>
+    <string name="scan">Scan the band</string>
+    <string name="scanning">Scanning…</string>
+    <string name="favorites">Favorites</string>
+    <string name="stations">Stations</string>
+    <string name="toggle_favorite">Add / remove favorite</string>
+    <string name="no_favorites">No favorites yet: tune a station and tap the star.</string>
+    <string name="no_stations">Start the radio and scan the band to list the stations.</string>
+    <string name="off">Radio off</string>
+    <string name="error_power_up">The FM chip did not start (/dev/fm). See the installation notes.</string>
+    <string name="error_driver">FM driver library unavailable on this device.</string>
+</resources>
