@@ -21,4 +21,6 @@
     <string name="off">Radio éteinte</string>
     <string name="error_power_up">La puce FM n\'a pas démarré (/dev/fm). Voir les notes d\'installation.</string>
     <string name="error_driver">Bibliothèque du pilote FM indisponible sur cet appareil.</string>
+    <string name="error_focus">Focus audio refusé (autre source, appel en cours ?).</string>
+    <string name="error_open">Impossible d\'ouvrir /dev/fm : installer l\'app en app privilégiée (voir le README).</string>
 </resources>
