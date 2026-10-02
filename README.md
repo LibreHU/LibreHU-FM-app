@@ -9,6 +9,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   l'app radio Jancar d'origine.
 - Son : source de capture `RADIO_TUNER` recopiée vers un flux média (méthode « render » d'AOSP FMRadio et de l'app
   Jancar).
+- **Logo de la station** : recherché par le nom RDS dans [Radio Browser](https://www.radio-browser.info)
+  (base ouverte), seulement si le nom correspond, puis gardé en cache par fréquence ; affiché dans l'app, le widget,
+  la notification et la carte média du lanceur. Nécessite Internet la première fois.
 - Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris, RDS (nom de station, radiotexte).
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.
 - Widget : station, radiotexte, précédente / lecture / suivante.

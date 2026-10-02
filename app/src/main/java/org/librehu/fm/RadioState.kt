@@ -1,6 +1,7 @@
 package org.librehu.fm
 
 import android.content.Context
+import android.graphics.Bitmap
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -21,6 +22,8 @@ data class RadioState(
     val radioText: String = "",
     val presets: List<Station> = emptyList(),
     val stations: List<Station> = emptyList(),
+    /** Logo of the current station (Radio Browser, cached), when found. */
+    val logo: Bitmap? = null,
 ) {
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 

@@ -21,11 +21,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.librehu.fm.headunit.HeadUnitBridge
 import java.util.concurrent.Executors
 import kotlin.math.roundToInt
@@ -39,6 +44,7 @@ class FmService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val audio = FmAudio()
     private lateinit var store: RadioStore
+    private lateinit var logos: StationLogos
     private lateinit var bridge: HeadUnitBridge
     private lateinit var session: MediaSession
     private lateinit var audioManager: AudioManager
@@ -51,6 +57,7 @@ class FmService : Service() {
     override fun onCreate() {
         super.onCreate()
         store = RadioStore(this)
+        logos = StationLogos(this)
         bridge = HeadUnitBridge.create(this)
         audioManager = getSystemService(AudioManager::class.java)
         _state.update {
@@ -74,6 +81,20 @@ class FmService : Service() {
                     ),
                 )
             }
+        // Station logo: cached one at once, network lookup once the RDS name is stable (some stations scroll it).
+        scope.launch {
+            state
+                .map { it.frequency to it.title.trim() }
+                .distinctUntilChanged()
+                .collectLatest { (freq, name) ->
+                    val cached = withContext(Dispatchers.IO) { logos.cached(freq) }
+                    _state.update { if (it.frequency == freq) it.copy(logo = cached) else it }
+                    if (name.isEmpty()) return@collectLatest
+                    delay(LOGO_NAME_STABLE_MS)
+                    val found = withContext(Dispatchers.IO) { logos.find(freq, name) }
+                    if (found != null) _state.update { if (it.frequency == freq) it.copy(logo = found) else it }
+                }
+        }
         scope.launch {
             state.collect { s ->
                 updateSession(s)
@@ -400,6 +421,8 @@ class FmService : Service() {
                 .putString(MediaMetadata.METADATA_KEY_TITLE, s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
                 .putString(MediaMetadata.METADATA_KEY_ARTIST, s.radioText.ifBlank { "FM ${Band.format(s.frequency)} MHz" })
                 .putString(MediaMetadata.METADATA_KEY_ALBUM, getString(R.string.app_name))
+                .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, s.logo)
+                .putBitmap(MediaMetadata.METADATA_KEY_ART, s.logo)
                 .build(),
         )
         session.setPlaybackState(
@@ -439,6 +462,7 @@ class FmService : Service() {
             .setSmallIcon(R.drawable.ic_radio)
             .setContentTitle(s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
             .setContentText(s.radioText.ifBlank { "${Band.format(s.frequency)} MHz" })
+            .setLargeIcon(s.logo)
             .setContentIntent(session.controller.sessionActivity)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
             .addAction(action(R.drawable.ic_skip_previous, R.string.previous, ACTION_PREVIOUS))
@@ -470,6 +494,7 @@ class FmService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val RDS_POLL_MS = 200L
         private const val DUCK_VOLUME = 0.3f
+        private const val LOGO_NAME_STABLE_MS = 3000L
 
         const val ACTION_PLAY = "org.librehu.fm.PLAY"
         const val ACTION_PAUSE = "org.librehu.fm.PAUSE"

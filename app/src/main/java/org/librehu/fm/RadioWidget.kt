@@ -53,6 +53,13 @@ class RadioWidget : AppWidgetProvider() {
                         else -> context.getString(R.string.off)
                     },
                 )
+                if (s.logo != null) {
+                    setImageViewBitmap(R.id.widget_logo, s.logo)
+                    setInt(R.id.widget_logo, "setColorFilter", 0)
+                } else {
+                    setImageViewResource(R.id.widget_logo, R.drawable.ic_radio)
+                    setInt(R.id.widget_logo, "setColorFilter", 0xFF8AB4F8.toInt())
+                }
                 setImageViewResource(R.id.widget_toggle, if (s.poweredOn) R.drawable.ic_pause else R.drawable.ic_play)
                 setOnClickPendingIntent(R.id.widget_previous, FmService.servicePending(context, FmService.ACTION_PREVIOUS))
                 setOnClickPendingIntent(R.id.widget_toggle, FmService.servicePending(context, FmService.ACTION_TOGGLE))
