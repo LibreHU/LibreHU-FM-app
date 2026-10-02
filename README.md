@@ -14,6 +14,8 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   la notification et la carte média du lanceur. Nécessite Internet la première fois.
 - Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris, RDS (nom de station, radiotexte).
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.
+- **Thème clair / sombre** : suit le lanceur [LibreHU Launcher](https://github.com/LibreHU/LibreHU-Launcher-App)
+  (y compris le mode automatique selon les feux et la couleur d'accent), sinon le thème sombre d'Android.
 - Widget : station, radiotexte, précédente / lecture / suivante.
 
 ## Branches
