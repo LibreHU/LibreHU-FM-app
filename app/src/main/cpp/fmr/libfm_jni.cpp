@@ -208,6 +208,19 @@ jshort activeAf(JNIEnv *env, jobject thiz)
     return ret_freq;
 }
 
+/* LibreHU: [PI, PTY, TP, TA] of the last RDS data read by readRds. */
+jintArray getRdsInfo(JNIEnv *env, jobject thiz)
+{
+    jint info[4];
+    info[0] = fmr_data.rds.PI;
+    info[1] = fmr_data.rds.PTY;
+    info[2] = fmr_data.rds.RDSFlag.TP;
+    info[3] = fmr_data.rds.RDSFlag.TA;
+    jintArray out = env->NewIntArray(4);
+    if (out != NULL) env->SetIntArrayRegion(out, 0, 4, info);
+    return out;
+}
+
 jshortArray getAFList(JNIEnv *env, jobject thiz)
 {
     int ret = 0;
@@ -350,6 +363,7 @@ static JNINativeMethod methodsRx[] = {
     {"setMute",	"(Z)I", (void*)setMute},  //15
     {"isRdsSupport",	"()I", (void*)isRdsSupport},  //16
     {"switchAntenna", "(I)I", (void*)switchAntenna}, //17
+    {"getRdsInfo", "()[I", (void*)getRdsInfo}, // LibreHU
 };
 
 /*

@@ -23,4 +23,84 @@
     <string name="error_driver">FM driver library unavailable on this device.</string>
     <string name="error_focus">Audio focus refused (another source, phone call?).</string>
     <string name="error_open">Cannot open /dev/fm: install the app as a privileged app (see the README).</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Data sent by the stations with the sound and decoded by the FM chip: station name, radiotext, programme type, traffic info.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotext (song, show…)</string>
+    <string name="set_pty">Programme type (news, pop…)</string>
+    <string name="set_af">Alternative frequencies (AF)</string>
+    <string name="set_af_hint">Switches to another frequency of the same station when the signal gets weak</string>
+    <string name="set_preset_names">Name the favourites with the RDS name</string>
+    <string name="set_audio">Audio path</string>
+    <string name="set_audio_hint">Automatic: hardware patch FM tuner → speakers like the original radio app, else copy of the tuner audio. Applied at the next start of the radio.</string>
+    <string name="set_audio_auto">Automatic</string>
+    <string name="set_audio_patch">Hardware patch</string>
+    <string name="set_audio_render">Copy (render)</string>
+    <string name="set_audio_current">In use: %1$s</string>
+    <string name="set_logos">Station logos</string>
+    <string name="set_logos_hint">Logos from Radio Browser, an open community database of radio stations, found by the RDS station name.</string>
+    <string name="set_logos_enable">Show the logos</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Downloaded library only, never the network</string>
+    <string name="set_server">Server</string>
+    <string name="set_server_auto">Automatic</string>
+    <string name="set_server_list">List the servers</string>
+    <string name="set_server_loading">Loading…</string>
+    <string name="set_server_list_failed">Server list unavailable (no network?).</string>
+    <string name="set_server_custom">Other server (Radio Browser API URL)</string>
+    <string name="set_server_current">Address used: %1$s</string>
+    <string name="set_country">Country of the stations</string>
+    <string name="set_country_auto">Device (%1$s)</string>
+    <string name="set_country_other">Other country (ISO code)</string>
+    <string name="set_library">Offline library</string>
+    <string name="set_library_empty">No logo downloaded.</string>
+    <string name="set_library_info">%1$d logos (%2$s), %3$s, updated %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d stations</string>
+    <string name="set_library_listing">Listing the stations…</string>
+    <string name="set_library_all">All</string>
+    <string name="set_library_top">%1$d most popular</string>
+    <string name="set_library_hint">Downloads the logos of the stations of %1$s from the chosen server, to use them without Internet.</string>
+    <string name="set_library_failed">Download failed (network or server).</string>
+    <string name="set_library_download">Download</string>
+    <string name="set_library_delete">Delete the library</string>
+    <string name="set_logos_clear_cache">Look up the logos again</string>
+    <!-- RDS programme types (PTY 0–31, EN 50067, Europe). -->
+    <string-array name="pty_names">
+        <item>None</item>
+        <item>News</item>
+        <item>Current affairs</item>
+        <item>Information</item>
+        <item>Sport</item>
+        <item>Education</item>
+        <item>Drama</item>
+        <item>Culture</item>
+        <item>Science</item>
+        <item>Varied</item>
+        <item>Pop music</item>
+        <item>Rock music</item>
+        <item>Easy listening</item>
+        <item>Light classical</item>
+        <item>Serious classical</item>
+        <item>Other music</item>
+        <item>Weather</item>
+        <item>Finance</item>
+        <item>Children</item>
+        <item>Social affairs</item>
+        <item>Religion</item>
+        <item>Phone-in</item>
+        <item>Travel</item>
+        <item>Leisure</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>National music</item>
+        <item>Oldies</item>
+        <item>Folk</item>
+        <item>Documentary</item>
+        <item>Alarm test</item>
+        <item>Alarm</item>
+    </string-array>
 </resources>

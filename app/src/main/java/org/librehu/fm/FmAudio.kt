@@ -48,15 +48,20 @@ class FmAudio(
     private var track: AudioTrack? = null
 
     /** Hardware patch, before the chip powers up like Jancar's `FmService.powerUp`. */
-    fun preparePatch() {
-        if (patch == null) patch = HwPatch.create()
+    fun preparePatch(mode: AudioMode) {
+        if (patch == null && mode != AudioMode.RENDER) patch = HwPatch.create()
     }
 
-    fun start() {
+    fun start(mode: AudioMode) {
         if (running) return
-        running = true
         lastError = ""
-        preparePatch()
+        preparePatch(mode)
+        if (patch == null && mode == AudioMode.PATCH) {
+            // Forced hardware path (settings): no silent fallback, the user tests this path.
+            fail("Audio patch FM tuner -> speaker refused (MODIFY_AUDIO_ROUTING / hidden API?)")
+            return
+        }
+        running = true
         path = if (patch != null) Path.PATCH else Path.RENDER
         Log.i(TAG, "audio path: $path")
         thread = Thread(if (path == Path.PATCH) ::keepAlive else ::render, "fm-audio").apply { start() }

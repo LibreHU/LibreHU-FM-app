@@ -15,7 +15,12 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 - **Logo de la station** : recherché par le nom RDS dans [Radio Browser](https://www.radio-browser.info)
   (base ouverte), seulement si le nom correspond, puis gardé en cache par fréquence ; affiché dans l'app, le widget,
   la notification et la carte média du lanceur. Nécessite Internet la première fois.
-- Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris, RDS (nom de station, radiotexte).
+- Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris.
+- **RDS** décodé par la puce FM : nom de station, radiotexte, type de programme (PTY), TP / TA, fréquences
+  alternatives (AF, option), nommage automatique des favoris.
+- **Paramètres** (roue dentée) : RDS, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
+  Browser (automatique, miroir de la liste officielle ou URL personnalisée), pays, **bibliothèque hors ligne**
+  (téléchargement des logos des stations du pays, les plus populaires ou toutes) et mode hors ligne.
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.
 - **Thème clair / sombre** : suit le lanceur [LibreHU Launcher](https://github.com/LibreHU/LibreHU-Launcher-App)
   (y compris le mode automatique selon les feux et la couleur d'accent), sinon le thème sombre d'Android.

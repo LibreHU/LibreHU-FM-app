@@ -52,6 +52,12 @@ object FmNative {
 
     @JvmStatic external fun switchAntenna(antenna: Int): Int
 
+    /** [PI, PTY, TP, TA] of the last RDS data read by [readRds]. */
+    @JvmStatic external fun getRdsInfo(): IntArray?
+
+    const val RDS_EVENT_FLAGS = 0x0001
+    const val RDS_EVENT_PI_CODE = 0x0002
+    const val RDS_EVENT_PTY_CODE = 0x0004
     const val RDS_EVENT_PROGRAMNAME = 0x0008
     const val RDS_EVENT_LAST_RADIOTEXT = 0x0040
     const val RDS_EVENT_AF = 0x0080
