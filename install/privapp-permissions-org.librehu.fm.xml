@@ -4,5 +4,8 @@
     <privapp-permissions package="org.librehu.fm">
         <permission name="android.permission.CAPTURE_AUDIO_OUTPUT" />
         <permission name="android.permission.ACCESS_BROADCAST_RADIO" />
+        <permission name="android.permission.MODIFY_AUDIO_ROUTING" />
     </privapp-permissions>
+    <!-- Hidden audio patch API (AudioManager.createAudioPatch), as for Jancar's radio app. -->
+    <hidden-api-whitelisted-app package="org.librehu.fm" />
 </permissions>

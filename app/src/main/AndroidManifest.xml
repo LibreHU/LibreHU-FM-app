@@ -15,6 +15,10 @@
     <uses-permission
         android:name="android.permission.ACCESS_BROADCAST_RADIO"
         tools:ignore="ProtectedPermissions" />
+    <!-- Hardware audio patch FM tuner -> speaker, like Jancar's radio app (privileged install). -->
+    <uses-permission
+        android:name="android.permission.MODIFY_AUDIO_ROUTING"
+        tools:ignore="ProtectedPermissions" />
 
     <queries>
         <package android:name="com.jancar.services" />

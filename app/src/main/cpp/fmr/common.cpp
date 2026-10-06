@@ -15,6 +15,8 @@
  */
 
 #include "fmr.h"
+#include <strings.h>
+#include <sys/system_properties.h>
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -22,6 +24,37 @@
 #define LOG_TAG "FMLIB_COM"
 
 static int g_stopscan = 0;
+
+/* LibreHU: AC8257 driver, see fm_tune_parm_8257. Set by FM_interface_init. */
+fm_bool g_b8257 = fm_false;
+
+/* LibreHU: POWERUP / TUNE with the tune structure of the running driver. [freq] in, the driver's frequency out. */
+static int COM_tune_ioctl(int fd, unsigned long cmd, int band, int *freq)
+{
+    int ret;
+    if (g_b8257) {
+        /* Jancar powers up in 100 kHz units but tunes in 10 kHz units on this driver. */
+        int unit = (cmd == FM_IOCTL_TUNE && *freq < 2000) ? 10 : 1;
+        struct fm_tune_parm_8257 parm;
+        bzero(&parm, sizeof(parm));
+        parm.band = band;
+        parm.freq = *freq * unit;
+        parm.hilo = FM_AUTO_HILO_OFF;
+        parm.space = FM_SEEK_SPACE;
+        ret = ioctl(fd, cmd, &parm);
+        *freq = parm.freq / unit;
+    } else {
+        struct fm_tune_parm parm;
+        bzero(&parm, sizeof(parm));
+        parm.band = band;
+        parm.freq = *freq;
+        parm.hilo = FM_AUTO_HILO_OFF;
+        parm.space = FM_SEEK_SPACE;
+        ret = ioctl(fd, cmd, &parm);
+        *freq = parm.freq;
+    }
+    return ret;
+}
 
 int COM_open_dev(const char *pname, int *fd)
 {
@@ -58,21 +91,13 @@ int COM_close_dev(int fd)
 int COM_pwr_up(int fd, int band, int freq)
 {
     int ret = 0;
-    struct fm_tune_parm parm;
 
-    LOGI("%s, [freq=%d]\n", __func__, freq);
-    bzero(&parm, sizeof(struct fm_tune_parm));
-
-    parm.band = band;
-    parm.freq = freq;
-    parm.hilo = FM_AUTO_HILO_OFF;
-    parm.space = FM_SEEK_SPACE;
-
-    ret = ioctl(fd, FM_IOCTL_POWERUP, &parm);
+    LOGI("%s, [freq=%d] [8257=%d]\n", __func__, freq, g_b8257);
+    ret = COM_tune_ioctl(fd, FM_IOCTL_POWERUP, band, &freq);
     if (ret) {
         LOGE("%s, failed\n", __func__);
     }
-    LOGD("%s, [fd=%d] [ret=%d]\n", __func__, fd, ret);
+    LOGD("%s, [ret=%d]\n", __func__, ret);
     return ret;
 }
 
@@ -177,20 +202,11 @@ int COM_tune(int fd, int freq, int band)
 {
     int ret = 0;
 
-    struct fm_tune_parm parm;
-
-    bzero(&parm, sizeof(struct fm_tune_parm));
-
-    parm.band = band;
-    parm.freq = freq;
-    parm.hilo = FM_AUTO_HILO_OFF;
-    parm.space = FM_SEEK_SPACE;
-
-    ret = ioctl(fd, FM_IOCTL_TUNE, &parm);
+    ret = COM_tune_ioctl(fd, FM_IOCTL_TUNE, band, &freq);
     if (ret) {
         LOGE("%s, failed\n", __func__);
     }
-    LOGD("%s, [fd=%d] [freq=%d] [ret=%d]\n", __func__, fd, freq, ret);
+    LOGD("%s, [freq=%d] [ret=%d]\n", __func__, freq, ret);
     return ret;
 }
 
@@ -433,6 +449,15 @@ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
     return ret;
 }
 
+/* LibreHU: FM_IOCTL_TUNE of a struct fm_tune_parm, converted for the AC8257 driver. */
+static int COM_tune_parm_ioctl(int fd, struct fm_tune_parm *parm)
+{
+    int freq = parm->freq;
+    int ret = COM_tune_ioctl(fd, FM_IOCTL_TUNE, parm->band, &freq);
+    parm->freq = freq;
+    return ret;
+}
+
 int COM_active_af(int fd, RDSData_Struct *rds, int band, uint16_t cur_freq, uint16_t *ret_freq)
 {
     int ret = 0;
@@ -475,7 +500,7 @@ int COM_active_af(int fd, RDSData_Struct *rds, int band, uint16_t cur_freq, uint
             set_freq = rds->AF_Data.AF[1][i];  //method A or B
             if (set_freq != org_freq) {
                 parm.freq = set_freq;
-                ioctl(fd, FM_IOCTL_TUNE, &parm);
+                COM_tune_parm_ioctl(fd, &parm);
                 usleep(250*1000);
                 ioctl(fd, FM_IOCTL_GETCURPAMD, &PAMD_Level[i]);
                 LOGI("next_freq=%d,PAMD_Level=%d\n", parm.freq, PAMD_Level[i]);
@@ -488,11 +513,11 @@ int COM_active_af(int fd, RDSData_Struct *rds, int band, uint16_t cur_freq, uint
         LOGI("PAMD_Value=%d, sw_freq=%d\n", PAMD_Value, sw_freq);
         if ((PAMD_Value > AF_PAMD_HBound)&&(sw_freq != 0)) {
             parm.freq = sw_freq;
-            ioctl(fd, FM_IOCTL_TUNE, &parm);
+            COM_tune_parm_ioctl(fd, &parm);
             cur_freq = parm.freq;
         } else {
             parm.freq = org_freq;
-            ioctl(fd, FM_IOCTL_TUNE, &parm);
+            COM_tune_parm_ioctl(fd, &parm);
             cur_freq = parm.freq;
         }
         rds_on = 1;
@@ -563,6 +588,12 @@ int COM_desense_check(int fd, int freq, int rssi)
 
 void FM_interface_init(struct fm_cbk_tbl *cbk_tbl)
 {
+    /* LibreHU: same test as Jancar's libfmjni (JNI_OnLoad). */
+    char platform[PROP_VALUE_MAX] = {0};
+    __system_property_get("ro.mediatek.platform", platform);
+    g_b8257 = strcasecmp(platform, "AC8257") == 0 ? fm_true : fm_false;
+    LOGI("%s, [platform=%s] [8257=%d]\n", __func__, platform, g_b8257);
+
     //Basic functions.
     cbk_tbl->open_dev = COM_open_dev;
     cbk_tbl->close_dev = COM_close_dev;
