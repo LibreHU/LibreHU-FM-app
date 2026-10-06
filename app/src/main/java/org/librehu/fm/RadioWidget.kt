@@ -45,15 +45,30 @@ class RadioWidget : AppWidgetProvider() {
             return s.copy(frequency = store.frequency, presets = store.presets)
         }
 
+        private fun luminance(argb: Int): Double {
+            val r = (argb shr 16 and 0xFF) / 255.0
+            val g = (argb shr 8 and 0xFF) / 255.0
+            val b = (argb and 0xFF) / 255.0
+            return 0.299 * r + 0.587 * g + 0.114 * b
+        }
+
         private fun views(
             context: Context,
             s: RadioState,
         ): RemoteViews {
-            val dark = ThemeFollower.current(context).first
+            val (dark, launcherAccent) = ThemeFollower.current(context)
             val text = if (dark) 0xFFE8EAED.toInt() else 0xFF202124.toInt()
             val dim = if (dark) 0xFF9AA0A6.toInt() else 0xFF5F6368.toInt()
-            val accent = if (dark) 0xFF8AB4F8.toInt() else 0xFF1A73E8.toInt()
-            val onAccent = if (dark) 0xFF062E6F.toInt() else 0xFFFFFFFF.toInt()
+            // Accent of LibreHU Launcher, else the default blue; icon on it black or white by its brightness.
+            val accent =
+                if (launcherAccent != 0) {
+                    launcherAccent
+                } else if (dark) {
+                    0xFF8AB4F8.toInt()
+                } else {
+                    0xFF1A73E8.toInt()
+                }
+            val onAccent = if (luminance(accent) > 0.5) 0xFF202124.toInt() else 0xFFFFFFFF.toInt()
             return RemoteViews(context.packageName, R.layout.widget_radio).apply {
                 setInt(
                     R.id.widget_root,
@@ -68,11 +83,7 @@ class RadioWidget : AppWidgetProvider() {
                 setInt(R.id.widget_next, "setBackgroundResource", button)
                 setInt(R.id.widget_previous, "setColorFilter", text)
                 setInt(R.id.widget_next, "setColorFilter", text)
-                setInt(
-                    R.id.widget_toggle,
-                    "setBackgroundResource",
-                    if (dark) R.drawable.widget_button_accent else R.drawable.widget_button_accent_light,
-                )
+                setInt(R.id.widget_toggle_disc, "setColorFilter", accent)
                 setInt(R.id.widget_toggle, "setColorFilter", onAccent)
                 setTextViewText(R.id.widget_frequency, Band.format(s.frequency))
                 setTextViewText(R.id.widget_title, s.title.ifBlank { context.getString(R.string.app_name) })
