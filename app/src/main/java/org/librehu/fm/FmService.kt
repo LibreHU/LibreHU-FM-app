@@ -61,8 +61,10 @@ class FmService : Service() {
         store = RadioStore(this)
         logos = StationLogos(this)
         settings = RadioSettings.get(this)
-        bridge = HeadUnitBridge.create(this)
         audioManager = getSystemService(AudioManager::class.java)
+        // An earlier version sent AudioFmPreStop=1 at each stop, which mutes the media of the whole unit until reboot.
+        chip.execute { clearFmPreStop() }
+        bridge = HeadUnitBridge.create(this)
         _state.update {
             it.copy(
                 available = FmNative.loadError == null,
@@ -244,18 +246,28 @@ class FmService : Service() {
             if (!state.value.poweredOn) return@execute
             stopRds()
             audio.stop()
-            audioManager.setParameters("AudioFmPreStop=1")
             FmNative.setRds(false)
             FmNative.powerDown(0)
             if (deviceOpen) {
                 FmNative.closeDev()
                 deviceOpen = false
             }
+            clearFmPreStop()
             bridge.onRadioOff()
             abandonFocus()
             _state.update { it.copy(poweredOn = false, busy = false, audioPath = FmAudio.Path.NONE) }
             scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) }
         }
+
+    /**
+     * MediaTek's audio policy mutes the media strategy of the primary output on `AudioFmPreStop=1` ("mute for FM app
+     * with Handle 13" in the logcat): every app goes silent, phone calls aside, until `AudioFmPreStop=0`. Jancar's radio
+     * only ever sends 0 (FmService.onDestroy); the mute may have been counted several times, so it is sent a few times
+     * (a 0 without a pending mute does nothing).
+     */
+    private fun clearFmPreStop() {
+        repeat(FM_PRESTOP_CLEARS) { audioManager.setParameters("AudioFmPreStop=0") }
+    }
 
     private fun tune(frequency: Int) =
         chip.execute {
@@ -565,6 +577,7 @@ class FmService : Service() {
         private const val RDS_POLL_MS = 200L
         private const val DUCK_VOLUME = 0.3f
         private const val LOGO_NAME_STABLE_MS = 3000L
+        private const val FM_PRESTOP_CLEARS = 8
 
         const val ACTION_PLAY = "org.librehu.fm.PLAY"
         const val ACTION_PAUSE = "org.librehu.fm.PAUSE"
