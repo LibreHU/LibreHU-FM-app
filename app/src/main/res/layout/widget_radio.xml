@@ -67,15 +67,28 @@
             android:contentDescription="@string/previous"
             android:src="@drawable/ic_skip_previous" />
 
-        <ImageButton
-            android:id="@+id/widget_toggle"
+        <!-- Accent disc under the play button: an ImageView, whose colour filter RemoteViews can set (launcher accent). -->
+        <FrameLayout
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/widget_button_accent"
-            android:contentDescription="@string/play"
-            android:src="@drawable/ic_play" />
+            android:layout_marginEnd="24dp">
+
+            <ImageView
+                android:id="@+id/widget_toggle_disc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:src="@drawable/widget_disc" />
+
+            <ImageButton
+                android:id="@+id/widget_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/play"
+                android:src="@drawable/ic_play" />
+        </FrameLayout>
 
         <ImageButton
             android:id="@+id/widget_next"
