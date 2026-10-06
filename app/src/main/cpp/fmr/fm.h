@@ -134,6 +134,18 @@ struct fm_tune_parm {
     uint16_t freq;
 };
 
+/* LibreHU: layout of the AC8257 driver (ro.mediatek.platform=AC8257), read from COM_pwr_up_8257 / COM_tune_8257
+ * in Jancar's libfmjni.so: two more bytes before the frequency. */
+struct fm_tune_parm_8257 {
+    uint8_t err;
+    uint8_t band;
+    uint8_t space;
+    uint8_t hilo;
+    uint8_t deemphasis;
+    uint8_t rsv;
+    uint16_t freq;
+};
+
 struct fm_seek_parm {
     uint8_t err;
     uint8_t band;

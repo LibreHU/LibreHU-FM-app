@@ -7,8 +7,11 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 - Puce FM interne MediaTek (combo **MT6631**) pilotée par `/dev/fm`, via le JNI FM d'AOSP (Apache 2.0, voir
   [app/src/main/cpp/fmr/README.md](app/src/main/cpp/fmr/README.md)). Les codes ioctl sont les mêmes que ceux de
   l'app radio Jancar d'origine.
-- Son : source de capture `RADIO_TUNER` recopiée vers un flux média (méthode « render » d'AOSP FMRadio et de l'app
-  Jancar).
+- Son : comme l'app radio Jancar, **patch audio matériel** tuner FM → haut-parleur (le son ne passe pas par l'app,
+  une piste muette garde le flux média actif) ; à défaut, source de capture `RADIO_TUNER` recopiée vers un flux
+  média (méthode « render » d'AOSP FMRadio).
+- AC8257 : structure d'accord et unités du pilote `/dev/fm` de l'AC8257 (détecté par `ro.mediatek.platform`),
+  relevées dans la `libfmjni.so` de Jancar.
 - **Logo de la station** : recherché par le nom RDS dans [Radio Browser](https://www.radio-browser.info)
   (base ouverte), seulement si le nom correspond, puis gardé en cache par fréquence ; affiché dans l'app, le widget,
   la notification et la carte média du lanceur. Nécessite Internet la première fois.
@@ -31,8 +34,9 @@ Cette branche : **`librehu-service`** (installer LibreHU-service avant l'app rad
 
 ## Installation (obligatoirement en app privilégiée)
 
-`/dev/fm` appartient au groupe `media` (permission `ACCESS_BROADCAST_RADIO`) et la capture `RADIO_TUNER` exige
-`CAPTURE_AUDIO_OUTPUT` : deux permissions réservées aux apps privilégiées. Avec root ou en reconstruisant la ROM :
+`/dev/fm` appartient au groupe `media` (permission `ACCESS_BROADCAST_RADIO`), le patch audio exige
+`MODIFY_AUDIO_ROUTING` et l'API cachée `AudioManager.createAudioPatch` (liste blanche dans le fichier XML), la
+capture `RADIO_TUNER` exige `CAPTURE_AUDIO_OUTPUT` : permissions réservées aux apps privilégiées. Avec root ou en reconstruisant la ROM :
 
 ```
 adb root && adb remount

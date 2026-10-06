@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 class FmService : Service() {
     private val chip = Executors.newSingleThreadExecutor { r -> Thread(r, "fm-chip") }
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private val audio = FmAudio()
+    private val audio = FmAudio { mute -> chip.execute { if (state.value.poweredOn) FmNative.setMute(mute) } }
     private lateinit var store: RadioStore
     private lateinit var logos: StationLogos
     private lateinit var bridge: HeadUnitBridge
@@ -191,15 +191,19 @@ class FmService : Service() {
                 return@execute
             }
             setBusy(true)
+            audio.preparePatch()
             if (!deviceOpen) deviceOpen = FmNative.openDev()
             val freq = state.value.frequency
             if (!deviceOpen || !FmNative.powerUp(Band.mhz(freq))) {
+                audio.stop()
                 abandonFocus()
                 fail(getString(if (deviceOpen) R.string.error_power_up else R.string.error_open))
                 return@execute
             }
             bridge.onRadioOn()
             FmNative.setRds(true)
+            // Tune once powered, like Jancar (powerUp in 100 kHz units, tune in 10 kHz units on the AC8257).
+            FmNative.tune(Band.mhz(freq))
             FmNative.setMute(false)
             audio.start()
             _state.update { it.copy(poweredOn = true, busy = false, error = "") }
