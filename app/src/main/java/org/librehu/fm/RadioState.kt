@@ -24,6 +24,12 @@ data class RadioState(
     val stations: List<Station> = emptyList(),
     /** Logo of the current station (Radio Browser, cached), when found. */
     val logo: Bitmap? = null,
+    /** RDS programme type (0 = none, 1–31 per EN 50067), traffic programme / announcement flags. */
+    val pty: Int = 0,
+    val tp: Boolean = false,
+    val ta: Boolean = false,
+    /** Audio path in use, for the settings screen. */
+    val audioPath: FmAudio.Path = FmAudio.Path.NONE,
 ) {
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 
