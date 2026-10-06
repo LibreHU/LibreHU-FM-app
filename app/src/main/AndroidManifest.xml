@@ -28,6 +28,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.LibreHU.Car">
+        <!-- Single-colour icon: LibreHU Launcher draws it in the colours of its theme. -->
+        <meta-data
+            android:name="org.librehu.themed_icon"
+            android:resource="@drawable/ic_launcher_mono" />
+
 
         <activity
             android:name=".MainActivity"
