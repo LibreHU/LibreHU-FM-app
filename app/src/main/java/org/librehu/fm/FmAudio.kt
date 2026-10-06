@@ -195,7 +195,19 @@ class FmAudio(
                 val ports = ArrayList<Any>()
                 AudioManager::class.java.getMethod("listAudioPorts", ArrayList::class.java).invoke(null, ports)
                 val type = devPortCls.getMethod("type")
-                val active = portCls.getMethod("activeConfig")
+                // Light greylist on Android 9 (the activeConfig() method is not): the port's current configuration.
+                val activeField = portCls.getDeclaredField("mActiveConfig").apply { isAccessible = true }
+                val devCfgCtor =
+                    Class
+                        .forName("android.media.AudioDevicePortConfig")
+                        .getDeclaredConstructor(
+                            devPortCls,
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                            Int::class.javaPrimitiveType,
+                            Class.forName("android.media.AudioGainConfig"),
+                        ).apply { isAccessible = true }
+                val active = { port: Any -> activeField.get(port) ?: devCfgCtor.newInstance(port, 0, 0, 0, null) }
                 val devices = ports.filter { devPortCls.isInstance(it) }
                 val source = devices.firstOrNull { type.invoke(it) == DEVICE_IN_FM_TUNER }
                 val sink = devices.firstOrNull { type.invoke(it) == DEVICE_OUT_SPEAKER }
@@ -204,8 +216,8 @@ class FmAudio(
                     null
                 } else {
                     val out = JArray.newInstance(patchCls, 1)
-                    val sources = JArray.newInstance(cfgCls, 1).also { JArray.set(it, 0, active.invoke(source)) }
-                    val sinks = JArray.newInstance(cfgCls, 1).also { JArray.set(it, 0, active.invoke(sink)) }
+                    val sources = JArray.newInstance(cfgCls, 1).also { JArray.set(it, 0, active(source)) }
+                    val sinks = JArray.newInstance(cfgCls, 1).also { JArray.set(it, 0, active(sink)) }
                     val res =
                         AudioManager::class.java
                             .getMethod("createAudioPatch", out.javaClass, sources.javaClass, sinks.javaClass)
@@ -233,7 +245,9 @@ class FmAudio(
     private companion object {
         const val TAG = "LibreHU-FM"
         const val RADIO_TUNER = 1998 // MediaRecorder.AudioSource.RADIO_TUNER (@SystemApi)
-        const val SAMPLE_RATE = 44100
+
+        // Rate of the MediaTek FM capture (FM_I2S_Capture): the HAL refuses 44.1 kHz and reopens at 48 kHz.
+        const val SAMPLE_RATE = 48000
         const val CHANNELS_IN = AudioFormat.CHANNEL_IN_STEREO
         const val ENCODING = AudioFormat.ENCODING_PCM_16BIT
         const val SILENCE_BYTES = 100
