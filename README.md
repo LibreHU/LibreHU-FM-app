@@ -24,7 +24,10 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.
 - **Thème clair / sombre** : suit le lanceur [LibreHU Launcher](https://github.com/LibreHU/LibreHU-Launcher-App)
   (y compris le mode automatique selon les feux et la couleur d'accent), sinon le thème sombre d'Android.
-- Widget : station, radiotexte, précédente / lecture / suivante.
+- Widget : station, radiotexte, précédente / lecture / suivante, aux couleurs du lanceur (couleur d'accent).
+- Son des autres applis préservé : l'app n'envoie jamais `AudioFmPreStop=1` au HAL audio MediaTek (ce paramètre coupe
+  le flux média de la sortie principale, donc tout le son d'Android et l'AUX) et le remet à 0 au démarrage et à
+  l'arrêt de la radio.
 
 ## Branches
 
