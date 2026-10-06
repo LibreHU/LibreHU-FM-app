@@ -7,8 +7,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import org.librehu.fm.ui.RadioScreen
 import org.librehu.fm.ui.RadioTheme
+import org.librehu.fm.ui.SettingsScreen
 import org.librehu.fm.ui.ThemeFollower
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +29,15 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             RadioTheme {
-                RadioScreen(send = { action, freq -> FmService.send(this, action, freq) })
+                var settings by rememberSaveable { mutableStateOf(false) }
+                if (settings) {
+                    SettingsScreen(onBack = { settings = false })
+                } else {
+                    RadioScreen(
+                        send = { action, freq -> FmService.send(this, action, freq) },
+                        onSettings = { settings = true },
+                    )
+                }
             }
         }
     }

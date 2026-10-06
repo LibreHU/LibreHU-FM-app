@@ -23,4 +23,84 @@
     <string name="error_driver">Bibliothèque du pilote FM indisponible sur cet appareil.</string>
     <string name="error_focus">Focus audio refusé (autre source, appel en cours ?).</string>
     <string name="error_open">Impossible d\'ouvrir /dev/fm : installer l\'app en app privilégiée (voir le README).</string>
+    <string name="settings">Paramètres</string>
+    <string name="back">Retour</string>
+    <string name="apply">Appliquer</string>
+    <string name="cancel">Annuler</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Données envoyées par les stations avec le son et décodées par la puce FM : nom de la station, radiotexte, type de programme, info trafic.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotexte (titre, émission…)</string>
+    <string name="set_pty">Type de programme (info, pop…)</string>
+    <string name="set_af">Fréquences alternatives (AF)</string>
+    <string name="set_af_hint">Passe sur une autre fréquence de la même station quand le signal faiblit</string>
+    <string name="set_preset_names">Nommer les favoris avec le nom RDS</string>
+    <string name="set_audio">Chemin audio</string>
+    <string name="set_audio_hint">Automatique : patch matériel tuner FM → haut-parleurs comme l\'app radio d\'origine, sinon recopie du son du tuner. Appliqué au prochain démarrage de la radio.</string>
+    <string name="set_audio_auto">Automatique</string>
+    <string name="set_audio_patch">Patch matériel</string>
+    <string name="set_audio_render">Recopie (render)</string>
+    <string name="set_audio_current">En cours : %1$s</string>
+    <string name="set_logos">Logos des stations</string>
+    <string name="set_logos_hint">Logos de Radio Browser, base ouverte et communautaire de stations de radio, trouvés par le nom RDS de la station.</string>
+    <string name="set_logos_enable">Afficher les logos</string>
+    <string name="set_logos_offline">Hors ligne</string>
+    <string name="set_logos_offline_hint">Bibliothèque téléchargée seulement, jamais le réseau</string>
+    <string name="set_server">Serveur</string>
+    <string name="set_server_auto">Automatique</string>
+    <string name="set_server_list">Lister les serveurs</string>
+    <string name="set_server_loading">Chargement…</string>
+    <string name="set_server_list_failed">Liste des serveurs indisponible (pas de réseau ?).</string>
+    <string name="set_server_custom">Autre serveur (URL d\'une API Radio Browser)</string>
+    <string name="set_server_current">Adresse utilisée : %1$s</string>
+    <string name="set_country">Pays des stations</string>
+    <string name="set_country_auto">Appareil (%1$s)</string>
+    <string name="set_country_other">Autre pays (code ISO)</string>
+    <string name="set_library">Bibliothèque hors ligne</string>
+    <string name="set_library_empty">Aucun logo téléchargé.</string>
+    <string name="set_library_info">%1$d logos (%2$s), %3$s, mis à jour le %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d stations</string>
+    <string name="set_library_listing">Liste des stations…</string>
+    <string name="set_library_all">Toutes</string>
+    <string name="set_library_top">Les %1$d plus populaires</string>
+    <string name="set_library_hint">Télécharge les logos des stations de %1$s depuis le serveur choisi, pour les utiliser sans Internet.</string>
+    <string name="set_library_failed">Échec du téléchargement (réseau ou serveur).</string>
+    <string name="set_library_download">Télécharger</string>
+    <string name="set_library_delete">Supprimer la bibliothèque</string>
+    <string name="set_logos_clear_cache">Rechercher les logos à nouveau</string>
+    <!-- RDS programme types (PTY 0–31, EN 50067, Europe). -->
+    <string-array name="pty_names">
+        <item>Aucun</item>
+        <item>Infos</item>
+        <item>Actualité</item>
+        <item>Information</item>
+        <item>Sport</item>
+        <item>Éducation</item>
+        <item>Fiction</item>
+        <item>Culture</item>
+        <item>Sciences</item>
+        <item>Divers</item>
+        <item>Pop</item>
+        <item>Rock</item>
+        <item>Variétés douces</item>
+        <item>Classique léger</item>
+        <item>Classique</item>
+        <item>Autre musique</item>
+        <item>Météo</item>
+        <item>Économie</item>
+        <item>Jeunesse</item>
+        <item>Société</item>
+        <item>Religion</item>
+        <item>Ligne ouverte</item>
+        <item>Voyages</item>
+        <item>Loisirs</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Musique nationale</item>
+        <item>Rétro</item>
+        <item>Folk</item>
+        <item>Documentaire</item>
+        <item>Test d\'alarme</item>
+        <item>Alarme</item>
+    </string-array>
 </resources>

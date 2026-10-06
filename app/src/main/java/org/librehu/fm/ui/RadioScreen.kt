@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Star
@@ -55,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,7 +72,10 @@ import kotlin.math.roundToInt
 
 /** Car-style radio screen: now-playing card with transport controls on the left, presets / stations on the right. */
 @Composable
-fun RadioScreen(send: (String, Int?) -> Unit) {
+fun RadioScreen(
+    send: (String, Int?) -> Unit,
+    onSettings: () -> Unit,
+) {
     val s by FmService.state.collectAsStateWithLifecycle()
     Row(
         modifier =
@@ -81,7 +86,7 @@ fun RadioScreen(send: (String, Int?) -> Unit) {
                 .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        NowPlaying(s, send, Modifier.weight(1.1f).fillMaxHeight())
+        NowPlaying(s, send, onSettings, Modifier.weight(1.1f).fillMaxHeight())
         StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
     }
 }
@@ -90,6 +95,7 @@ fun RadioScreen(send: (String, Int?) -> Unit) {
 private fun NowPlaying(
     s: RadioState,
     send: (String, Int?) -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier,
 ) {
     Column(
@@ -101,7 +107,17 @@ private fun NowPlaying(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            Text(stringResource(R.string.app_name), color = CarColors.TextDim, fontSize = 18.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.app_name), color = CarColors.TextDim, fontSize = 18.sp, modifier = Modifier.weight(1f))
+                IconButton(onClick = onSettings, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.settings),
+                        tint = CarColors.TextDim,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
+            }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StationLogo(s)
                 Spacer(Modifier.width(20.dp))
@@ -111,14 +127,18 @@ private fun NowPlaying(
                     Text("MHz", color = CarColors.TextDim, fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
                 }
             }
-            Text(
-                s.title.ifBlank { " " },
-                color = CarColors.Text,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    s.title.ifBlank { " " },
+                    color = CarColors.Text,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                RdsBadges(s)
+            }
             Text(
                 when {
                     !s.available || s.error.isNotEmpty() -> s.error.ifEmpty { stringResource(R.string.error_driver) }
@@ -167,6 +187,38 @@ private fun NowPlaying(
             RoundButton(Icons.Default.SkipNext, R.string.seek_up) { send(FmService.ACTION_SEEK_UP, null) }
         }
     }
+}
+
+/** RDS programme type and traffic flags (TP: traffic programme, TA: traffic announcement on air). */
+@Composable
+private fun RdsBadges(s: RadioState) {
+    val pty = stringArrayResource(R.array.pty_names)
+    if (s.pty in 1 until pty.size) Badge(pty[s.pty], false)
+    if (s.ta) {
+        Badge("TA", true)
+    } else if (s.tp) {
+        Badge("TP", false)
+    }
+}
+
+@Composable
+private fun Badge(
+    label: String,
+    strong: Boolean,
+) {
+    Spacer(Modifier.width(10.dp))
+    Text(
+        label,
+        color = if (strong) CarColors.OnAccent else CarColors.TextDim,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        maxLines = 1,
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(50))
+                .background(if (strong) CarColors.Accent else CarColors.SurfaceHigh)
+                .padding(horizontal = 10.dp, vertical = 4.dp),
+    )
 }
 
 /** Station logo when found, else a radio icon, on a light tile (most logos are made for light backgrounds). */

@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -48,6 +49,7 @@ class FmService : Service() {
     private lateinit var bridge: HeadUnitBridge
     private lateinit var session: MediaSession
     private lateinit var audioManager: AudioManager
+    private lateinit var settings: StateFlow<Settings>
     private var focusRequest: AudioFocusRequest? = null
     private var deviceOpen = false
 
@@ -58,6 +60,7 @@ class FmService : Service() {
         super.onCreate()
         store = RadioStore(this)
         logos = StationLogos(this)
+        settings = RadioSettings.get(this)
         bridge = HeadUnitBridge.create(this)
         audioManager = getSystemService(AudioManager::class.java)
         _state.update {
@@ -83,9 +86,10 @@ class FmService : Service() {
             }
         // Station logo: cached one at once, network lookup once the RDS name is stable (some stations scroll it).
         scope.launch {
-            state
-                .map { it.frequency to it.title.trim() }
-                .distinctUntilChanged()
+            combine(state.map { it.frequency to it.title.trim() }, settings) { key, set ->
+                Triple(key, set.logos, Triple(set.logosOffline, set.serverUrl, set.countryCode))
+            }.distinctUntilChanged()
+                .map { it.first }
                 .collectLatest { (freq, name) ->
                     val cached = withContext(Dispatchers.IO) { logos.cached(freq) }
                     _state.update { if (it.frequency == freq) it.copy(logo = cached) else it }
@@ -93,6 +97,27 @@ class FmService : Service() {
                     delay(LOGO_NAME_STABLE_MS)
                     val found = withContext(Dispatchers.IO) { logos.find(freq, name) }
                     if (found != null) _state.update { if (it.frequency == freq) it.copy(logo = found) else it }
+                }
+        }
+        // RDS settings applied at once while the radio plays.
+        scope.launch {
+            settings
+                .map { Triple(it.rds, it.radioText, it.pty) }
+                .distinctUntilChanged()
+                .collect { (rds, radioText, pty) ->
+                    if (!radioText) _state.update { it.copy(radioText = "") }
+                    if (!pty) _state.update { it.copy(pty = 0) }
+                    chip.execute {
+                        if (!state.value.poweredOn) return@execute
+                        if (rds && rdsThread == null) {
+                            FmNative.setRds(true)
+                            startRds()
+                        } else if (!rds && rdsThread != null) {
+                            stopRds()
+                            FmNative.setRds(false)
+                            _state.update { it.copy(ps = "", radioText = "", pty = 0, tp = false, ta = false) }
+                        }
+                    }
                 }
         }
         scope.launch {
@@ -191,7 +216,8 @@ class FmService : Service() {
                 return@execute
             }
             setBusy(true)
-            audio.preparePatch()
+            val mode = settings.value.audioMode
+            audio.preparePatch(mode)
             if (!deviceOpen) deviceOpen = FmNative.openDev()
             val freq = state.value.frequency
             if (!deviceOpen || !FmNative.powerUp(Band.mhz(freq))) {
@@ -201,12 +227,12 @@ class FmService : Service() {
                 return@execute
             }
             bridge.onRadioOn()
-            FmNative.setRds(true)
+            FmNative.setRds(settings.value.rds)
             // Tune once powered, like Jancar (powerUp in 100 kHz units, tune in 10 kHz units on the AC8257).
             FmNative.tune(Band.mhz(freq))
             FmNative.setMute(false)
-            audio.start()
-            _state.update { it.copy(poweredOn = true, busy = false, error = "") }
+            audio.start(mode)
+            _state.update { it.copy(poweredOn = true, busy = false, error = "", audioPath = audio.path) }
             startRds()
             // The render thread reports a missing capture permission asynchronously.
             Thread.sleep(500)
@@ -227,7 +253,7 @@ class FmService : Service() {
             }
             bridge.onRadioOff()
             abandonFocus()
-            _state.update { it.copy(poweredOn = false, busy = false) }
+            _state.update { it.copy(poweredOn = false, busy = false, audioPath = FmAudio.Path.NONE) }
             scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) }
         }
 
@@ -259,7 +285,7 @@ class FmService : Service() {
             _state.update { it.copy(scanning = true) }
             FmNative.setRds(false)
             val found = FmNative.autoScan()
-            FmNative.setRds(true)
+            FmNative.setRds(settings.value.rds)
             val stations =
                 found
                     ?.map { it.toInt() }
@@ -313,7 +339,7 @@ class FmService : Service() {
 
     private fun setFrequency(f: Int) {
         store.frequency = f
-        _state.update { it.copy(frequency = f, ps = "", radioText = "") }
+        _state.update { it.copy(frequency = f, ps = "", radioText = "", pty = 0, tp = false, ta = false) }
     }
 
     private fun setBusy(busy: Boolean) = _state.update { it.copy(busy = busy) }
@@ -326,19 +352,36 @@ class FmService : Service() {
     // --- RDS -----------------------------------------------------------------------------------------------------
 
     private fun startRds() {
-        if (FmNative.isRdsSupport() != 1) return
+        if (!settings.value.rds || FmNative.isRdsSupport() != 1) return
+        var lastPs = ""
         rdsThread =
             Thread({
                 while (rdsThread === Thread.currentThread()) {
                     val events = FmNative.readRds().toInt()
+                    val set = settings.value
                     if (events and FmNative.RDS_EVENT_PROGRAMNAME != 0) {
                         val ps = FmNative.getPs()?.let(::rdsText).orEmpty()
                         _state.update { it.copy(ps = ps) }
+                        // Same name twice in a row: not a half-received or scrolling one.
+                        if (set.rdsPresetNames && ps.isNotBlank() && ps == lastPs) namePreset(ps)
+                        lastPs = ps
                     }
-                    if (events and FmNative.RDS_EVENT_LAST_RADIOTEXT != 0) {
+                    if (set.radioText && events and FmNative.RDS_EVENT_LAST_RADIOTEXT != 0) {
                         val rt = FmNative.getLrText()?.let(::rdsText).orEmpty()
                         _state.update { it.copy(radioText = rt) }
                     }
+                    if (events and (FmNative.RDS_EVENT_FLAGS or FmNative.RDS_EVENT_PTY_CODE or FmNative.RDS_EVENT_PROGRAMNAME) != 0) {
+                        FmNative.getRdsInfo()?.takeIf { it.size >= 4 }?.let { info ->
+                            _state.update {
+                                it.copy(
+                                    pty = if (set.pty) info[1].coerceIn(0, 31) else 0,
+                                    tp = info[2] != 0,
+                                    ta = info[3] != 0,
+                                )
+                            }
+                        }
+                    }
+                    if (set.af && events and FmNative.RDS_EVENT_AF != 0) followAf()
                     try {
                         Thread.sleep(RDS_POLL_MS)
                     } catch (_: InterruptedException) {
@@ -346,6 +389,29 @@ class FmService : Service() {
                     }
                 }
             }, "fm-rds").apply { start() }
+    }
+
+    /** Signal too weak: the chip tries the RDS alternative frequencies and keeps the best one. */
+    private fun followAf() =
+        chip.execute {
+            if (!state.value.poweredOn) return@execute
+            val raw = FmNative.activeAf().toInt() and 0xFFFF
+            val f = if (raw > Band.MAX * 2) raw / 10 else raw
+            if (f in Band.MIN..Band.MAX && f != state.value.frequency) {
+                Log.i(TAG, "RDS AF: ${state.value.frequency} -> $f")
+                store.frequency = f
+                // Same programme: name and logo stay.
+                _state.update { it.copy(frequency = f) }
+            }
+        }
+
+    /** Names the current favourite with the RDS name when it has none. */
+    private fun namePreset(ps: String) {
+        val s = state.value
+        if (s.presets.none { it.frequency == s.frequency && it.name.isBlank() }) return
+        val presets = s.presets.map { if (it.frequency == s.frequency && it.name.isBlank()) it.copy(name = ps) else it }
+        store.presets = presets
+        _state.update { it.copy(presets = presets) }
     }
 
     private fun stopRds() {
