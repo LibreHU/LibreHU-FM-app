@@ -26,7 +26,7 @@ android {
         minSdk = 28
         targetSdk = 35
         versionCode = git("rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
-        versionName = git("describe", "--tags", "--always", "--dirty", "--exclude", "latest-*") ?: "dev"
+        versionName = git("describe", "--tags", "--always", "--dirty", "--exclude", "latest-*", "--exclude", "build-*") ?: "dev"
 
         ndk {
             // Same ABI as Jancar's radio app, whose libfmjni drives /dev/fm through the 32-bit ioctl path.
