@@ -29,6 +29,14 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   le flux média de la sortie principale, donc tout le son d'Android et l'AUX) et le remet à 0 au démarrage et à
   l'arrêt de la radio.
 
+## Captures d'écran
+
+| | |
+|---|---|
+| ![Radio](docs/screenshots/main.png)<br>Radio | ![Stations](docs/screenshots/stations.png)<br>Stations |
+
+Captures sur l'émulateur Android 11 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots).
+
 ## Branches
 
 Cette branche : **`librehu-service`** (installer LibreHU-service avant l'app radio).
@@ -67,4 +75,3 @@ reste, le journal du pilote dit pourquoi :
 adb shell su -c "dmesg | grep -i -E 'fm|wmt'" > fm_dmesg.txt
 adb logcat -d -s LibreHU-FM FMLIB_COM FMLIB_CORE FMLIB_JNI FMLIB_ERR > fm_logcat.txt
 ```
-
