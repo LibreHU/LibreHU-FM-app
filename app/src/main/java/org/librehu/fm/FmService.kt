@@ -222,10 +222,22 @@ class FmService : Service() {
             audio.preparePatch(mode)
             if (!deviceOpen) deviceOpen = FmNative.openDev()
             val freq = state.value.frequency
-            if (!deviceOpen || !FmNative.powerUp(Band.mhz(freq))) {
+            var powered = deviceOpen && FmNative.powerUp(Band.mhz(freq))
+            if (deviceOpen && !powered) {
+                // The combo chip's FM function may not be up yet (WMT): close, wait, open again and retry once.
+                Log.w(TAG, "powerUp failed, retrying")
+                FmNative.closeDev()
+                Thread.sleep(POWER_UP_RETRY_MS)
+                deviceOpen = FmNative.openDev()
+                powered = deviceOpen && FmNative.powerUp(Band.mhz(freq))
+            }
+            if (!powered) {
+                val opened = deviceOpen
+                if (opened) FmNative.closeDev()
+                deviceOpen = false
                 audio.stop()
                 abandonFocus()
-                fail(getString(if (deviceOpen) R.string.error_power_up else R.string.error_open))
+                fail(getString(if (opened) R.string.error_power_up else R.string.error_open))
                 return@execute
             }
             bridge.onRadioOn()
@@ -572,6 +584,7 @@ class FmService : Service() {
 
     companion object {
         private const val TAG = "LibreHU-FM"
+        private const val POWER_UP_RETRY_MS = 600L
         private const val CHANNEL_ID = "radio"
         private const val NOTIFICATION_ID = 1
         private const val RDS_POLL_MS = 200L
