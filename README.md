@@ -46,11 +46,22 @@ capture `RADIO_TUNER` exige `CAPTURE_AUDIO_OUTPUT` : permissions réservées aux
 ```
 adb root && adb remount
 adb shell mkdir -p /system/priv-app/LibreHU-FM
-adb push app-debug.apk /system/priv-app/LibreHU-FM/LibreHU-FM.apk
+adb push LibreHU-FM-librehu-service.apk /system/priv-app/LibreHU-FM/LibreHU-FM.apk
 adb push install/privapp-permissions-org.librehu.fm.xml /system/etc/permissions/
 adb reboot
 ```
+L'APK vient de la release `latest-<branche>` du dépôt (build *release* signé avec la clé commune des applis LibreHU).
 Au premier lancement, accepter la permission micro (`RECORD_AUDIO`, demandée par Android pour toute capture).
 
 Non testé sur l'appareil à ce stade : la séquence est celle d'AOSP et de l'app Jancar, mais le comportement réel
 (niveau audio, RDS) reste à valider.
+
+### « La puce FM n'a pas démarré (/dev/fm) »
+`/dev/fm` s'ouvre mais la mise sous tension (`FM_IOCTL_POWERUP`) est refusée par le pilote. L'appli réessaie une fois
+après avoir refermé et rouvert `/dev/fm` (la fonction FM de la puce combo, WMT, peut ne pas être prête). Si l'erreur
+reste, le journal du pilote dit pourquoi :
+```
+adb shell su -c "dmesg | grep -i -E 'fm|wmt'" > fm_dmesg.txt
+adb logcat -d -s LibreHU-FM FMLIB_COM FMLIB_CORE FMLIB_JNI FMLIB_ERR > fm_logcat.txt
+```
+
