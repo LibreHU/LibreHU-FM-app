@@ -103,4 +103,8 @@
         <item>Alarm test</item>
         <item>Alarm</item>
     </string-array>
+    <string name="logo_title">Logo for %1$s MHz</string>
+    <string name="logo_hint">Found from the RDS name in Radio Browser or the downloaded library. You can choose a picture for this frequency instead.</string>
+    <string name="logo_pick">Choose a picture…</string>
+    <string name="logo_auto">Automatic logo</string>
 </resources>

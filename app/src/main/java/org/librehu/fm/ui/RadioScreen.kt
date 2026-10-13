@@ -1,5 +1,7 @@
 package org.librehu.fm.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,6 +37,7 @@ import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,10 +45,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -56,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +74,7 @@ import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
 import org.librehu.fm.Station
+import org.librehu.fm.StationLogos
 import kotlin.math.roundToInt
 
 /** Car-style radio screen: now-playing card with transport controls on the left, presets / stations on the right. */
@@ -221,9 +228,19 @@ private fun Badge(
     )
 }
 
-/** Station logo when found, else a radio icon, on a light tile (most logos are made for light backgrounds). */
+/**
+ * Station logo when found, else a radio icon, on a light tile (most logos are made for light backgrounds). A touch
+ * lets choose a picture for this frequency, or go back to the automatic logo.
+ */
 @Composable
 private fun StationLogo(s: RadioState) {
+    val context = LocalContext.current
+    val logos = remember { StationLogos(context.applicationContext) }
+    var menu by remember { mutableStateOf(false) }
+    val pick =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) Thread({ logos.setManual(s.frequency, uri) }, "logo").start()
+        }
     val logo = s.logo
     Box(
         modifier =
@@ -231,6 +248,7 @@ private fun StationLogo(s: RadioState) {
                 .size(112.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .background(if (logo != null) Color.White else CarColors.SurfaceHigh)
+                .clickable { menu = true }
                 .padding(if (logo != null) 8.dp else 28.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -240,6 +258,30 @@ private fun StationLogo(s: RadioState) {
         } else {
             Icon(Icons.Default.Radio, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.fillMaxSize())
         }
+    }
+    if (menu) {
+        val manual = remember(s.frequency, s.logo) { logos.hasManual(s.frequency) }
+        AlertDialog(
+            onDismissRequest = { menu = false },
+            title = { Text(stringResource(R.string.logo_title, Band.format(s.frequency))) },
+            text = { Text(stringResource(R.string.logo_hint)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    menu = false
+                    pick.launch("image/*")
+                }) { Text(stringResource(R.string.logo_pick)) }
+            },
+            dismissButton = {
+                if (manual) {
+                    TextButton(onClick = {
+                        menu = false
+                        logos.clearManual(s.frequency)
+                    }) { Text(stringResource(R.string.logo_auto)) }
+                } else {
+                    TextButton(onClick = { menu = false }) { Text(stringResource(android.R.string.cancel)) }
+                }
+            },
+        )
     }
 }
 

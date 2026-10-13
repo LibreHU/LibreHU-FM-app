@@ -25,11 +25,66 @@ class StationLogos(
     private val dir = File(context.filesDir, "logos").apply { mkdirs() }
     private val prefs = context.getSharedPreferences("logos", Context.MODE_PRIVATE)
     private val http = RadioBrowser.Http(context)
+    private val manualDir = File(context.filesDir, "logos_manual").apply { mkdirs() }
 
-    /** Cached logo for [frequency], if any (whatever the name). */
+    init {
+        // A better name matching: the stations missed with the previous one are looked up again.
+        if (prefs.getInt(KEY_MATCHER, 0) != MATCHER) {
+            val e = prefs.edit()
+            prefs.all.keys
+                .filter { it.startsWith("miss_") }
+                .forEach { e.remove(it) }
+            e.putInt(KEY_MATCHER, MATCHER).apply()
+        }
+    }
+
+    /** Cached logo for [frequency], if any (whatever the name); the one chosen by hand first. */
     fun cached(frequency: Int): Bitmap? {
         if (!RadioSettings.get(context).value.logos) return null
+        manual(frequency)?.let { return it }
         val f = file(frequency)
+        return if (f.exists()) BitmapFactory.decodeFile(f.path) else null
+    }
+
+    /** Logo chosen by hand for [frequency] (a picture file), kept whatever the RDS name. */
+    fun setManual(
+        frequency: Int,
+        uri: android.net.Uri,
+    ): Boolean {
+        val bitmap =
+            try {
+                context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
+            } catch (e: Exception) {
+                Log.w("LibreHU-FM", "manual logo: ${e.message}")
+                null
+            } ?: return false
+        val scaled =
+            if (bitmap.width > MANUAL_PX || bitmap.height > MANUAL_PX) {
+                val k = MANUAL_PX.toFloat() / maxOf(bitmap.width, bitmap.height)
+                Bitmap.createScaledBitmap(
+                    bitmap,
+                    (bitmap.width * k).toInt().coerceAtLeast(1),
+                    (bitmap.height * k).toInt().coerceAtLeast(1),
+                    true,
+                )
+            } else {
+                bitmap
+            }
+        File(manualDir, "$frequency.png").outputStream().use { scaled.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        changed.value++
+        return true
+    }
+
+    fun hasManual(frequency: Int) = File(manualDir, "$frequency.png").exists()
+
+    /** Back to the automatic logo for [frequency]. */
+    fun clearManual(frequency: Int) {
+        File(manualDir, "$frequency.png").delete()
+        changed.value++
+    }
+
+    private fun manual(frequency: Int): Bitmap? {
+        val f = File(manualDir, "$frequency.png")
         return if (f.exists()) BitmapFactory.decodeFile(f.path) else null
     }
 
@@ -40,6 +95,7 @@ class StationLogos(
     ): Bitmap? {
         val settings = RadioSettings.get(context).value
         if (!settings.logos) return null
+        manual(frequency)?.let { return it }
         val key = normalize(name)
         if (key.length < 2) return null
         val f = file(frequency)
@@ -58,7 +114,10 @@ class StationLogos(
                 ?: if (settings.logosOffline) {
                     null
                 } else {
-                    RadioBrowser.search(http, settings.serverUrl, settings.countryCode, name)?.let { http.logo(it) }
+                    queries(name)
+                        .firstNotNullOfOrNull { q ->
+                            RadioBrowser.search(http, settings.serverUrl, settings.countryCode, q, name)
+                        }?.let { http.logo(it) }
                 }
         if (bitmap == null) return miss(frequency, key)
         f.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
@@ -111,13 +170,64 @@ class StationLogos(
         fun score(
             wanted: String,
             candidate: String,
-        ): Int =
-            when {
-                candidate == wanted -> 3
-                candidate.startsWith("$wanted ") -> 2
-                candidate.split(' ').contains(wanted) -> 1
+        ): Int = variants(candidate).maxOf { scoreOne(wanted, it) }
+
+        private fun scoreOne(
+            wanted: String,
+            candidate: String,
+        ): Int {
+            val w = core(wanted)
+            val c = core(candidate)
+            val wc = w.replace(" ", "")
+            val cc = c.replace(" ", "")
+            return when {
+                candidate == wanted || (w.isNotEmpty() && c == w) || (wc.length >= 3 && cc == wc) -> 3
+                candidate.startsWith("$wanted ") || (w.isNotEmpty() && c.startsWith("$w ")) -> 2
+                // RDS names are 8 characters, often without spaces: "ICIVAUCL" for "ici Vaucluse".
+                wc.length >= 5 && cc.startsWith(wc) -> 2
+                candidate.split(' ').contains(wanted) || (w.length >= 3 && c.split(' ').contains(w)) -> 1
                 else -> 0
             }
+        }
+
+        /** The name without the words most stations add or drop: "RTV FM" and "Radio RTV" are "RTV". */
+        private fun core(s: String): String = s.split(' ').filter { it.isNotEmpty() && it !in NOISE }.joinToString(" ")
+
+        /** Former names: the France Bleu stations became "ici …" in January 2025. */
+        private fun variants(candidate: String): List<String> =
+            buildList {
+                add(candidate)
+                if (candidate.startsWith("FRANCE BLEU ")) add("ICI " + candidate.removePrefix("FRANCE BLEU "))
+                if (candidate.startsWith("ICI ")) add("FRANCE BLEU " + candidate.removePrefix("ICI "))
+            }
+
+        /**
+         * Searches to send to Radio Browser (it matches a part of the name): the RDS name, without "FM" / "radio",
+         * and for a name without spaces its known prefix split off ("ICIVAUCL" → "ici VAUCL") or its last letters.
+         */
+        fun queries(name: String): List<String> {
+            val n = normalize(name)
+            val out = LinkedHashSet<String>()
+            out += name.trim()
+            core(n).takeIf { it.length >= 2 }?.let { out += it }
+            val single = core(n).replace(" ", "")
+            if (!core(n).contains(' ') && single.length >= 6) {
+                PREFIXES.firstOrNull { single.startsWith(it) && single.length - it.length >= 3 }?.let {
+                    out += "$it ${single.removePrefix(it)}"
+                }
+                out += single.takeLast(5)
+            }
+            return out.toList().take(4)
+        }
+
+        private const val KEY_MATCHER = "matcher"
+        private const val MATCHER = 2
+        private const val MANUAL_PX = 256
+        private val NOISE = setOf("FM", "RADIO", "LA", "LE", "OFFICIEL", "OFFICIAL")
+        private val PREFIXES = listOf("ICI", "FRANCE", "RADIO", "RCF", "RTL", "NRJ", "RFM", "RMC", "FIP", "RTS", "RTV")
+
+        /** Bumped when a logo is chosen or removed by hand: the service shows it again. */
+        val changed = kotlinx.coroutines.flow.MutableStateFlow(0)
     }
 }
 
@@ -134,10 +244,11 @@ object RadioBrowser {
         http: Http,
         server: String,
         country: String,
-        name: String,
+        query: String,
+        name: String = query,
     ): String? {
         val q =
-            "name=${URLEncoder.encode(name.trim(), "UTF-8")}&countrycode=$country&hidebroken=true" +
+            "name=${URLEncoder.encode(query.trim(), "UTF-8")}&countrycode=$country&hidebroken=true" +
                 "&order=votes&reverse=true&limit=20"
         val body = http.get("$server/json/stations/search?$q")?.toString(Charsets.UTF_8) ?: return null
         val wanted = StationLogos.normalize(name)
