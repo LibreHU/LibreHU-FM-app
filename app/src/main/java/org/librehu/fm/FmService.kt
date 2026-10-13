@@ -88,8 +88,8 @@ class FmService : Service() {
             }
         // Station logo: cached one at once, network lookup once the RDS name is stable (some stations scroll it).
         scope.launch {
-            combine(state.map { it.frequency to it.title.trim() }, settings) { key, set ->
-                Triple(key, set.logos, Triple(set.logosOffline, set.serverUrl, set.countryCode))
+            combine(state.map { it.frequency to it.title.trim() }, settings, StationLogos.changed) { key, set, changed ->
+                Triple(key, set.logos, Triple(set.logosOffline, set.serverUrl, set.countryCode to changed))
             }.distinctUntilChanged()
                 .map { it.first }
                 .collectLatest { (freq, name) ->

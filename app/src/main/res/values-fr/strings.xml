@@ -103,4 +103,8 @@
         <item>Test d\'alarme</item>
         <item>Alarme</item>
     </string-array>
+    <string name="logo_title">Logo du %1$s MHz</string>
+    <string name="logo_hint">Trouvé d\'après le nom RDS dans Radio Browser ou la bibliothèque téléchargée. Vous pouvez choisir une image pour cette fréquence à la place.</string>
+    <string name="logo_pick">Choisir une image…</string>
+    <string name="logo_auto">Logo automatique</string>
 </resources>
