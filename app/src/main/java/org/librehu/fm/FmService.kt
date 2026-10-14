@@ -281,11 +281,21 @@ class FmService : Service() {
         repeat(FM_PRESTOP_CLEARS) { audioManager.setParameters("AudioFmPreStop=0") }
     }
 
+    /**
+     * MediaTek's FM driver mutes the chip while it tunes, seeks or scans and leaves it muted: AOSP's FmService calls
+     * setMute(false) after each tune, otherwise the radio stays silent until a power cycle (pause / play). Not while
+     * the audio is ducked to nothing (focus loss mutes the chip on the hardware path).
+     */
+    private fun unmuteAfterTune() {
+        if (audio.volume > 0f) FmNative.setMute(false)
+    }
+
     private fun tune(frequency: Int) =
         chip.execute {
             val f = Band.clamp(frequency)
-            if (state.value.poweredOn && !FmNative.tune(Band.mhz(f))) {
-                Log.w(TAG, "tune $f failed")
+            if (state.value.poweredOn) {
+                if (!FmNative.tune(Band.mhz(f))) Log.w(TAG, "tune $f failed")
+                unmuteAfterTune()
             }
             setFrequency(f)
         }
@@ -300,6 +310,7 @@ class FmService : Service() {
                 FmNative.tune(Band.mhz(f))
                 setFrequency(f)
             }
+            unmuteAfterTune()
             setBusy(false)
         }
 
@@ -320,6 +331,7 @@ class FmService : Service() {
             if (stations.isNotEmpty()) store.stations = stations
             val target = stations.firstOrNull()?.frequency ?: state.value.frequency
             FmNative.tune(Band.mhz(target))
+            unmuteAfterTune()
             _state.update { it.copy(scanning = false, stations = stations.ifEmpty { it.stations }) }
             setFrequency(target)
         }
