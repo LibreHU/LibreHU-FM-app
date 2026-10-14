@@ -107,4 +107,9 @@
     <string name="logo_hint">Found from the RDS name in Radio Browser or the downloaded library. You can choose a picture for this frequency instead.</string>
     <string name="logo_pick">Choose a picture…</string>
     <string name="logo_auto">Automatic logo</string>
+    <string name="set_log">Log</string>
+    <string name="set_log_hint">For an FM problem: the radio state, /dev/fm, the FM and audio lines of the system log and the kernel\'s FM messages, in one text file to share. The whole system log needs root (else this app\'s lines only).</string>
+    <string name="set_log_export">Export the log</string>
+    <string name="set_log_done">Log saved</string>
+    <string name="set_log_failed">Log not saved</string>
 </resources>

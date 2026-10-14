@@ -66,7 +66,10 @@ import java.util.Locale
 
 /** Radio settings: RDS, audio path, station logos (server, offline library). */
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsScreen(
+    onBack: () -> Unit,
+    onExportLog: () -> Unit = {},
+) {
     BackHandler(onBack = onBack)
     val context = LocalContext.current
     val s by RadioSettings.get(context).collectAsStateWithLifecycle()
@@ -135,6 +138,11 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
 
             LogoSection(s, update)
+
+            Section(stringResource(R.string.set_log)) {
+                Hint(stringResource(R.string.set_log_hint))
+                Actions { Pill(stringResource(R.string.set_log_export), onExportLog) }
+            }
         }
     }
 }
