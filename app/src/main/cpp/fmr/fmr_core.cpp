@@ -58,8 +58,8 @@ int FMR_get_cfgs(int idx)
 
     FMR_cust_hdler(idx) = dlopen(CUST_LIB_NAME, RTLD_NOW);
     if (FMR_cust_hdler(idx) == NULL) {
-        /* LibreHU: no vendor libfmcust.so on the UJC201 (and apps cannot load it anyway): use the US/Europe
-         * defaults of fm.h. The chip id is taken from the driver in FMR_open_dev(). */
+        /* LibreHU: libfmcust.so not loadable (a privileged install loads Jancar's /system/lib64 one, with the band in
+         * 10 kHz units): use the US/Europe defaults of fm.h. The chip id is taken from the driver in FMR_open_dev(). */
         static struct fm_fake_channel_t no_fake_channels = {0, NULL};
         LOGI("%s: %s, using built-in defaults\n", __FUNCTION__, dlerror());
         pfmr_data[idx]->cfg_data.chip = 0;
@@ -203,7 +203,19 @@ int FMR_pwr_up(int idx, int freq)
     FMR_ASSERT(FMR_cbk_tbl(idx).pwr_up);
 
     LOGI("%s,[freq=%d]\n", __func__, freq);
-    if (freq < fmr_data.cfg_data.low_band || freq > fmr_data.cfg_data.high_band) {
+    /* LibreHU: the power-up frequency is in 100 kHz units (875 = 87.5 MHz, as the AC8257 driver takes it), but
+     * Jancar's /system/lib64/libfmcust.so (loaded by a privileged install) gives the band in 10 kHz units
+     * (8750..10800, like seek and scan here): compare in the same unit, or 100 MHz (1000) is refused. */
+    int low = fmr_data.cfg_data.low_band, high = fmr_data.cfg_data.high_band;
+    if (high > 2000) {
+        low /= 10;
+        high /= 10;
+    }
+    if (low <= 0 || high <= 0) {
+        low = FM_UE_FREQ_MIN;
+        high = FM_UE_FREQ_MAX;
+    }
+    if (freq < low || freq > high) {
         LOGE("%s error freq: %d\n", __func__, freq);
         ret = -ERR_INVALID_PARA;
         return ret;

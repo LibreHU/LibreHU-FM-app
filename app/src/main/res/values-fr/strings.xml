@@ -107,4 +107,9 @@
     <string name="logo_hint">Trouvé d\'après le nom RDS dans Radio Browser ou la bibliothèque téléchargée. Vous pouvez choisir une image pour cette fréquence à la place.</string>
     <string name="logo_pick">Choisir une image…</string>
     <string name="logo_auto">Logo automatique</string>
+    <string name="set_log">Journal</string>
+    <string name="set_log_hint">Pour un problème de radio : état de la radio, /dev/fm, lignes FM et audio du journal système et messages FM du noyau, dans un fichier texte à partager. Le journal de tout le système demande le root (sinon seulement les lignes de cette appli).</string>
+    <string name="set_log_export">Exporter le journal</string>
+    <string name="set_log_done">Journal enregistré</string>
+    <string name="set_log_failed">Journal non enregistré</string>
 </resources>
