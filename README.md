@@ -9,7 +9,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   l'app radio Jancar d'origine.
 - Son : comme l'app radio Jancar, **patch audio matériel** tuner FM → haut-parleur (le son ne passe pas par l'app,
   une piste muette garde le flux média actif) ; à défaut, source de capture `RADIO_TUNER` recopiée vers un flux
-  média (méthode « render » d'AOSP FMRadio).
+  média (méthode « render » d'AOSP FMRadio). Le pilote MediaTek coupe le son de la puce pendant un accord, une
+  recherche ou un balayage : comme `FmService.tuneStation` d'AOSP, l'appli le rétablit après chacun (sinon silence
+  jusqu'à pause / lecture).
 - AC8257 : structure d'accord et unités du pilote `/dev/fm` de l'AC8257 (détecté par `ro.mediatek.platform`),
   relevées dans la `libfmjni.so` de Jancar.
 - **Logo de la station** : recherché par le nom RDS dans [Radio Browser](https://www.radio-browser.info)
