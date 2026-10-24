@@ -7,6 +7,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import org.librehu.fm.ui.RetroLook
+import org.librehu.fm.ui.SegmentViews
 import org.librehu.fm.ui.ThemeFollower
 
 /** Home screen / launcher widget: station, RDS text and previous / play / next. */
@@ -57,30 +59,43 @@ class RadioWidget : AppWidgetProvider() {
             s: RadioState,
         ): RemoteViews {
             val (dark, launcherAccent) = ThemeFollower.current(context)
-            val text = if (dark) 0xFFE8EAED.toInt() else 0xFF202124.toInt()
-            val dim = if (dark) 0xFF9AA0A6.toInt() else 0xFF5F6368.toInt()
+            // Retro style of the launcher: its display's colours (read along with the theme above).
+            val retro = RetroLook.widget(dark)
+            val text = retro?.text ?: if (dark) 0xFFE8EAED.toInt() else 0xFF202124.toInt()
+            val dim = retro?.textDim ?: if (dark) 0xFF9AA0A6.toInt() else 0xFF5F6368.toInt()
             // Accent of LibreHU Launcher, else the default blue; icon on it black or white by its brightness.
             val accent =
-                if (launcherAccent != 0) {
+                if (retro != null) {
+                    retro.accent
+                } else if (launcherAccent != 0) {
                     launcherAccent
                 } else if (dark) {
                     0xFF8AB4F8.toInt()
                 } else {
                     0xFF1A73E8.toInt()
                 }
-            val onAccent = if (luminance(accent) > 0.5) 0xFF202124.toInt() else 0xFFFFFFFF.toInt()
-            return RemoteViews(context.packageName, R.layout.widget_radio).apply {
-                setInt(
-                    R.id.widget_root,
-                    "setBackgroundResource",
-                    if (dark) R.drawable.widget_background else R.drawable.widget_background_light,
-                )
+            val onAccent = retro?.onAccent ?: if (luminance(accent) > 0.5) 0xFF202124.toInt() else 0xFFFFFFFF.toInt()
+            return SegmentViews(context, R.layout.widget_radio, RetroLook.segment).apply {
+                if (retro != null) {
+                    setInt(R.id.widget_root, "setBackgroundColor", retro.surface)
+                } else {
+                    setInt(
+                        R.id.widget_root,
+                        "setBackgroundResource",
+                        if (dark) R.drawable.widget_background else R.drawable.widget_background_light,
+                    )
+                }
                 setTextColor(R.id.widget_title, text)
                 setTextColor(R.id.widget_frequency, text)
                 setTextColor(R.id.widget_text, dim)
-                val button = if (dark) R.drawable.widget_button else R.drawable.widget_button_light
-                setInt(R.id.widget_previous, "setBackgroundResource", button)
-                setInt(R.id.widget_next, "setBackgroundResource", button)
+                if (retro != null) {
+                    setInt(R.id.widget_previous, "setBackgroundColor", retro.surfaceHigh)
+                    setInt(R.id.widget_next, "setBackgroundColor", retro.surfaceHigh)
+                } else {
+                    val button = if (dark) R.drawable.widget_button else R.drawable.widget_button_light
+                    setInt(R.id.widget_previous, "setBackgroundResource", button)
+                    setInt(R.id.widget_next, "setBackgroundResource", button)
+                }
                 setInt(R.id.widget_previous, "setColorFilter", text)
                 setInt(R.id.widget_next, "setColorFilter", text)
                 setInt(R.id.widget_toggle_disc, "setColorFilter", accent)
