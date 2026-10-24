@@ -26,7 +26,10 @@ class ThemeFollower(
             override fun onReceive(
                 c: Context,
                 intent: Intent,
-            ) = apply(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0))
+            ) {
+                RetroLook.read(intent)
+                apply(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0))
+            }
         }
 
     private val observer =
@@ -67,7 +70,12 @@ class ThemeFollower(
             val fromLauncher =
                 try {
                     context.contentResolver.query(URI, null, null, null, null)?.use { c ->
-                        if (c.moveToFirst()) (c.getInt(0) != 0) to c.getInt(1) else null
+                        if (c.moveToFirst()) {
+                            RetroLook.read(c)
+                            (c.getInt(0) != 0) to c.getInt(1)
+                        } else {
+                            null
+                        }
                     }
                 } catch (_: Exception) {
                     null
