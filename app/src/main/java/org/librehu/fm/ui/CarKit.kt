@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -652,6 +654,101 @@ internal fun AmbientOptionsPopup(
                     Text(item.label, color = if (item.enabled) KitLight else KitDim.copy(alpha = 0.6f), fontSize = 21.sp, fontWeight = FontWeight.Light)
                 }
             }
+        }
+    }
+}
+
+/** An icon in brushed metal: white at the top fading to grey at the bottom, like the original's grey glyphs. */
+@Composable
+internal fun MetalIcon(
+    icon: ImageVector,
+    size: Dp,
+) = Icon(
+    icon,
+    null,
+    tint = Color.White,
+    modifier =
+        Modifier
+            .size(size)
+            .graphicsLayer { compositingStrategy = androidx.compose.ui.graphics.CompositingStrategy.Offscreen }
+            .drawWithContent {
+                drawContent()
+                drawRect(
+                    Brush.verticalGradient(listOf(Color(0xFFFFFFFF), Color(0xFFC9CDD3), Color(0xFF7E848D))),
+                    blendMode = androidx.compose.ui.graphics.BlendMode.SrcIn,
+                )
+            },
+)
+
+/** A menu tile: black in a thin frame of the accent colour, metal icon over its name; pressed, lit from the bottom. */
+@Composable
+internal fun AmbientMenuTile(
+    label: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val accent = CarColors.Accent
+    Box(
+        modifier
+            .fillMaxHeight()
+            .background(Color.Black.copy(alpha = 0.75f))
+            .drawBehind {
+                if (pressed) drawRect(Brush.verticalGradient(0f to Color.Transparent, 0.64f to Color.Transparent, 1f to deep(accent).copy(alpha = 0.9f)))
+            }.border(BorderStroke(1.dp, accent))
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            MetalIcon(icon, 76.dp)
+            Spacer(Modifier.height(10.dp))
+            Text(label, color = KitLight, fontSize = 23.sp, fontWeight = FontWeight.Light, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+    }
+}
+
+/** A key of a framed grid (dial pad, in-call actions): the bar buttons' light, a word or an icon. */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+internal fun AmbientGridKey(
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val accent = CarColors.Accent
+    Box(
+        modifier
+            .background(
+                Brush.verticalGradient(
+                    0f to SHEEN.copy(alpha = 0.8f),
+                    (if (pressed || selected) 0.25f else 0.45f) to Color.Black,
+                    1f to if (pressed || selected) accent else deep(accent).copy(alpha = 0.6f),
+                ),
+            ).border(BorderStroke(1.dp, accent))
+            .combinedClickable(interactionSource = interaction, indication = null, onClick = onClick, onLongClick = onLongClick),
+        contentAlignment = Alignment.Center,
+        content = content,
+    )
+}
+
+/** A picture in a square frame of the accent colour (contact), the metal person when there is none. */
+@Composable
+internal fun FramedPicture(
+    size: Dp,
+    modifier: Modifier = Modifier,
+    image: androidx.compose.ui.graphics.ImageBitmap? = null,
+) {
+    Box(modifier.size(size).border(BorderStroke(1.dp, CarColors.Accent)).padding(1.dp), contentAlignment = Alignment.Center) {
+        if (image != null) {
+            androidx.compose.foundation.Image(image, null, contentScale = androidx.compose.ui.layout.ContentScale.Crop, modifier = Modifier.fillMaxSize())
+        } else {
+            MetalIcon(Icons.Filled.Person, size * 0.62f)
         }
     }
 }
