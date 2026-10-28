@@ -23,6 +23,12 @@ import org.librehu.fm.ui.SettingsScreen
 import org.librehu.fm.ui.ThemeFollower
 
 class MainActivity : ComponentActivity() {
+    /** A click on each tap, the sound of LibreHU Launcher's style (see KeyClick). */
+    override fun dispatchTouchEvent(ev: android.view.MotionEvent): Boolean {
+        org.librehu.fm.ui.KeyClick.onTouch(this, ev, org.librehu.fm.ui.RetroLook.style)
+        return super.dispatchTouchEvent(ev)
+    }
+
     private val theme = lazy { ThemeFollower(this) }
 
     /** FM journal (Settings → Export the log) to the file the user picks. */
