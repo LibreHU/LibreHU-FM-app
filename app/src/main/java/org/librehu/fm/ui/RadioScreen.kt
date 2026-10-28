@@ -84,6 +84,9 @@ fun RadioScreen(
     onSettings: () -> Unit,
 ) {
     val s by FmService.state.collectAsStateWithLifecycle()
+    // LibreHU Launcher's car styles: the launcher asks the app for them (see RetroLook).
+    if (RetroLook.factory) return FactoryRadio(s, send, onSettings)
+    if (RetroLook.ambient) return AmbientRadio(s, send, onSettings)
     Row(
         modifier =
             Modifier

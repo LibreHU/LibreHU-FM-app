@@ -112,4 +112,16 @@
     <string name="set_log_export">Export the log</string>
     <string name="set_log_done">Log saved</string>
     <string name="set_log_failed">Log not saved</string>
+    <!-- LibreHU Launcher's car styles (Modularer Infotainment-Baukasten, LHU-Link) -->
+    <string name="car_setup">Setup</string>
+    <string name="fm_manual">Manual</string>
+    <string name="fm_station_list">Station list</string>
+    <string name="fm_update_list">Update station list</string>
+    <string name="fm_stop_search">Stop the search</string>
+    <string name="fm_searching">Searching for radio stations… %1$s MHz</string>
+    <string name="fm_frequencies">Frequencies</string>
+    <string name="fm_presets">Presets</string>
+    <string name="fm_store_preset">Store the station</string>
+    <string name="fm_remove_preset">Remove from the presets</string>
+    <string name="fm_no_presets">No preset yet: Options → Store the station.</string>
 </resources>
