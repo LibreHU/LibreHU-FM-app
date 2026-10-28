@@ -40,7 +40,8 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 |---|---|
 | ![Écran principal](docs/screenshots/main.png)<br>Écran principal | ![Stations](docs/screenshots/stations.png)<br>Stations |
 | ![Réglages](docs/screenshots/settings.png)<br>Réglages | ![Réglages (2)](docs/screenshots/settings-2.png)<br>Réglages (2) |
-| ![Réglages (3)](docs/screenshots/settings-3.png)<br>Réglages (3) |   |
+| ![Réglages (3)](docs/screenshots/settings-3.png)<br>Réglages (3) | ![Style Modularer Infotainment-Baukasten](docs/screenshots/style-mib.png)<br>Style Modularer Infotainment-Baukasten |
+| ![Style LHU-Link](docs/screenshots/style-lhu-link.png)<br>Style LHU-Link |   |
 
 Captures sur l'émulateur Android 11 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots). Galerie : [librehu.github.io/screenshots/fm.html](https://librehu.github.io/screenshots/fm.html).
 
@@ -120,6 +121,25 @@ rend Jetpack Compose nettement plus fluide ([Compose performance](https://develo
 règles gardent aussi ce qui n'est appelé que par son nom (méthodes natives, helpers root lancés par `app_process`). Si
 une fonction plante avec « class / method not found », regarder `usage.txt` dans l'artefact *R8 reports* de la CI (ce
 que R8 a retiré) et ajouter une règle `-keep`.
+
+**Styles Modularer Infotainment-Baukasten et LHU-Link de LibreHU Launcher** : c'est le launcher qui les choisit et les demande à l'appli (il publie `style` = `factory` ou `ambient`, comme pour le style rétro) ; l'appli suit tout de suite : palette noire du style même en mode jour, coins carrés partout, police Source Sans 3 pour Modularer Infotainment-Baukasten (SIL OFL 1.1, `third_party/SourceSans3-LICENSE.md`), lettres fines pour LHU-Link. Rien à régler dans l'appli.
+
+L'écran radio prend aussi la **mise en page** de ces styles (`ui/RadioStyled.kt`, éléments communs dans `ui/CarKit.kt`) :
+
+- **Modularer Infotainment-Baukasten** : la fréquence entre deux touches encadrées ‹ › (recherche de station ; pas de
+  0,1 MHz en mode Manuel), le nom RDS et le radiotexte dessous, des pages de **6 présélections en tuiles numérotées**
+  (trait de la couleur d'accent, nom dessous, logo de la station écoutée, points de page ; une tuile vide mémorise la
+  station écoutée, un appui long sur la station écoutée la retire), la **liste des stations** (« Actualiser la liste
+  des stations » en tête, recherche en cours avec la fréquence) et une **échelle Manuel** (toucher ou glisser).
+  Touches du bas : Stations, Manuel, Lecture / Pause, Réglages.
+- **LHU-Link** : onglets **Fréquences / Stations / Présélections** ; Fréquences = panneau d'accord (◀ ▶ par 0,1 MHz,
+  échelle à lignes fines et aiguille rouge lumineuse, toucher ou glisser) au-dessus du panneau de la station (⏮ ⏭
+  recherche, numéro de présélection, type de programme et TP / TA) ; Stations = liste qui tourne, station écoutée au
+  milieu sur le trait rouge avec le haut-parleur ; Présélections = liste numérotée. Barre du bas : Retour, Lecture /
+  Pause, Options (actualiser la liste, mémoriser / retirer la station, réglages).
+
+Mise en page reprise des styles de LibreHU Launcher, avec les icônes Material de LibreHU : aucun logo, nom, icône,
+police ni image d'un constructeur.
 
 **Style rétro et police de LibreHU Launcher** : quand le launcher est en style rétro (les couleurs d'un afficheur
 d'autoradio tirées de sa couleur d'accent, couleur RGB comprise), cette appli prend sa palette (jour ou nuit) ; quand
