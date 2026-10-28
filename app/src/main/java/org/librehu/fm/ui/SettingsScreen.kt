@@ -75,73 +75,75 @@ fun SettingsScreen(
     val s by RadioSettings.get(context).collectAsStateWithLifecycle()
     val radio by FmService.state.collectAsStateWithLifecycle()
     val update: ((Settings) -> Settings) -> Unit = { RadioSettings.update(context, it) }
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(CarColors.Background)
-                .safeDrawingPadding()
-                .padding(16.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack, modifier = Modifier.size(56.dp)) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back),
-                    tint = CarColors.Text,
-                    modifier = Modifier.size(32.dp),
-                )
-            }
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.settings), color = CarColors.Text, fontSize = 28.sp, fontWeight = FontWeight.Medium)
-        }
-        Spacer(Modifier.height(12.dp))
+    StyledPage(stringResource(R.string.settings)) {
         Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier =
+                if (carStyled) Modifier.fillMaxSize() else Modifier
+                    .fillMaxSize()
+                    .background(CarColors.Background)
+                    .safeDrawingPadding()
+                    .padding(16.dp),
         ) {
-            Section(stringResource(R.string.set_rds)) {
-                Hint(stringResource(R.string.set_rds_hint))
-                SwitchRow(stringResource(R.string.set_rds_enable), s.rds) { on -> update { it.copy(rds = on) } }
-                if (s.rds) {
-                    SwitchRow(stringResource(R.string.set_radio_text), s.radioText) { on -> update { it.copy(radioText = on) } }
-                    SwitchRow(stringResource(R.string.set_pty), s.pty) { on -> update { it.copy(pty = on) } }
-                    SwitchRow(stringResource(R.string.set_af), s.af, stringResource(R.string.set_af_hint)) { on ->
-                        update { it.copy(af = on) }
-                    }
-                    SwitchRow(stringResource(R.string.set_preset_names), s.rdsPresetNames) { on ->
-                        update { it.copy(rdsPresetNames = on) }
+            if (!carStyled) Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack, modifier = Modifier.size(56.dp)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        tint = CarColors.Text,
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.settings), color = CarColors.Text, fontSize = 28.sp, fontWeight = FontWeight.Medium)
+            }
+            Spacer(Modifier.height(12.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Section(stringResource(R.string.set_rds)) {
+                    Hint(stringResource(R.string.set_rds_hint))
+                    SwitchRow(stringResource(R.string.set_rds_enable), s.rds) { on -> update { it.copy(rds = on) } }
+                    if (s.rds) {
+                        SwitchRow(stringResource(R.string.set_radio_text), s.radioText) { on -> update { it.copy(radioText = on) } }
+                        SwitchRow(stringResource(R.string.set_pty), s.pty) { on -> update { it.copy(pty = on) } }
+                        SwitchRow(stringResource(R.string.set_af), s.af, stringResource(R.string.set_af_hint)) { on ->
+                            update { it.copy(af = on) }
+                        }
+                        SwitchRow(stringResource(R.string.set_preset_names), s.rdsPresetNames) { on ->
+                            update { it.copy(rdsPresetNames = on) }
+                        }
                     }
                 }
-            }
 
-            Section(stringResource(R.string.set_audio)) {
-                Hint(stringResource(R.string.set_audio_hint))
-                Choices(
-                    listOf(
-                        AudioMode.AUTO to stringResource(R.string.set_audio_auto),
-                        AudioMode.PATCH to stringResource(R.string.set_audio_patch),
-                        AudioMode.RENDER to stringResource(R.string.set_audio_render),
-                    ),
-                    s.audioMode,
-                ) { m -> update { it.copy(audioMode = m) } }
-                Hint(
-                    stringResource(
-                        R.string.set_audio_current,
-                        when (radio.audioPath) {
-                            FmAudio.Path.PATCH -> stringResource(R.string.set_audio_patch)
-                            FmAudio.Path.RENDER -> stringResource(R.string.set_audio_render)
-                            FmAudio.Path.NONE -> stringResource(R.string.off)
-                        },
-                    ),
-                )
-            }
+                Section(stringResource(R.string.set_audio)) {
+                    Hint(stringResource(R.string.set_audio_hint))
+                    Choices(
+                        listOf(
+                            AudioMode.AUTO to stringResource(R.string.set_audio_auto),
+                            AudioMode.PATCH to stringResource(R.string.set_audio_patch),
+                            AudioMode.RENDER to stringResource(R.string.set_audio_render),
+                        ),
+                        s.audioMode,
+                    ) { m -> update { it.copy(audioMode = m) } }
+                    Hint(
+                        stringResource(
+                            R.string.set_audio_current,
+                            when (radio.audioPath) {
+                                FmAudio.Path.PATCH -> stringResource(R.string.set_audio_patch)
+                                FmAudio.Path.RENDER -> stringResource(R.string.set_audio_render)
+                                FmAudio.Path.NONE -> stringResource(R.string.off)
+                            },
+                        ),
+                    )
+                }
 
-            LogoSection(s, update)
+                LogoSection(s, update)
 
-            Section(stringResource(R.string.set_log)) {
-                Hint(stringResource(R.string.set_log_hint))
-                Actions { Pill(stringResource(R.string.set_log_export), onExportLog) }
+                Section(stringResource(R.string.set_log)) {
+                    Hint(stringResource(R.string.set_log_hint))
+                    Actions { Pill(stringResource(R.string.set_log_export), onExportLog) }
+                }
             }
         }
     }
@@ -278,6 +280,10 @@ private fun Section(
     title: String,
     content: @Composable () -> Unit,
 ) {
+    if (carStyled) {
+        StyledCard(title) { content() }
+        return
+    }
     Column(
         modifier =
             Modifier
@@ -309,6 +315,10 @@ private fun SwitchRow(
     hint: String? = null,
     onChange: (Boolean) -> Unit,
 ) {
+    if (carStyled) {
+        StyledSwitchRow(label, hint, checked, onChange = onChange)
+        return
+    }
     Row(
         modifier =
             Modifier
@@ -343,6 +353,10 @@ private fun <T> Choices(
     selected: T?,
     onSelect: (T) -> Unit,
 ) {
+    if (carStyled) {
+        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { options.forEach { (value, label) -> StyledPill(label, selected = value == selected) { onSelect(value) } } }
+        return
+    }
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEach { (value, label) ->
             val on = value == selected
@@ -374,6 +388,10 @@ private fun Pill(
     label: String,
     onClick: () -> Unit,
 ) {
+    if (carStyled) {
+        StyledPill(label, onClick = onClick)
+        return
+    }
     Text(
         label,
         color = CarColors.Text,

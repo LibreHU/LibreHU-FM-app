@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -264,7 +263,7 @@ private fun StationLogo(s: RadioState) {
     }
     if (menu) {
         val manual = remember(s.frequency, s.logo) { logos.hasManual(s.frequency) }
-        AlertDialog(
+        CarAlertDialog(
             onDismissRequest = { menu = false },
             title = { Text(stringResource(R.string.logo_title, Band.format(s.frequency))) },
             text = { Text(stringResource(R.string.logo_hint)) },
