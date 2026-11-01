@@ -15,6 +15,10 @@
  */
 
 #include "fmr.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
 #include <strings.h>
 #include <sys/system_properties.h>
 
@@ -423,30 +427,52 @@ int COM_get_chip_id(int fd, int *chipid)
     return ret;
 }
 
+/*
+ * LibreHU: the RDS record of /dev/fm depends on the driver. fm_ops_read() refuses any buffer smaller than its
+ * struct rds_t ("fm_read invliad buf", nothing returned) and copies exactly sizeof(struct rds_t):
+ *  - 688 bytes: the layout of RDSData_Struct;
+ *  - 720 bytes: the AC8257 fmradio_drv.ko, whose struct rds_t has RTP_Data (RT+ tags, 28 bytes) between RT_Data and
+ *    event_status: event_status at 584 and the group counters at 588 instead of 554 and 556.
+ * Reading 688 bytes from the AC8257 driver got nothing at all: no RDS anywhere, whatever the region. The record is
+ * read into a buffer larger than both and the length returned tells the layout; an incomplete or unknown record
+ * publishes nothing. Analysis and first patch: Reo Au In.
+ */
+#define FM_RDS_RECORD_AC8257 720
+#define FM_RDS_AC8257_EVENT_OFS 584
+#define FM_RDS_AC8257_GC_OFS 588
+
 int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
 {
-    int ret = 0;
-    uint16_t event_status;
-    //char tmp_ps[9] = {0};
-    //char tmp_rt[65] = { 0 };
+    static_assert(sizeof(RDSData_Struct) == 688, "unexpected app RDS layout");
+    static_assert(offsetof(RDSData_Struct, event_status) == 554, "unexpected event_status offset");
+    static_assert(offsetof(RDSData_Struct, gc) == 556, "unexpected group counter offset");
+    static_assert(sizeof(RDSData_Struct::gc) == 132, "unexpected group counter size (32-bit build expected)");
+    static_assert(FM_RDS_AC8257_GC_OFS + sizeof(RDSData_Struct::gc) == FM_RDS_RECORD_AC8257, "AC8257 layout");
+    static uint16_t last_len;
+    uint8_t wire[1024];
+    ssize_t n;
 
-    FMR_ASSERT(rds);
-    FMR_ASSERT(rds_status);
+    if (!rds || !rds_status) return -ERR_INVALID_BUF;
 
-    if (read(fd, rds, sizeof(RDSData_Struct)) == sizeof(RDSData_Struct)) {
-        event_status = rds->event_status;
-        //memcpy(tmp_ps, &rds->PS_Data.PS[3][0], 8);
-        //memcpy(tmp_rt, &rds->RT_Data.TextData[3][0], 64);
-        LOGI("event_status = 0x%x\n", event_status);
-        //memset(tmp_ps, 0, 9);
-        //memset(tmp_rt, 0, 65);
-        *rds_status = event_status;
-        return ret;
+    n = read(fd, wire, sizeof(wire));
+    if (n == (ssize_t)sizeof(RDSData_Struct)) {
+        memcpy(rds, wire, sizeof(RDSData_Struct));
+    } else if (n == FM_RDS_RECORD_AC8257) {
+        memcpy(rds, wire, offsetof(RDSData_Struct, event_status));
+        rds->event_status = (uint16_t)(wire[FM_RDS_AC8257_EVENT_OFS] | wire[FM_RDS_AC8257_EVENT_OFS + 1] << 8);
+        memcpy(&rds->gc, wire + FM_RDS_AC8257_GC_OFS, sizeof(rds->gc));
     } else {
-        //LOGE("readrds get no event\n");
-        ret = -ERR_RDS_NO_DATA;
+        if (n > 0 && n != last_len) LOGE("%s: RDS record of %zd bytes, layout unknown: ignored\n", __func__, n);
+        if (n > 0) last_len = (uint16_t)n;
+        return -ERR_RDS_NO_DATA;
     }
-    return ret;
+    if (n != last_len) {
+        LOGI("%s: RDS record of %zd bytes\n", __func__, n);
+        last_len = (uint16_t)n;
+    }
+    *rds_status = rds->event_status;
+    LOGD("event_status = 0x%x\n", rds->event_status);
+    return 0;
 }
 
 /* LibreHU: FM_IOCTL_TUNE of a struct fm_tune_parm, converted for the AC8257 driver. */
