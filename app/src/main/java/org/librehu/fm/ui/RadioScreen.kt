@@ -151,12 +151,15 @@ private fun NowPlaying(
             Text(
                 when {
                     !s.available || s.error.isNotEmpty() -> s.error.ifEmpty { stringResource(R.string.error_driver) }
+                    s.alarm -> stringResource(R.string.alarm_on_air)
+                    s.announcing -> stringResource(R.string.ta_announcing)
                     s.scanning -> stringResource(R.string.scanning)
+                    s.standby -> stringResource(R.string.ta_standby)
                     s.nowPlaying.isNotBlank() -> s.nowPlaying
                     !s.poweredOn -> stringResource(R.string.off)
                     else -> " "
                 },
-                color = if (s.error.isNotEmpty() || !s.available) MaterialTheme.colorScheme.error else CarColors.TextDim,
+                color = if (s.error.isNotEmpty() || !s.available || s.alarm) MaterialTheme.colorScheme.error else CarColors.TextDim,
                 fontSize = 18.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -201,6 +204,11 @@ private fun NowPlaying(
 /** Call letters (US), RDS programme type and traffic flags (TP: traffic programme, TA: traffic announcement on air). */
 @Composable
 private fun RdsBadges(s: RadioState) {
+    s.bars?.let {
+        Spacer(Modifier.width(10.dp))
+        SignalBars(it, CarColors.Text, CarColors.SurfaceHigh)
+    }
+    if (s.stereo) Badge("ST", false)
     if (s.callSign.isNotBlank() && s.callSign != s.title) Badge(s.callSign, false)
     val pty = stringArrayResource(Band.region.ptyNames)
     if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) Badge(pty[s.pty], false)
@@ -208,6 +216,26 @@ private fun RdsBadges(s: RadioState) {
         Badge("TA", true)
     } else if (s.tp) {
         Badge("TP", false)
+    }
+}
+
+/** Signal of the station: four bars of growing height, [bars] of them lit. */
+@Composable
+fun SignalBars(
+    bars: Int,
+    on: Color,
+    off: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.height(18.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.Bottom) {
+        for (i in 1..4) {
+            Box(
+                Modifier
+                    .width(4.dp)
+                    .height((4 * i + 2).dp)
+                    .background(if (i <= bars) on else off),
+            )
+        }
     }
 }
 

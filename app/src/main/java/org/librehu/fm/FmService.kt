@@ -1,5 +1,6 @@
 package org.librehu.fm
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -16,6 +17,7 @@ import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.os.Build
 import android.os.IBinder
+import android.os.SystemClock
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +36,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.librehu.fm.headunit.HeadUnitBridge
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -56,6 +65,23 @@ class FmService : Service() {
 
     @Volatile
     private var rdsThread: Thread? = null
+
+    /** Chip kept on while another source plays, for the traffic announcements of the station (chip thread). */
+    @Volatile
+    private var standby = false
+    private var taFocus: AudioFocusRequest? = null
+
+    /** Radio playing: its volume before the announcement (ducked by another app), given back after. */
+    private var taVolume: Float? = null
+    private var announceSince = 0L
+    private var taBlocked = false
+
+    /** The chip forced to mono by [applyReception], the search threshold changed (chip thread). */
+    private var monoSet = false
+    private var searchSet = false
+    private val signalPending = AtomicBoolean(false)
+    private var lastClock = 0L
+    private var lastClockAt = 0L
 
     override fun onCreate() {
         super.onCreate()
@@ -91,7 +117,7 @@ class FmService : Service() {
             }
         // Station logo: cached one at once, network lookup once the RDS name is stable (some stations scroll it).
         scope.launch {
-            combine(state.map { it.frequency to it.title.trim() }, settings, StationLogos.changed) { key, set, changed ->
+            combine(state.map { it.frequency to it.logoName }, settings, StationLogos.changed) { key, set, changed ->
                 Triple(key, set.logos, Triple(set.logosOffline, set.serverUrl, set.countryCode to changed))
             }.distinctUntilChanged()
                 .map { it.first }
@@ -141,17 +167,54 @@ class FmService : Service() {
                         val f = Band.clamp(state.value.frequency)
                         if (f != state.value.frequency) setFrequency(f)
                         if (state.value.poweredOn) {
-                            powerOff()
+                            powerOff(keepTa = false)
                             powerOn()
+                        } else if (standby) {
+                            powerDownChip()
                         }
                     }
                 }
         }
         scope.launch {
-            state.collect { s ->
+            // Not on each signal reading (every second): the session, widget and notification do not show it.
+            state.map { it.copy(rssi = null, stereo = false) }.distinctUntilChanged().collect { s ->
                 updateSession(s)
                 RadioWidget.updateAll(this@FmService, s)
-                if (s.poweredOn) notify(s)
+                if (s.poweredOn || s.standby) notify(s)
+            }
+        }
+        // Forced mono and search threshold applied at once while the chip is on.
+        scope.launch {
+            settings
+                .map { it.forceMono to it.localSearch }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { chip.execute { if (state.value.poweredOn || standby) applyReception() } }
+        }
+        // Traffic announcements turned off during the standby: the chip goes off.
+        scope.launch {
+            settings
+                .map { it.trafficAnnouncements }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { on -> if (!on) chip.execute { if (standby) powerDownChip() } }
+        }
+        // Signal and stereo of the tuned station, every second while the chip is on.
+        scope.launch {
+            while (true) {
+                delay(SIGNAL_POLL_MS)
+                val s = state.value
+                if (!s.poweredOn && !s.standby) {
+                    if (s.rssi != null) _state.update { it.copy(rssi = null, stereo = false) }
+                    continue
+                }
+                if (s.scanning || s.busy || !signalPending.compareAndSet(false, true)) continue
+                chip.execute {
+                    signalPending.set(false)
+                    if (!state.value.poweredOn && !standby) return@execute
+                    val sig = FmNative.getSignal()
+                    _state.update { it.copy(rssi = sig?.getOrNull(0), stereo = sig?.getOrNull(1) == 1) }
+                }
             }
         }
     }
@@ -218,14 +281,18 @@ class FmService : Service() {
                 togglePreset()
             }
 
+            ACTION_STOP_STANDBY -> {
+                chip.execute { if (standby) powerDownChip() }
+            }
+
             else -> {}
         }
-        chip.execute { if (!state.value.poweredOn) scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) } }
+        chip.execute { if (!state.value.poweredOn && !standby) scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) } }
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        powerOff()
+        chip.execute { if (state.value.poweredOn || standby) powerDownChip() }
         chip.shutdown()
         session.release()
         bridge.release()
@@ -237,7 +304,12 @@ class FmService : Service() {
 
     private fun powerOn() =
         chip.execute {
-            if (state.value.poweredOn || FmNative.loadError != null) return@execute
+            if (FmNative.loadError != null) return@execute
+            if (standby) {
+                resumeFromStandby()
+                return@execute
+            }
+            if (state.value.poweredOn) return@execute
             if (!bridge.managesAudioFocus && !requestFocus()) {
                 fail(getString(R.string.error_focus))
                 return@execute
@@ -270,6 +342,9 @@ class FmService : Service() {
             // Tune once powered, like Jancar (powerUp in 100 kHz units, tune in 10 kHz units on the AC8257).
             FmNative.tune(Band.mhz(freq))
             FmNative.setMute(false)
+            // The chip starts in stereo.
+            monoSet = false
+            applyReception()
             audio.start(mode)
             _state.update { it.copy(poweredOn = true, busy = false, error = "", audioPath = audio.path) }
             startRds()
@@ -278,23 +353,244 @@ class FmService : Service() {
             if (audio.lastError.isNotEmpty()) _state.update { it.copy(error = audio.lastError) }
         }
 
-    private fun powerOff() =
+    /**
+     * Pause, or another source took the audio focus. With the traffic announcements on and a station that has them
+     * (TP), the chip stays on in standby for the announcements; otherwise it goes off.
+     */
+    private fun powerOff(keepTa: Boolean = true) =
         chip.execute {
             if (!state.value.poweredOn) return@execute
-            stopRds()
-            audio.stop()
-            FmNative.setRds(false)
-            FmNative.powerDown(0)
-            if (deviceOpen) {
-                FmNative.closeDev()
-                deviceOpen = false
-            }
-            clearFmPreStop()
-            bridge.onRadioOff()
-            abandonFocus()
-            _state.update { it.copy(poweredOn = false, busy = false, audioPath = FmAudio.Path.NONE) }
-            scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) }
+            if (keepTa && taStandbyAllowed()) enterStandby() else powerDownChip()
         }
+
+    /** Chip off, the radio playing or in standby (chip thread). */
+    private fun powerDownChip() {
+        if (state.value.announcing) endAnnouncement()
+        stopRds()
+        audio.stop()
+        FmNative.setRds(false)
+        FmNative.powerDown(0)
+        if (deviceOpen) {
+            FmNative.closeDev()
+            deviceOpen = false
+        }
+        clearFmPreStop()
+        bridge.onRadioOff()
+        abandonFocus()
+        standby = false
+        _state.update {
+            it.copy(
+                poweredOn = false,
+                standby = false,
+                announcing = false,
+                busy = false,
+                audioPath = FmAudio.Path.NONE,
+                rssi = null,
+                stereo = false,
+                alarm = false,
+            )
+        }
+        scope.launch {
+            cancelAlarm()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+    }
+
+    // --- Traffic announcements (TA) ------------------------------------------------------------------------------
+
+    /**
+     * Standby only on a traffic programme (TP), with RDS, and not when the head unit arbitrates the audio focus
+     * (ivi-services: the radio cannot take the focus back for an announcement).
+     */
+    private fun taStandbyAllowed(): Boolean {
+        val s = settings.value
+        return s.trafficAnnouncements && s.rds && state.value.tp && !bridge.managesAudioFocus && rdsThread != null
+    }
+
+    /** Another source plays: sound off and focus given back; chip, RDS and antenna kept (chip thread). */
+    private fun enterStandby() {
+        audio.stop()
+        FmNative.setMute(true)
+        abandonFocus()
+        standby = true
+        _state.update { it.copy(poweredOn = false, standby = true, busy = false, audioPath = FmAudio.Path.NONE) }
+        Log.i(TAG, "traffic announcements: standby on ${Band.format(state.value.frequency)}")
+    }
+
+    /** Play pressed during the standby: the radio plays again without powering the chip up (chip thread). */
+    private fun resumeFromStandby() {
+        if (state.value.announcing) endAnnouncement()
+        if (!bridge.managesAudioFocus && !requestFocus()) {
+            fail(getString(R.string.error_focus))
+            return
+        }
+        standby = false
+        FmNative.setMute(false)
+        audio.start(settings.value.audioMode)
+        _state.update { it.copy(poweredOn = true, standby = false, error = "", audioPath = audio.path) }
+    }
+
+    /**
+     * TA flag of the station (TP and TA: an announcement on air). In standby the radio takes a transient audio focus
+     * (the other app pauses) and plays; while the radio plays ducked, its volume goes back to full (chip thread).
+     */
+    private fun trafficAnnouncement(on: Boolean) {
+        if (!on) {
+            taBlocked = false
+            if (state.value.announcing) endAnnouncement()
+            return
+        }
+        if (!settings.value.trafficAnnouncements || state.value.announcing || taBlocked) return
+        if (standby) {
+            if (!requestTaFocus()) return
+            FmNative.setMute(false)
+            audio.start(settings.value.audioMode)
+        } else if (state.value.poweredOn) {
+            taVolume = audio.volume
+            audio.volume = 1f
+        } else {
+            return
+        }
+        announceSince = SystemClock.elapsedRealtime()
+        _state.update { it.copy(announcing = true, audioPath = audio.path) }
+        Log.i(TAG, "traffic announcement on ${state.value.title}")
+        // A TA flag stuck on (some stations): the announcement ends after TA_MAX_MS, until the flag drops.
+        scope.launch {
+            delay(TA_MAX_MS)
+            chip.execute {
+                if (state.value.announcing && SystemClock.elapsedRealtime() - announceSince >= TA_MAX_MS) {
+                    Log.w(TAG, "traffic announcement longer than ${TA_MAX_MS / 60_000} min: ended")
+                    taBlocked = true
+                    endAnnouncement()
+                }
+            }
+        }
+    }
+
+    private fun endAnnouncement() {
+        if (standby) {
+            FmNative.setMute(true)
+            audio.stop()
+            abandonTaFocus()
+            _state.update { it.copy(announcing = false, audioPath = FmAudio.Path.NONE) }
+        } else {
+            taVolume?.let { audio.volume = it }
+            taVolume = null
+            _state.update { it.copy(announcing = false) }
+        }
+    }
+
+    private val taFocusListener =
+        AudioManager.OnAudioFocusChangeListener { change ->
+            if (change == AudioManager.AUDIOFOCUS_LOSS || change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                chip.execute { if (standby && state.value.announcing) endAnnouncement() }
+            }
+        }
+
+    private fun requestTaFocus(): Boolean {
+        val req =
+            AudioFocusRequest
+                .Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(
+                    AudioAttributes
+                        .Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build(),
+                ).setOnAudioFocusChangeListener(taFocusListener)
+                .build()
+        taFocus = req
+        return audioManager.requestAudioFocus(req) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
+    private fun abandonTaFocus() {
+        taFocus?.let { audioManager.abandonAudioFocusRequest(it) }
+        taFocus = null
+    }
+
+    // --- Reception, clock, alarm ---------------------------------------------------------------------------------
+
+    /** Forced mono and seek / scan threshold of the settings, after each power-up and change (chip thread). */
+    private fun applyReception() {
+        val s = settings.value
+        val monoOk = if (s.forceMono || monoSet) FmNative.setForceMono(s.forceMono) else true
+        monoSet = s.forceMono && monoOk
+        if (s.localSearch || searchSet) {
+            FmNative.setSearchThreshold(if (s.localSearch) FmNative.SEARCH_LOCAL else FmNative.SEARCH_DX)
+            searchSet = s.localSearch
+        }
+        _state.update { it.copy(monoUnsupported = s.forceMono && !monoOk) }
+    }
+
+    /**
+     * RDS clock time (group 4A, once a minute): the head unit's clock is set when it is more than a minute off, after
+     * two clock times one minute apart (a corrupted group is not taken). RDS thread.
+     */
+    private fun clockTime(ct: IntArray) {
+        if (ct.size < 5) return
+        val (y, mo, d, h, mi) = ct
+        if (y !in 2024..2099 || mo !in 1..12 || d !in 1..31 || h !in 0..23 || mi !in 0..59) return
+        val utc =
+            Calendar
+                .getInstance(TimeZone.getTimeZone("UTC"))
+                .apply {
+                    clear()
+                    set(y, mo - 1, d, h, mi, 0)
+                }.timeInMillis
+        val at = SystemClock.elapsedRealtime()
+        val consistent = lastClock != 0L && abs((utc - lastClock) - (at - lastClockAt)) < CLOCK_TOLERANCE_MS
+        lastClock = utc
+        lastClockAt = at
+        if (!consistent) return
+        val off = utc - System.currentTimeMillis()
+        if (abs(off) < CLOCK_MAX_OFFSET_MS) return
+        if (setClock(utc)) Log.i(TAG, "clock set from the RDS of ${state.value.title}: ${off / 1000} s")
+    }
+
+    /** AlarmManager.setTime with SET_TIME (privileged install), else `date` as root and TIME_SET for the apps. */
+    private fun setClock(utc: Long): Boolean {
+        try {
+            getSystemService(AlarmManager::class.java).setTime(utc)
+            return true
+        } catch (_: SecurityException) {
+        }
+        val stamp = SimpleDateFormat("MMddHHmmyyyy.ss", Locale.ROOT).apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date(utc))
+        return try {
+            val p =
+                ProcessBuilder("su", "-c", "date -u $stamp && am broadcast -a android.intent.action.TIME_SET")
+                    .redirectErrorStream(true)
+                    .start()
+            p.inputStream.readBytes()
+            p.waitFor() == 0
+        } catch (e: Exception) {
+            Log.w(TAG, "clock not set: ${e.message}")
+            false
+        }
+    }
+
+    /** Programme type 31 on air: a heads-up notification (alarm / emergency). */
+    private fun showAlarm(s: RadioState) {
+        val nm = getSystemService(NotificationManager::class.java)
+        nm.createNotificationChannel(
+            NotificationChannel(ALERT_CHANNEL_ID, getString(R.string.notif_alerts), NotificationManager.IMPORTANCE_HIGH),
+        )
+        val station = s.title.ifBlank { "FM ${Band.format(s.frequency)}" }
+        nm.notify(
+            ALERT_NOTIFICATION_ID,
+            Notification
+                .Builder(this, ALERT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_radio)
+                .setContentTitle(getString(R.string.alarm_title, station))
+                .setContentText(s.nowPlaying.ifBlank { getString(R.string.alarm_text) })
+                .setCategory(Notification.CATEGORY_ALARM)
+                .setContentIntent(session.controller.sessionActivity)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .build(),
+        )
+    }
+
+    private fun cancelAlarm() = getSystemService(NotificationManager::class.java).cancel(ALERT_NOTIFICATION_ID)
 
     /**
      * MediaTek's audio policy mutes the media strategy of the primary output on `AudioFmPreStop=1` ("mute for FM app
@@ -318,7 +614,7 @@ class FmService : Service() {
     private fun tune(frequency: Int) =
         chip.execute {
             val f = Band.clamp(frequency)
-            if (state.value.poweredOn) {
+            if (state.value.poweredOn || standby) {
                 if (!FmNative.tune(Band.mhz(f))) Log.w(TAG, "tune $f failed")
                 unmuteAfterTune()
             }
@@ -430,6 +726,9 @@ class FmService : Service() {
         // Enhanced RadioText, rebuilt from the raw groups; preferred to the radiotext once the station sent one.
         val ert = Ert()
         var ertFrequency = state.value.frequency
+        // Last TA and alarm states seen, to act on their changes only.
+        var traffic = false
+        var alarm = false
         rdsThread =
             Thread({
                 while (rdsThread === Thread.currentThread()) {
@@ -454,15 +753,27 @@ class FmService : Service() {
                             if (set.radioText && ert.text.isEmpty()) _state.update { it.copy(radioText = RdsText.clean(text)) }
                         }
                     }
-                    if (set.radioText) {
+                    if (set.radioText || set.rtPlus) {
                         FmNative.readRdsGroups()?.let { groups ->
-                            if (ert.feed(groups) && ert.text.isNotBlank()) _state.update { it.copy(radioText = ert.text) }
+                            if (ert.feed(groups)) {
+                                if (set.radioText && ert.text.isNotBlank()) _state.update { it.copy(radioText = ert.text) }
+                                // eRT+: artist and title tagged in the eRT, preferred to those of the RT+.
+                                if (set.rtPlus && (ert.title.isNotEmpty() || ert.artist.isNotEmpty())) {
+                                    _state.update { it.copy(song = ert.title, artist = ert.artist) }
+                                    heard(ert.title, ert.artist)
+                                }
+                            }
                         }
                     }
                     // RT+ (tags given by the driver once the radiotext is stable): artist and title of the song.
-                    if (set.rtPlus && events and FmNative.RDS_EVENT_RTP_TAG != 0) {
+                    val ertPlus = ert.title.isNotEmpty() || ert.artist.isNotEmpty()
+                    if (set.rtPlus && !ertPlus && events and FmNative.RDS_EVENT_RTP_TAG != 0) {
                         val item = FmNative.getRtPlus()?.let { RdsText.rtPlus(rt, it) }
                         _state.update { it.copy(song = item?.first.orEmpty(), artist = item?.second.orEmpty()) }
+                        if (item != null) heard(item.first, item.second)
+                    }
+                    if (set.rdsClock && events and FmNative.RDS_EVENT_UTCDATETIME != 0) {
+                        FmNative.getClockTime()?.let(::clockTime)
                     }
                     val infoEvents =
                         FmNative.RDS_EVENT_FLAGS or FmNative.RDS_EVENT_PI_CODE or FmNative.RDS_EVENT_PTY_CODE or
@@ -471,13 +782,27 @@ class FmService : Service() {
                         FmNative.getRdsInfo()?.takeIf { it.size >= 4 }?.let { info ->
                             // US stations: call letters from the PI code (RBDS, NRSC-4-B annex D).
                             val call = if (Rbds.appliesTo(set.countryCode)) Rbds.callSign(info[0]) else ""
+                            // PTY 31: alarm (RDS) / emergency (RBDS), whatever the PTY display setting.
+                            val nowAlarm = info[1] == PTY_ALARM
                             _state.update {
                                 it.copy(
                                     callSign = call,
                                     pty = if (set.pty) info[1].coerceIn(0, 31) else 0,
                                     tp = info[2] != 0,
                                     ta = info[3] != 0,
+                                    alarm = nowAlarm,
                                 )
+                            }
+                            if (nowAlarm != alarm) {
+                                alarm = nowAlarm
+                                val st = state.value
+                                scope.launch { if (nowAlarm) showAlarm(st) else cancelAlarm() }
+                            }
+                            // Traffic announcement: TP and TA together.
+                            val nowTraffic = info[2] != 0 && info[3] != 0
+                            if (nowTraffic != traffic) {
+                                traffic = nowTraffic
+                                chip.execute { trafficAnnouncement(nowTraffic) }
                             }
                         }
                     }
@@ -504,6 +829,15 @@ class FmService : Service() {
                 _state.update { it.copy(frequency = f) }
             }
         }
+
+    /** A song tagged by the station (RT+ / eRT+): into the history of the titles heard. */
+    private fun heard(
+        title: String,
+        artist: String,
+    ) {
+        val s = state.value
+        TitleHistory.add(this, HeardTitle(System.currentTimeMillis(), s.frequency, s.title, artist, title))
+    }
 
     /** Names the current favourite with the RDS name when it has none. */
     private fun namePreset(ps: String) {
@@ -532,18 +866,23 @@ class FmService : Service() {
                 }
 
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                    audio.volume = 0f
+                    focusVolume(0f)
                 }
 
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    audio.volume = DUCK_VOLUME
+                    focusVolume(DUCK_VOLUME)
                 }
 
                 AudioManager.AUDIOFOCUS_GAIN -> {
-                    audio.volume = 1f
+                    focusVolume(1f)
                 }
             }
         }
+
+    /** Volume asked by the focus; during a traffic announcement it is the one given back after it. */
+    private fun focusVolume(v: Float) {
+        if (state.value.announcing && !standby) taVolume = v else audio.volume = v
+    }
 
     private fun requestFocus(): Boolean {
         val req =
@@ -574,7 +913,10 @@ class FmService : Service() {
 
             override fun onPause() = powerOff()
 
-            override fun onStop() = powerOff()
+            override fun onStop() {
+                powerOff(keepTa = false)
+                chip.execute { if (standby) powerDownChip() }
+            }
 
             override fun onSkipToNext() = next(true)
 
@@ -627,8 +969,19 @@ class FmService : Service() {
         return Notification
             .Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_radio)
-            .setContentTitle(s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
-            .setContentText(s.nowPlaying.ifBlank { "${Band.format(s.frequency)} MHz" })
+            .setContentTitle(
+                when {
+                    s.announcing -> getString(R.string.ta_announcing)
+                    s.standby -> getString(R.string.ta_standby)
+                    else -> s.title.ifBlank { "FM ${Band.format(s.frequency)}" }
+                },
+            ).setContentText(
+                if (s.standby && !s.announcing) {
+                    s.title.ifBlank { "FM ${Band.format(s.frequency)}" }
+                } else {
+                    s.nowPlaying.ifBlank { "${Band.format(s.frequency)} MHz" }
+                },
+            )
             .setLargeIcon(s.logo)
             .setContentIntent(session.controller.sessionActivity)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -640,6 +993,7 @@ class FmService : Service() {
                     action(R.drawable.ic_play, R.string.play, ACTION_PLAY)
                 },
             ).addAction(action(R.drawable.ic_skip_next, R.string.next, ACTION_NEXT))
+            .apply { if (s.standby) addAction(action(R.drawable.ic_pause, R.string.ta_stop, ACTION_STOP_STANDBY)) }
             .setStyle(Notification.MediaStyle().setMediaSession(session.sessionToken).setShowActionsInCompactView(0, 1, 2))
             .build()
     }
@@ -664,6 +1018,13 @@ class FmService : Service() {
         private const val DUCK_VOLUME = 0.3f
         private const val LOGO_NAME_STABLE_MS = 3000L
         private const val FM_PRESTOP_CLEARS = 8
+        private const val SIGNAL_POLL_MS = 1000L
+        private const val TA_MAX_MS = 10 * 60_000L
+        private const val CLOCK_TOLERANCE_MS = 30_000L
+        private const val CLOCK_MAX_OFFSET_MS = 60_000L
+        private const val PTY_ALARM = 31
+        private const val ALERT_CHANNEL_ID = "alerts"
+        private const val ALERT_NOTIFICATION_ID = 2
 
         const val ACTION_PLAY = "org.librehu.fm.PLAY"
         const val ACTION_PAUSE = "org.librehu.fm.PAUSE"
@@ -678,6 +1039,7 @@ class FmService : Service() {
         const val ACTION_SCAN = "org.librehu.fm.SCAN"
         const val ACTION_STOP_SCAN = "org.librehu.fm.STOP_SCAN"
         const val ACTION_TOGGLE_PRESET = "org.librehu.fm.TOGGLE_PRESET"
+        const val ACTION_STOP_STANDBY = "org.librehu.fm.STOP_STANDBY"
         const val EXTRA_FREQUENCY = "frequency"
 
         private val _state = MutableStateFlow(RadioState())
