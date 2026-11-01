@@ -36,12 +36,30 @@ data class RadioState(
     val ta: Boolean = false,
     /** Audio path in use, for the settings screen. */
     val audioPath: FmAudio.Path = FmAudio.Path.NONE,
+    /** Signal of the tuned station in dBm (null: unknown) and stereo reception. */
+    val rssi: Int? = null,
+    val stereo: Boolean = false,
+    /** Programme type 31: alarm (RDS) / emergency (RBDS) on air. */
+    val alarm: Boolean = false,
+    /** Chip kept on for the traffic announcements while another source plays, and an announcement playing. */
+    val standby: Boolean = false,
+    val announcing: Boolean = false,
+    /** Forced mono asked but refused by the FM driver. */
+    val monoUnsupported: Boolean = false,
 ) {
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 
     /** Station name: RDS PS, else the preset name, else the call letters. */
     val title: String
         get() = ps.ifBlank { presets.firstOrNull { it.frequency == frequency }?.name.orEmpty() }.ifBlank { callSign }
+
+    /** Name to look the logo up with: the call letters (stable, US) before the PS, which some stations scroll. */
+    val logoName: String
+        get() = callSign.ifBlank { title }.trim()
+
+    /** Signal bars, 0 to 4 (dBµV ≈ dBm + 107: about 17, 27, 37 and 47 dBµV), null when unknown. */
+    val bars: Int?
+        get() = rssi?.let { r -> listOf(-90, -80, -70, -60).count { r >= it } }
 
     /** Second line of the media card, the notification and the widget: "artist – title" (RT+), else the radiotext. */
     val nowPlaying: String

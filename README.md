@@ -53,7 +53,25 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   - **Radiotexte étendu (eRT)** : texte UTF-8 (ou UCS-2) de 128 octets pour les écritures absentes du RDS (arabe,
     chinois, cyrillique…), application 0x6552. Le pilote ne le décode pas : l'appli lit les groupes RDS bruts
     (`FM_IOCTL_RDS_GET_LOG`) et le reconstruit ; il remplace le radiotexte quand la station en envoie un.
-- **Paramètres** (roue dentée) : RDS (dont RT+), bande et région, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
+- **Réception** : **barres de signal** (RSSI du pilote en dBm, environ 17 / 27 / 37 / 47 dBµV par barre) et **ST**
+  quand la station passe en stéréo ; **mono forcé** (moins de souffle sur les stations faibles) ; **recherche des
+  stations fortes seulement** (« Local », seuil d'environ 25 dBµV au lieu de -4 dBµV, le réglage MediaTek, « DX »).
+  Le mono forcé demande un correctif du pilote FM (sa couche de compatibilité 32 bits ne transmet pas
+  `FM_IOCTL_SETMONOSTERO`) : l'appli le signale tant qu'il manque.
+- **Annonces trafic (TA, option)** : pendant une annonce de la station (TP et TA), volume plein si la radio joue
+  (baissée par une autre appli) ; si vous écoutez autre chose, la radio reste allumée sans son (« veille », notification
+  avec une touche Arrêter), prend la main pendant l'annonce (l'autre appli se met en pause) puis la rend. 10 minutes au
+  plus par annonce (drapeau TA bloqué). Pas avec Jancar ivi-services, qui arbitre lui-même les sources.
+- **Heure RDS (option)** : l'horloge de l'autoradio est réglée sur l'heure envoyée par la station (groupe 4A, UTC)
+  quand elle s'écarte de plus d'une minute, après deux heures cohérentes à une minute d'intervalle. Installation
+  privilégiée (permission `SET_TIME`) ou root (`date`).
+- **Alerte (type de programme 31)** : bandeau rouge et notification prioritaire quand la station diffuse une alarme
+  (RDS) ou une alerte d'urgence (RBDS).
+- **Titres entendus** (Paramètres) : artiste et titre du RT+ / eRT+ avec l'heure et la station, 100 derniers.
+- **eRT+** : artiste et titre balisés dans le radiotexte étendu (application 0x4BD8), comme le RT+ du radiotexte.
+- **Logo des stations américaines** cherché avec l'indicatif (stable) plutôt qu'avec le PS, que beaucoup de stations
+  font défiler.
+- **Paramètres** (roue dentée) : RDS (dont RT+, annonces trafic, heure), bande et région, réception, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
   Browser (automatique, miroir de la liste officielle ou URL personnalisée), pays, **bibliothèque hors ligne**
   (téléchargement des logos des stations du pays, les plus populaires ou toutes) et mode hors ligne.
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.

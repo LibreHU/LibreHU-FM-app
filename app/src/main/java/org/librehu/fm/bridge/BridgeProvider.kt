@@ -57,6 +57,10 @@ class BridgeProvider : BridgeKitProvider() {
                 switch("af", s(R.string.set_af), st.af, s(R.string.set_af_hint)) { v -> update { it.copy(af = v) } }
                 switch("preset_names", s(R.string.set_preset_names), st.rdsPresetNames) { v -> update { it.copy(rdsPresetNames = v) } }
                 switch("rt_plus", s(R.string.set_rt_plus), st.rtPlus, s(R.string.set_rt_plus_hint)) { v -> update { it.copy(rtPlus = v) } }
+                switch("ta", s(R.string.set_ta), st.trafficAnnouncements, s(R.string.set_ta_hint)) { v ->
+                    update { it.copy(trafficAnnouncements = v) }
+                }
+                switch("rds_clock", s(R.string.set_rds_clock), st.rdsClock, s(R.string.set_rds_clock_hint)) { v -> update { it.copy(rdsClock = v) } }
             }
             section(s(R.string.set_region))
             val regionName: (Region) -> String = {
@@ -78,6 +82,11 @@ class BridgeProvider : BridgeKitProvider() {
                 ) + enumValues<Region>().map { it to regionName(it) },
                 s(R.string.set_region_hint),
             ) { v -> update { it.copy(region = v) } }
+            section(s(R.string.set_reception))
+            switch("force_mono", s(R.string.set_force_mono), st.forceMono, s(R.string.set_force_mono_hint)) { v -> update { it.copy(forceMono = v) } }
+            switch("local_search", s(R.string.set_local_search), st.localSearch, s(R.string.set_local_search_hint)) { v ->
+                update { it.copy(localSearch = v) }
+            }
             section(s(R.string.set_audio))
             pick("audio_mode", s(R.string.set_audio), st.audioMode, s(R.string.set_audio_hint), label = {
                 s(

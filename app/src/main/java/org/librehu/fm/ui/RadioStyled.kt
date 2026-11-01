@@ -92,7 +92,10 @@ private const val PRESETS_BY_PAGE = 6
 private fun statusLine(s: RadioState): String =
     when {
         !s.available || s.error.isNotEmpty() -> s.error.ifEmpty { stringResource(R.string.error_driver) }
+        s.alarm -> stringResource(R.string.alarm_on_air)
+        s.announcing -> stringResource(R.string.ta_announcing)
         s.scanning -> stringResource(R.string.scanning)
+        s.standby -> stringResource(R.string.ta_standby)
         s.nowPlaying.isNotBlank() -> s.nowPlaying
         !s.poweredOn -> stringResource(R.string.off)
         else -> ""
@@ -444,6 +447,8 @@ private fun AmbientFrequencies(
                     val preset = s.presets.indexOfFirst { it.frequency == s.frequency }
                     if (preset >= 0) Box(Modifier.align(Alignment.TopStart)) { NumberBadge(preset + 1, strong = true) }
                     Row(Modifier.align(Alignment.TopEnd), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        s.bars?.let { SignalBars(it, KitLight, KitDim, Modifier.align(Alignment.CenterVertically)) }
+                        if (s.stereo) FlagBox("ST")
                         if (s.callSign.isNotBlank() && s.callSign != s.title) FlagBox(s.callSign)
                         val pty = stringArrayResource(Band.region.ptyNames)
                         if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) FlagBox(pty[s.pty])
