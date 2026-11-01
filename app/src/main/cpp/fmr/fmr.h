@@ -247,5 +247,9 @@ void FM_interface_init(struct fm_cbk_tbl *cbk_tbl);
         return -ERR_INVALID_BUF; \
     } \
 }
+/* LibreHU (common.cpp): de-emphasis of the next AC8257 power-up, RT+ tags of the last RDS record. */
+extern uint8_t g_deemphasis;
+int COM_get_rtplus(int32_t info[8]);
+
 #endif
 

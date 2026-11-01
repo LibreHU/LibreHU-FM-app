@@ -35,6 +35,15 @@
     <string name="set_af">Alternative frequencies (AF)</string>
     <string name="set_af_hint">Switches to another frequency of the same station when the signal gets weak</string>
     <string name="set_preset_names">Name the favourites with the RDS name</string>
+    <string name="set_rt_plus">Artist and title (RT+)</string>
+    <string name="set_rt_plus_hint">Shown instead of the radiotext, here, on the widget, the notification and the launcher\'s media card, when the station tags them</string>
+    <string name="set_region">Band and region</string>
+    <string name="set_region_hint">Limits of the FM band, tuning step, de-emphasis of the sound and names of the programme types used in the region. The radio restarts to apply a change.</string>
+    <string name="set_region_auto">Automatic (%1$s: %2$s)</string>
+    <string name="set_region_europe">Europe, Africa, Asia</string>
+    <string name="set_region_americas">Americas, South Korea</string>
+    <string name="set_region_japan">Japan</string>
+    <string name="set_region_current">In use: %1$s–%2$s MHz, step %3$d kHz, de-emphasis %4$d µs%5$s</string>
     <string name="set_audio">Audio path</string>
     <string name="set_audio_hint">Automatic: hardware patch FM tuner → speakers like the original radio app, else copy of the tuner audio. Applied at the next start of the radio.</string>
     <string name="set_audio_auto">Automatic</string>
@@ -102,6 +111,41 @@
         <item>Documentary</item>
         <item>Alarm test</item>
         <item>Alarm</item>
+    </string-array>
+    <!-- RBDS programme types (PTY 0–31, North America; 27 and 28 unassigned). -->
+    <string-array name="pty_names_rbds">
+        <item>None</item>
+        <item>News</item>
+        <item>Information</item>
+        <item>Sports</item>
+        <item>Talk</item>
+        <item>Rock</item>
+        <item>Classic rock</item>
+        <item>Adult hits</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Oldies</item>
+        <item>Soft music</item>
+        <item>Nostalgia</item>
+        <item>Jazz</item>
+        <item>Classical</item>
+        <item>Rhythm and blues</item>
+        <item>Soft rhythm and blues</item>
+        <item>Language</item>
+        <item>Religious music</item>
+        <item>Religious talk</item>
+        <item>Personality</item>
+        <item>Public</item>
+        <item>College</item>
+        <item>Spanish talk</item>
+        <item>Spanish music</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Weather</item>
+        <item>Emergency test</item>
+        <item>Emergency</item>
     </string-array>
     <string name="logo_title">Logo for %1$s MHz</string>
     <string name="logo_hint">Found from the RDS name in Radio Browser or the downloaded library. You can choose a picture for this frequency instead.</string>
