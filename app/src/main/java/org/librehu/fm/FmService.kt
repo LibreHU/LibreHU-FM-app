@@ -121,7 +121,9 @@ class FmService : Service() {
                         } else if (!rds && rdsThread != null) {
                             stopRds()
                             FmNative.setRds(false)
-                            _state.update { it.copy(ps = "", radioText = "", song = "", artist = "", pty = 0, tp = false, ta = false) }
+                            _state.update {
+                                it.copy(ps = "", radioText = "", song = "", artist = "", callSign = "", pty = 0, tp = false, ta = false)
+                            }
                         }
                     }
                 }
@@ -398,7 +400,9 @@ class FmService : Service() {
 
     private fun setFrequency(f: Int) {
         store.frequency = f
-        _state.update { it.copy(frequency = f, ps = "", radioText = "", song = "", artist = "", pty = 0, tp = false, ta = false) }
+        _state.update {
+            it.copy(frequency = f, ps = "", radioText = "", song = "", artist = "", callSign = "", pty = 0, tp = false, ta = false)
+        }
     }
 
     /** Band, step, limits and de-emphasis of [r] for the native library (chip thread). */
@@ -423,11 +427,18 @@ class FmService : Service() {
         var lastPs = ""
         // Last radiotext, one character per byte: the RT+ tags give positions in it.
         var rt = ""
+        // Enhanced RadioText, rebuilt from the raw groups; preferred to the radiotext once the station sent one.
+        val ert = Ert()
+        var ertFrequency = state.value.frequency
         rdsThread =
             Thread({
                 while (rdsThread === Thread.currentThread()) {
                     val events = FmNative.readRds().toInt()
                     val set = settings.value
+                    if (state.value.frequency != ertFrequency) {
+                        ert.reset()
+                        ertFrequency = state.value.frequency
+                    }
                     if (events and FmNative.RDS_EVENT_PROGRAMNAME != 0) {
                         val ps = FmNative.getPs()?.let { RdsText.clean(RdsText.decode(it)) }.orEmpty()
                         _state.update { it.copy(ps = ps) }
@@ -440,7 +451,12 @@ class FmService : Service() {
                             // A new text: the tags received for the last one do not fit it, wait for its own.
                             if (text != rt) _state.update { it.copy(song = "", artist = "") }
                             rt = text
-                            if (set.radioText) _state.update { it.copy(radioText = RdsText.clean(text)) }
+                            if (set.radioText && ert.text.isEmpty()) _state.update { it.copy(radioText = RdsText.clean(text)) }
+                        }
+                    }
+                    if (set.radioText) {
+                        FmNative.readRdsGroups()?.let { groups ->
+                            if (ert.feed(groups) && ert.text.isNotBlank()) _state.update { it.copy(radioText = ert.text) }
                         }
                     }
                     // RT+ (tags given by the driver once the radiotext is stable): artist and title of the song.
@@ -448,10 +464,16 @@ class FmService : Service() {
                         val item = FmNative.getRtPlus()?.let { RdsText.rtPlus(rt, it) }
                         _state.update { it.copy(song = item?.first.orEmpty(), artist = item?.second.orEmpty()) }
                     }
-                    if (events and (FmNative.RDS_EVENT_FLAGS or FmNative.RDS_EVENT_PTY_CODE or FmNative.RDS_EVENT_PROGRAMNAME) != 0) {
+                    val infoEvents =
+                        FmNative.RDS_EVENT_FLAGS or FmNative.RDS_EVENT_PI_CODE or FmNative.RDS_EVENT_PTY_CODE or
+                            FmNative.RDS_EVENT_PROGRAMNAME
+                    if (events and infoEvents != 0) {
                         FmNative.getRdsInfo()?.takeIf { it.size >= 4 }?.let { info ->
+                            // US stations: call letters from the PI code (RBDS, NRSC-4-B annex D).
+                            val call = if (Rbds.appliesTo(set.countryCode)) Rbds.callSign(info[0]) else ""
                             _state.update {
                                 it.copy(
+                                    callSign = call,
                                     pty = if (set.pty) info[1].coerceIn(0, 31) else 0,
                                     tp = info[2] != 0,
                                     ta = info[3] != 0,

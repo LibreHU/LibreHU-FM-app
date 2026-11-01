@@ -444,6 +444,7 @@ private fun AmbientFrequencies(
                     val preset = s.presets.indexOfFirst { it.frequency == s.frequency }
                     if (preset >= 0) Box(Modifier.align(Alignment.TopStart)) { NumberBadge(preset + 1, strong = true) }
                     Row(Modifier.align(Alignment.TopEnd), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        if (s.callSign.isNotBlank() && s.callSign != s.title) FlagBox(s.callSign)
                         val pty = stringArrayResource(Band.region.ptyNames)
                         if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) FlagBox(pty[s.pty])
                         if (s.tp || s.ta) FlagBox(if (s.ta) "TA" else "TP")

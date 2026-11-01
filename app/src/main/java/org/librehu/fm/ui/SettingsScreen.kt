@@ -128,6 +128,7 @@ fun SettingsScreen(
                             null to stringResource(R.string.set_region_auto, s.countryCode, regionName(Region.forCountry(s.countryCode))),
                             Region.EUROPE to regionName(Region.EUROPE),
                             Region.AMERICAS to regionName(Region.AMERICAS),
+                            Region.BRAZIL to regionName(Region.BRAZIL),
                             Region.JAPAN to regionName(Region.JAPAN),
                         ),
                         s.region,
@@ -185,6 +186,7 @@ fun regionName(r: Region): String =
         when (r) {
             Region.EUROPE -> R.string.set_region_europe
             Region.AMERICAS -> R.string.set_region_americas
+            Region.BRAZIL -> R.string.set_region_brazil
             Region.JAPAN -> R.string.set_region_japan
         },
     )

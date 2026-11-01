@@ -198,9 +198,10 @@ private fun NowPlaying(
     }
 }
 
-/** RDS programme type and traffic flags (TP: traffic programme, TA: traffic announcement on air). */
+/** Call letters (US), RDS programme type and traffic flags (TP: traffic programme, TA: traffic announcement on air). */
 @Composable
 private fun RdsBadges(s: RadioState) {
+    if (s.callSign.isNotBlank() && s.callSign != s.title) Badge(s.callSign, false)
     val pty = stringArrayResource(Band.region.ptyNames)
     if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) Badge(pty[s.pty], false)
     if (s.ta) {
