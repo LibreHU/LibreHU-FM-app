@@ -35,6 +35,15 @@
     <string name="set_af">Fréquences alternatives (AF)</string>
     <string name="set_af_hint">Passe sur une autre fréquence de la même station quand le signal faiblit</string>
     <string name="set_preset_names">Nommer les favoris avec le nom RDS</string>
+    <string name="set_rt_plus">Artiste et titre (RT+)</string>
+    <string name="set_rt_plus_hint">Affichés à la place du radiotexte, ici, sur le widget, la notification et la carte média du lanceur, quand la station les balise</string>
+    <string name="set_region">Bande et région</string>
+    <string name="set_region_hint">Limites de la bande FM, pas d\'accord, désaccentuation du son et noms des types de programme de la région. La radio redémarre pour appliquer un changement.</string>
+    <string name="set_region_auto">Automatique (%1$s : %2$s)</string>
+    <string name="set_region_europe">Europe, Afrique, Asie</string>
+    <string name="set_region_americas">Amériques, Corée du Sud</string>
+    <string name="set_region_japan">Japon</string>
+    <string name="set_region_current">En service : %1$s–%2$s MHz, pas de %3$d kHz, désaccentuation %4$d µs%5$s</string>
     <string name="set_audio">Chemin audio</string>
     <string name="set_audio_hint">Automatique : patch matériel tuner FM → haut-parleurs comme l\'app radio d\'origine, sinon recopie du son du tuner. Appliqué au prochain démarrage de la radio.</string>
     <string name="set_audio_auto">Automatique</string>
@@ -102,6 +111,41 @@
         <item>Documentaire</item>
         <item>Test d\'alarme</item>
         <item>Alarme</item>
+    </string-array>
+    <!-- Types de programme RBDS (PTY 0–31, Amérique du Nord ; 27 et 28 non attribués). -->
+    <string-array name="pty_names_rbds">
+        <item>Aucun</item>
+        <item>Infos</item>
+        <item>Information</item>
+        <item>Sports</item>
+        <item>Débats</item>
+        <item>Rock</item>
+        <item>Rock classique</item>
+        <item>Hits adultes</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Rétro</item>
+        <item>Musique douce</item>
+        <item>Nostalgie</item>
+        <item>Jazz</item>
+        <item>Classique</item>
+        <item>R&amp;B</item>
+        <item>R&amp;B doux</item>
+        <item>Langues étrangères</item>
+        <item>Musique religieuse</item>
+        <item>Émissions religieuses</item>
+        <item>Animateur vedette</item>
+        <item>Radio publique</item>
+        <item>Radio universitaire</item>
+        <item>Parole en espagnol</item>
+        <item>Musique en espagnol</item>
+        <item>Hip-hop</item>
+        <item></item>
+        <item></item>
+        <item>Météo</item>
+        <item>Test d\'alerte</item>
+        <item>Alerte</item>
     </string-array>
     <string name="logo_title">Logo du %1$s MHz</string>
     <string name="logo_hint">Trouvé d\'après le nom RDS dans Radio Browser ou la bibliothèque téléchargée. Vous pouvez choisir une image pour cette fréquence à la place.</string>

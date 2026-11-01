@@ -105,7 +105,7 @@ class RadioWidget : AppWidgetProvider() {
                 setTextViewText(
                     R.id.widget_text,
                     when {
-                        s.radioText.isNotBlank() -> s.radioText
+                        s.nowPlaying.isNotBlank() -> s.nowPlaying
                         s.poweredOn -> "FM ${Band.format(s.frequency)} MHz"
                         else -> context.getString(R.string.off)
                     },

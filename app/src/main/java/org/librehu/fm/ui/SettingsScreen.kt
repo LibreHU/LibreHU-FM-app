@@ -52,12 +52,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.librehu.fm.AudioMode
+import org.librehu.fm.Band
 import org.librehu.fm.FmAudio
 import org.librehu.fm.FmService
 import org.librehu.fm.LogoLibrary
 import org.librehu.fm.R
 import org.librehu.fm.RadioBrowser
 import org.librehu.fm.RadioSettings
+import org.librehu.fm.Region
 import org.librehu.fm.Settings
 import org.librehu.fm.StationLogos
 import java.text.DateFormat
@@ -106,6 +108,9 @@ fun SettingsScreen(
                     SwitchRow(stringResource(R.string.set_rds_enable), s.rds) { on -> update { it.copy(rds = on) } }
                     if (s.rds) {
                         SwitchRow(stringResource(R.string.set_radio_text), s.radioText) { on -> update { it.copy(radioText = on) } }
+                        SwitchRow(stringResource(R.string.set_rt_plus), s.rtPlus, stringResource(R.string.set_rt_plus_hint)) { on ->
+                            update { it.copy(rtPlus = on) }
+                        }
                         SwitchRow(stringResource(R.string.set_pty), s.pty) { on -> update { it.copy(pty = on) } }
                         SwitchRow(stringResource(R.string.set_af), s.af, stringResource(R.string.set_af_hint)) { on ->
                             update { it.copy(af = on) }
@@ -114,6 +119,30 @@ fun SettingsScreen(
                             update { it.copy(rdsPresetNames = on) }
                         }
                     }
+                }
+
+                Section(stringResource(R.string.set_region)) {
+                    Hint(stringResource(R.string.set_region_hint))
+                    Choices(
+                        listOf<Pair<Region?, String>>(
+                            null to stringResource(R.string.set_region_auto, s.countryCode, regionName(Region.forCountry(s.countryCode))),
+                            Region.EUROPE to regionName(Region.EUROPE),
+                            Region.AMERICAS to regionName(Region.AMERICAS),
+                            Region.JAPAN to regionName(Region.JAPAN),
+                        ),
+                        s.region,
+                    ) { r -> update { it.copy(region = r) } }
+                    val b = s.band
+                    Hint(
+                        stringResource(
+                            R.string.set_region_current,
+                            Band.format(b.min),
+                            Band.format(b.max),
+                            b.step * 100,
+                            if (b.deemphasis75) 75 else 50,
+                            if (b.rbds) ", RBDS" else "",
+                        ),
+                    )
                 }
 
                 Section(stringResource(R.string.set_audio)) {
@@ -148,6 +177,17 @@ fun SettingsScreen(
         }
     }
 }
+
+/** Name of a band plan, as in the settings and the phone app. */
+@Composable
+fun regionName(r: Region): String =
+    stringResource(
+        when (r) {
+            Region.EUROPE -> R.string.set_region_europe
+            Region.AMERICAS -> R.string.set_region_americas
+            Region.JAPAN -> R.string.set_region_japan
+        },
+    )
 
 @Composable
 private fun LogoSection(

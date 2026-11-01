@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        RadioSettings.get(this) // band plan of the scales, before the first frame
         theme.value.start()
         enableEdgeToEdge()
         // The FM capture source needs RECORD_AUDIO on top of the privileged CAPTURE_AUDIO_OUTPUT.

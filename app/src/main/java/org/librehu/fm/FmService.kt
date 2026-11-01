@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -64,6 +65,8 @@ class FmService : Service() {
         audioManager = getSystemService(AudioManager::class.java)
         // An earlier version sent AudioFmPreStop=1 at each stop, which mutes the media of the whole unit until reboot.
         chip.execute { clearFmPreStop() }
+        // Band plan before any power-up (queued first on the chip thread).
+        chip.execute { applyRegion(settings.value.band) }
         bridge = HeadUnitBridge.create(this)
         _state.update {
             it.copy(
@@ -104,11 +107,12 @@ class FmService : Service() {
         // RDS settings applied at once while the radio plays.
         scope.launch {
             settings
-                .map { Triple(it.rds, it.radioText, it.pty) }
+                .map { listOf(it.rds, it.radioText, it.pty, it.rtPlus) }
                 .distinctUntilChanged()
-                .collect { (rds, radioText, pty) ->
+                .collect { (rds, radioText, pty, rtPlus) ->
                     if (!radioText) _state.update { it.copy(radioText = "") }
                     if (!pty) _state.update { it.copy(pty = 0) }
+                    if (!rtPlus) _state.update { it.copy(song = "", artist = "") }
                     chip.execute {
                         if (!state.value.poweredOn) return@execute
                         if (rds && rdsThread == null) {
@@ -117,7 +121,26 @@ class FmService : Service() {
                         } else if (!rds && rdsThread != null) {
                             stopRds()
                             FmNative.setRds(false)
-                            _state.update { it.copy(ps = "", radioText = "", pty = 0, tp = false, ta = false) }
+                            _state.update { it.copy(ps = "", radioText = "", song = "", artist = "", pty = 0, tp = false, ta = false) }
+                        }
+                    }
+                }
+        }
+        // Band plan changed: frequency moved onto the new band's channels; a playing radio is powered again, the
+        // driver sets the de-emphasis at power-up.
+        scope.launch {
+            settings
+                .map { it.band }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { region ->
+                    chip.execute {
+                        applyRegion(region)
+                        val f = Band.clamp(state.value.frequency)
+                        if (f != state.value.frequency) setFrequency(f)
+                        if (state.value.poweredOn) {
+                            powerOff()
+                            powerOn()
                         }
                     }
                 }
@@ -375,7 +398,15 @@ class FmService : Service() {
 
     private fun setFrequency(f: Int) {
         store.frequency = f
-        _state.update { it.copy(frequency = f, ps = "", radioText = "", pty = 0, tp = false, ta = false) }
+        _state.update { it.copy(frequency = f, ps = "", radioText = "", song = "", artist = "", pty = 0, tp = false, ta = false) }
+    }
+
+    /** Band, step, limits and de-emphasis of [r] for the native library (chip thread). */
+    private fun applyRegion(r: Region) {
+        if (FmNative.loadError != null) return
+        FmNative.setRegion(r.chipBand, r.step, r.min, r.max, r.deemphasis75)
+        Log.i(TAG, "band plan ${r.name}: ${Band.format(r.min)}-${Band.format(r.max)} MHz, step ${r.step * 100} kHz, " +
+            "de-emphasis ${if (r.deemphasis75) 75 else 50} µs")
     }
 
     private fun setBusy(busy: Boolean) = _state.update { it.copy(busy = busy) }
@@ -390,21 +421,32 @@ class FmService : Service() {
     private fun startRds() {
         if (!settings.value.rds || FmNative.isRdsSupport() != 1) return
         var lastPs = ""
+        // Last radiotext, one character per byte: the RT+ tags give positions in it.
+        var rt = ""
         rdsThread =
             Thread({
                 while (rdsThread === Thread.currentThread()) {
                     val events = FmNative.readRds().toInt()
                     val set = settings.value
                     if (events and FmNative.RDS_EVENT_PROGRAMNAME != 0) {
-                        val ps = FmNative.getPs()?.let(::rdsText).orEmpty()
+                        val ps = FmNative.getPs()?.let { RdsText.clean(RdsText.decode(it)) }.orEmpty()
                         _state.update { it.copy(ps = ps) }
                         // Same name twice in a row: not a half-received or scrolling one.
                         if (set.rdsPresetNames && ps.isNotBlank() && ps == lastPs) namePreset(ps)
                         lastPs = ps
                     }
-                    if (set.radioText && events and FmNative.RDS_EVENT_LAST_RADIOTEXT != 0) {
-                        val rt = FmNative.getLrText()?.let(::rdsText).orEmpty()
-                        _state.update { it.copy(radioText = rt) }
+                    if ((set.radioText || set.rtPlus) && events and FmNative.RDS_EVENT_LAST_RADIOTEXT != 0) {
+                        FmNative.getLrText()?.let(RdsText::decode)?.let { text ->
+                            // A new text: the tags received for the last one do not fit it, wait for its own.
+                            if (text != rt) _state.update { it.copy(song = "", artist = "") }
+                            rt = text
+                            if (set.radioText) _state.update { it.copy(radioText = RdsText.clean(text)) }
+                        }
+                    }
+                    // RT+ (tags given by the driver once the radiotext is stable): artist and title of the song.
+                    if (set.rtPlus && events and FmNative.RDS_EVENT_RTP_TAG != 0) {
+                        val item = FmNative.getRtPlus()?.let { RdsText.rtPlus(rt, it) }
+                        _state.update { it.copy(song = item?.first.orEmpty(), artist = item?.second.orEmpty()) }
                     }
                     if (events and (FmNative.RDS_EVENT_FLAGS or FmNative.RDS_EVENT_PTY_CODE or FmNative.RDS_EVENT_PROGRAMNAME) != 0) {
                         FmNative.getRdsInfo()?.takeIf { it.size >= 4 }?.let { info ->
@@ -456,9 +498,6 @@ class FmService : Service() {
         t?.interrupt()
         t?.join(500)
     }
-
-    private fun rdsText(bytes: ByteArray): String =
-        String(bytes, Charsets.ISO_8859_1).replace('\u0000', ' ').trim().replace(Regex("\\s+"), " ")
 
     // --- Audio focus ---------------------------------------------------------------------------------------------
 
@@ -525,7 +564,7 @@ class FmService : Service() {
             MediaMetadata
                 .Builder()
                 .putString(MediaMetadata.METADATA_KEY_TITLE, s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, s.radioText.ifBlank { "FM ${Band.format(s.frequency)} MHz" })
+                .putString(MediaMetadata.METADATA_KEY_ARTIST, s.nowPlaying.ifBlank { "FM ${Band.format(s.frequency)} MHz" })
                 .putString(MediaMetadata.METADATA_KEY_ALBUM, getString(R.string.app_name))
                 .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, s.logo)
                 .putBitmap(MediaMetadata.METADATA_KEY_ART, s.logo)
@@ -567,7 +606,7 @@ class FmService : Service() {
             .Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_radio)
             .setContentTitle(s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
-            .setContentText(s.radioText.ifBlank { "${Band.format(s.frequency)} MHz" })
+            .setContentText(s.nowPlaying.ifBlank { "${Band.format(s.frequency)} MHz" })
             .setLargeIcon(s.logo)
             .setContentIntent(session.controller.sessionActivity)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
