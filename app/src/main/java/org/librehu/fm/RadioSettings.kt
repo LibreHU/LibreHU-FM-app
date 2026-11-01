@@ -20,6 +20,10 @@ data class Settings(
     val af: Boolean = false,
     /** Names the favourites without a name with the RDS station name. */
     val rdsPresetNames: Boolean = true,
+    /** Artist and title from the RT+ tags in the media card, the notification and the widget. */
+    val rtPlus: Boolean = true,
+    /** Band plan (limits, step, de-emphasis, PTY names); null = the one of [countryCode]. */
+    val region: Region? = null,
     val audioMode: AudioMode = AudioMode.AUTO,
     val logos: Boolean = true,
     /** Logos from the downloaded library only, never from the network. */
@@ -41,6 +45,10 @@ data class Settings(
     val countryCode: String
         get() = country.trim().uppercase(Locale.ROOT).ifBlank { Locale.getDefault().country.ifBlank { "FR" } }
 
+    /** Band plan in use. */
+    val band: Region
+        get() = region ?: Region.forCountry(countryCode)
+
     companion object {
         const val DEFAULT_SERVER = "all.api.radio-browser.info"
     }
@@ -59,6 +67,7 @@ object RadioSettings {
     ) {
         val f = state(context)
         val s = change(f.value)
+        Band.region = s.band
         f.value = s
         context.applicationContext
             .getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -68,6 +77,8 @@ object RadioSettings {
             .putBoolean("pty", s.pty)
             .putBoolean("af", s.af)
             .putBoolean("rds_preset_names", s.rdsPresetNames)
+            .putBoolean("rt_plus", s.rtPlus)
+            .putString("region", s.region?.name.orEmpty())
             .putString("audio_mode", s.audioMode.name)
             .putBoolean("logos", s.logos)
             .putBoolean("logos_offline", s.logosOffline)
@@ -77,7 +88,11 @@ object RadioSettings {
     }
 
     @Synchronized
-    private fun state(context: Context): MutableStateFlow<Settings> = flow ?: MutableStateFlow(load(context)).also { flow = it }
+    private fun state(context: Context): MutableStateFlow<Settings> =
+        flow ?: MutableStateFlow(load(context)).also {
+            Band.region = it.value.band
+            flow = it
+        }
 
     private fun load(context: Context): Settings {
         val p = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -88,6 +103,8 @@ object RadioSettings {
             pty = p.getBoolean("pty", d.pty),
             af = p.getBoolean("af", d.af),
             rdsPresetNames = p.getBoolean("rds_preset_names", d.rdsPresetNames),
+            rtPlus = p.getBoolean("rt_plus", d.rtPlus),
+            region = runCatching { Region.valueOf(p.getString("region", null).orEmpty()) }.getOrNull(),
             audioMode = runCatching { AudioMode.valueOf(p.getString("audio_mode", null) ?: "") }.getOrDefault(d.audioMode),
             logos = p.getBoolean("logos", d.logos),
             logosOffline = p.getBoolean("logos_offline", d.logosOffline),

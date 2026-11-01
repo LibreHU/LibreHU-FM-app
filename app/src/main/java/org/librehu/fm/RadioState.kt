@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 
 /** One saved station. [frequency] in 100 kHz units (1015 = 101.5 MHz). */
 data class Station(
@@ -20,6 +21,9 @@ data class RadioState(
     val frequency: Int = Band.DEFAULT,
     val ps: String = "",
     val radioText: String = "",
+    /** Song playing, from the RT+ tags of the radiotext (empty when the station sends none). */
+    val song: String = "",
+    val artist: String = "",
     val presets: List<Station> = emptyList(),
     val stations: List<Station> = emptyList(),
     /** Logo of the current station (Radio Browser, cached), when found. */
@@ -36,19 +40,85 @@ data class RadioState(
     /** Station name: RDS PS, else the preset name. */
     val title: String
         get() = ps.ifBlank { presets.firstOrNull { it.frequency == frequency }?.name.orEmpty() }
+
+    /** Second line of the media card, the notification and the widget: "artist – title" (RT+), else the radiotext. */
+    val nowPlaying: String
+        get() = listOf(artist, song).filter { it.isNotBlank() }.joinToString(" – ").ifBlank { radioText }
 }
 
+/**
+ * FM band plan of a part of the world, frequencies in 100 kHz units. Sources (Wikipedia, "FM broadcast band" and "FM
+ * broadcasting"): channels every 200 kHz on odd tenths in the Americas (ITU region 2: 87.9 to 107.9 MHz in the United
+ * States), the same odd tenths in South Korea; 76 to 95 MHz in Japan; 100 kHz elsewhere; de-emphasis of 75 µs in the
+ * Americas and South Korea, 50 µs in the rest of the world.
+ */
+enum class Region(
+    val min: Int,
+    val max: Int,
+    /** Tuning step: 1 = 100 kHz; 2 = 200 kHz, on the odd tenths counted from 87.5 MHz. */
+    val step: Int,
+    val default: Int,
+    /** 75 µs de-emphasis instead of 50 µs (set when the chip powers up). */
+    val deemphasis75: Boolean,
+    /** North American RDS (RBDS): programme types with other names. */
+    val rbds: Boolean,
+    /** Band of the MediaTek FM library: FM_BAND_UE (1) or FM_BAND_JAPAN (2). */
+    val chipBand: Int,
+) {
+    EUROPE(875, 1080, 1, 1000, false, false, 1),
+    AMERICAS(875, 1079, 2, 1001, true, true, 1),
+    JAPAN(760, 950, 1, 800, false, false, 2),
+    ;
+
+    /** Names of the programme types (PTY 0–31): RDS (EN 50067) or RBDS (North America). */
+    val ptyNames: Int get() = if (rbds) R.array.pty_names_rbds else R.array.pty_names
+
+    companion object {
+        /** Sovereign states of the Americas, the US territories and South Korea. */
+        private val AMERICAS_COUNTRIES =
+            setOf(
+                "AG", "AR", "BB", "BO", "BR", "BS", "BZ", "CA", "CL", "CO", "CR", "CU", "DM", "DO", "EC", "GD", "GT", "GY",
+                "HN", "HT", "JM", "KN", "LC", "MX", "NI", "PA", "PE", "PY", "SR", "SV", "TT", "US", "UY", "VC", "VE",
+                "AS", "GU", "MP", "PR", "UM", "VI", "KR",
+            )
+
+        /** Band plan of a country (ISO 3166 code). */
+        fun forCountry(code: String): Region =
+            when (code.uppercase(Locale.ROOT)) {
+                "JP" -> JAPAN
+                in AMERICAS_COUNTRIES -> AMERICAS
+                else -> EUROPE
+            }
+    }
+}
+
+/** Limits and step of the band of the chosen [Region] (set by [RadioSettings]). */
 object Band {
-    const val MIN = 875
-    const val MAX = 1080
-    const val STEP = 1
-    const val DEFAULT = 1000
+    @Volatile
+    var region: Region = Region.EUROPE
+
+    val MIN: Int get() = region.min
+    val MAX: Int get() = region.max
+    val STEP: Int get() = region.step
+    val DEFAULT: Int get() = region.default
 
     fun mhz(frequency: Int): Float = frequency / 10f
 
     fun format(frequency: Int): String = "%d.%d".format(frequency / 10, frequency % 10)
 
-    fun clamp(frequency: Int): Int = frequency.coerceIn(MIN, MAX)
+    /** In the band and on its channels (odd tenths with 200 kHz). */
+    fun clamp(frequency: Int): Int {
+        val r = region
+        val f = frequency.coerceIn(r.min, r.max)
+        return (r.min + (f - r.min + r.step / 2) / r.step * r.step).coerceAtMost(r.max)
+    }
+
+    /** Labels of the tuning scale: whole MHz every 4 MHz (108 for a band ending at 107.9). */
+    fun scaleLabels(): List<Int> {
+        val r = region
+        val first = (r.min + 39) / 40 * 40
+        return (first..r.max + 1 step 40).toList()
+    }
 }
 
 /** Persistence of the last frequency, presets and scan results. */

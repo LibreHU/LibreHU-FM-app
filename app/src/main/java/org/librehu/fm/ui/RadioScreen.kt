@@ -152,7 +152,7 @@ private fun NowPlaying(
                 when {
                     !s.available || s.error.isNotEmpty() -> s.error.ifEmpty { stringResource(R.string.error_driver) }
                     s.scanning -> stringResource(R.string.scanning)
-                    s.radioText.isNotBlank() -> s.radioText
+                    s.nowPlaying.isNotBlank() -> s.nowPlaying
                     !s.poweredOn -> stringResource(R.string.off)
                     else -> " "
                 },
@@ -201,8 +201,8 @@ private fun NowPlaying(
 /** RDS programme type and traffic flags (TP: traffic programme, TA: traffic announcement on air). */
 @Composable
 private fun RdsBadges(s: RadioState) {
-    val pty = stringArrayResource(R.array.pty_names)
-    if (s.pty in 1 until pty.size) Badge(pty[s.pty], false)
+    val pty = stringArrayResource(Band.region.ptyNames)
+    if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) Badge(pty[s.pty], false)
     if (s.ta) {
         Badge("TA", true)
     } else if (s.tp) {
@@ -287,20 +287,20 @@ private fun StationLogo(s: RadioState) {
     }
 }
 
-/** Band slider 87.5–108 MHz; the frequency is sent when the finger is lifted. */
+/** Band slider (limits of the region's band, on its channels); the frequency is sent when the finger is lifted. */
 @Composable
 private fun TunerBar(
     frequency: Int,
     onTune: (Int) -> Unit,
 ) {
     var dragging by remember { mutableFloatStateOf(-1f) }
-    val shown = if (dragging >= 0) dragging.roundToInt() else frequency
+    val shown = if (dragging >= 0) Band.clamp(dragging.roundToInt()) else frequency
     Column {
         Slider(
             value = shown.toFloat(),
             onValueChange = { dragging = it },
             onValueChangeFinished = {
-                if (dragging >= 0) onTune(dragging.roundToInt())
+                if (dragging >= 0) onTune(Band.clamp(dragging.roundToInt()))
                 dragging = -1f
             },
             valueRange = Band.MIN.toFloat()..Band.MAX.toFloat(),

@@ -8,6 +8,7 @@ import org.librehu.fm.FmService
 import org.librehu.fm.LogoLibrary
 import org.librehu.fm.R
 import org.librehu.fm.RadioSettings
+import org.librehu.fm.Region
 import org.librehu.fm.StationLogos
 
 /**
@@ -16,7 +17,10 @@ import org.librehu.fm.StationLogos
  * settings as the app's screens.
  */
 class BridgeProvider : BridgeKitProvider() {
-    override fun pages(context: Context): List<KitPage> = listOf(radio(context), settings(context))
+    override fun pages(context: Context): List<KitPage> {
+        RadioSettings.get(context) // loads the band plan used by the frequency slider
+        return listOf(radio(context), settings(context))
+    }
 
     private fun send(
         c: Context,
@@ -52,7 +56,27 @@ class BridgeProvider : BridgeKitProvider() {
                 switch("pty", s(R.string.set_pty), st.pty) { v -> update { it.copy(pty = v) } }
                 switch("af", s(R.string.set_af), st.af, s(R.string.set_af_hint)) { v -> update { it.copy(af = v) } }
                 switch("preset_names", s(R.string.set_preset_names), st.rdsPresetNames) { v -> update { it.copy(rdsPresetNames = v) } }
+                switch("rt_plus", s(R.string.set_rt_plus), st.rtPlus, s(R.string.set_rt_plus_hint)) { v -> update { it.copy(rtPlus = v) } }
             }
+            section(s(R.string.set_region))
+            val regionName: (Region) -> String = {
+                s(
+                    when (it) {
+                        Region.EUROPE -> R.string.set_region_europe
+                        Region.AMERICAS -> R.string.set_region_americas
+                        Region.JAPAN -> R.string.set_region_japan
+                    },
+                )
+            }
+            choice(
+                "region",
+                s(R.string.set_region),
+                st.region,
+                listOf<Pair<Region?, String>>(
+                    null to c.getString(R.string.set_region_auto, st.countryCode, regionName(Region.forCountry(st.countryCode))),
+                ) + enumValues<Region>().map { it to regionName(it) },
+                s(R.string.set_region_hint),
+            ) { v -> update { it.copy(region = v) } }
             section(s(R.string.set_audio))
             pick("audio_mode", s(R.string.set_audio), st.audioMode, s(R.string.set_audio_hint), label = {
                 s(

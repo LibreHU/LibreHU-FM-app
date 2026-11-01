@@ -87,13 +87,13 @@ import kotlin.math.roundToInt
 private const val PRESET_PAGES = 3
 private const val PRESETS_BY_PAGE = 6
 
-/** Problem, scan, radiotext or "off": the line under the station name. */
+/** Problem, scan, artist and title (RT+) or radiotext, or "off": the line under the station name. */
 @Composable
 private fun statusLine(s: RadioState): String =
     when {
         !s.available || s.error.isNotEmpty() -> s.error.ifEmpty { stringResource(R.string.error_driver) }
         s.scanning -> stringResource(R.string.scanning)
-        s.radioText.isNotBlank() -> s.radioText
+        s.nowPlaying.isNotBlank() -> s.nowPlaying
         !s.poweredOn -> stringResource(R.string.off)
         else -> ""
     }
@@ -289,7 +289,7 @@ private fun TuningScale(
     var drag by remember { mutableStateOf<Float?>(null) }
     val span = (Band.MAX - Band.MIN).toFloat()
     val shown = drag ?: ((frequency - Band.MIN) / span)
-    fun toFrequency(f: Float) = (Band.MIN + f.coerceIn(0f, 1f) * span).roundToInt()
+    fun toFrequency(f: Float) = Band.clamp((Band.MIN + f.coerceIn(0f, 1f) * span).roundToInt())
     val accent = CarColors.Accent
     BoxWithConstraints(
         modifier
@@ -350,7 +350,7 @@ private fun TuningScale(
                 },
             ) {
                 Row(Modifier.fillMaxWidth().align(Alignment.BottomCenter), horizontalArrangement = Arrangement.SpaceBetween) {
-                    listOf(880, 920, 960, 1000, 1040, 1080).forEach { Text(Band.format(it).removeSuffix(".0"), color = Color.White, fontSize = 18.sp) }
+                    Band.scaleLabels().forEach { Text(Band.format(it).removeSuffix(".0"), color = Color.White, fontSize = 18.sp) }
                 }
             }
         }
@@ -444,8 +444,8 @@ private fun AmbientFrequencies(
                     val preset = s.presets.indexOfFirst { it.frequency == s.frequency }
                     if (preset >= 0) Box(Modifier.align(Alignment.TopStart)) { NumberBadge(preset + 1, strong = true) }
                     Row(Modifier.align(Alignment.TopEnd), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        val pty = stringArrayResource(R.array.pty_names)
-                        if (s.pty in 1 until pty.size) FlagBox(pty[s.pty])
+                        val pty = stringArrayResource(Band.region.ptyNames)
+                        if (s.pty in 1 until pty.size && pty[s.pty].isNotBlank()) FlagBox(pty[s.pty])
                         if (s.tp || s.ta) FlagBox(if (s.ta) "TA" else "TP")
                     }
                     Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {

@@ -32,6 +32,17 @@ static int g_stopscan = 0;
 /* LibreHU: AC8257 driver, see fm_tune_parm_8257. Set by FM_interface_init. */
 fm_bool g_b8257 = fm_false;
 
+/* LibreHU: de-emphasis of the next power-up on the AC8257 driver (fm_tune_parm_8257.deemphasis, read by its
+ * FM_IOCTL_POWERUP only: 0 = 50 us, most of the world; 1 = 75 us, the Americas and South Korea). Set by setRegion. */
+uint8_t g_deemphasis = 0;
+
+/* LibreHU: RT+ tags of the last RDS record of the AC8257 driver (its RTP_Data): toggle, running, then content type,
+ * start and additional length of the two tags. Not valid with a 688-byte record, which has no RT+. */
+static struct {
+    fm_bool valid;
+    int32_t info[8];
+} g_rtp;
+
 /* LibreHU: POWERUP / TUNE with the tune structure of the running driver. [freq] in, the driver's frequency out. */
 static int COM_tune_ioctl(int fd, unsigned long cmd, int band, int *freq)
 {
@@ -45,6 +56,7 @@ static int COM_tune_ioctl(int fd, unsigned long cmd, int band, int *freq)
         parm.freq = *freq * unit;
         parm.hilo = FM_AUTO_HILO_OFF;
         parm.space = FM_SEEK_SPACE;
+        parm.deemphasis = g_deemphasis;
         ret = ioctl(fd, cmd, &parm);
         *freq = parm.freq / unit;
     } else {
@@ -144,7 +156,8 @@ int COM_get_ps(int fd, RDSData_Struct *rds, uint8_t **ps, int *ps_len)
         *ps = &rds->PS_Data.PS[3][0];
         *ps_len = sizeof(rds->PS_Data.PS[3]);
 
-        COM_change_string(*ps, *ps_len);
+        /* LibreHU: raw bytes, the app decodes the RDS character set (accents above 0x7F, which
+         * COM_change_string turned into spaces). */
         memcpy(tmp_ps, *ps, 8);
         LOGI("PS=%s\n", tmp_ps);
     } else {
@@ -170,8 +183,9 @@ int COM_get_rt(int fd, RDSData_Struct *rds, uint8_t **rt, int *rt_len)
         LOGD("%s, Success,[event_status=%d]\n", __func__, rds->event_status);
         *rt = &rds->RT_Data.TextData[3][0];
         *rt_len = rds->RT_Data.TextLength;
+        if (*rt_len > (int)sizeof(rds->RT_Data.TextData[3])) *rt_len = sizeof(rds->RT_Data.TextData[3]);
 
-        COM_change_string(*rt, *rt_len);
+        /* LibreHU: raw bytes (see COM_get_ps); the positions of the RT+ tags stay those of the text. */
         memcpy(tmp_rt, *rt, 64);
         LOGI("RT=%s\n", tmp_rt);
     } else {
@@ -438,6 +452,7 @@ int COM_get_chip_id(int fd, int *chipid)
  * publishes nothing. Analysis and first patch: Reo Au In.
  */
 #define FM_RDS_RECORD_AC8257 720
+#define FM_RDS_AC8257_RTP_OFS 556
 #define FM_RDS_AC8257_EVENT_OFS 584
 #define FM_RDS_AC8257_GC_OFS 588
 
@@ -448,6 +463,8 @@ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
     static_assert(offsetof(RDSData_Struct, gc) == 556, "unexpected group counter offset");
     static_assert(sizeof(RDSData_Struct::gc) == 132, "unexpected group counter size (32-bit build expected)");
     static_assert(FM_RDS_AC8257_GC_OFS + sizeof(RDSData_Struct::gc) == FM_RDS_RECORD_AC8257, "AC8257 layout");
+    /* struct rds_rtp_t: bool toggle, bool running, 2 bytes of padding, 2 x {int content_type, start_pos, additional_len} */
+    static_assert(FM_RDS_AC8257_RTP_OFS + 4 + 6 * sizeof(int32_t) == FM_RDS_AC8257_EVENT_OFS, "AC8257 RT+ layout");
     static uint16_t last_len;
     uint8_t wire[1024];
     ssize_t n;
@@ -457,10 +474,15 @@ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
     n = read(fd, wire, sizeof(wire));
     if (n == (ssize_t)sizeof(RDSData_Struct)) {
         memcpy(rds, wire, sizeof(RDSData_Struct));
+        g_rtp.valid = fm_false;
     } else if (n == FM_RDS_RECORD_AC8257) {
         memcpy(rds, wire, offsetof(RDSData_Struct, event_status));
         rds->event_status = (uint16_t)(wire[FM_RDS_AC8257_EVENT_OFS] | wire[FM_RDS_AC8257_EVENT_OFS + 1] << 8);
         memcpy(&rds->gc, wire + FM_RDS_AC8257_GC_OFS, sizeof(rds->gc));
+        g_rtp.info[0] = wire[FM_RDS_AC8257_RTP_OFS] != 0;
+        g_rtp.info[1] = wire[FM_RDS_AC8257_RTP_OFS + 1] != 0;
+        memcpy(&g_rtp.info[2], wire + FM_RDS_AC8257_RTP_OFS + 4, 6 * sizeof(int32_t));
+        g_rtp.valid = fm_true;
     } else {
         if (n > 0 && n != last_len) LOGE("%s: RDS record of %zd bytes, layout unknown: ignored\n", __func__, n);
         if (n > 0) last_len = (uint16_t)n;
@@ -472,6 +494,14 @@ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
     }
     *rds_status = rds->event_status;
     LOGD("event_status = 0x%x\n", rds->event_status);
+    return 0;
+}
+
+/* LibreHU: RT+ tags of the last record read (see g_rtp); -ERR_RDS_NO_DATA when the driver gives none. */
+int COM_get_rtplus(int32_t info[8])
+{
+    if (!g_rtp.valid) return -ERR_RDS_NO_DATA;
+    memcpy(info, g_rtp.info, sizeof(g_rtp.info));
     return 0;
 }
 

@@ -221,6 +221,32 @@ jintArray getRdsInfo(JNIEnv *env, jobject thiz)
     return out;
 }
 
+/*
+ * LibreHU: band plan of the region, for the next power-up, seek and scan: band (FM_BAND_UE, FM_BAND_JAPAN), seek space
+ * (1 = 100 kHz, 2 = 200 kHz: fmr_core's seek and scan step from 87.5 MHz, so odd tenths), limits in 100 kHz units
+ * (checked by FMR_pwr_up) and the 75 us de-emphasis (AC8257 power-up only).
+ */
+void setRegion(JNIEnv *env, jobject thiz, jint band, jint space, jint low, jint high, jboolean de75)
+{
+    fmr_data.cfg_data.band = band;
+    fmr_data.cfg_data.seek_space = space;
+    fmr_data.cfg_data.low_band = low;
+    fmr_data.cfg_data.high_band = high;
+    g_deemphasis = de75 == JNI_TRUE ? 1 : 0;
+    LOGI("%s: [band=%d] [space=%d] [%d-%d] [deemphasis=%d]\n", __func__, band, space, low, high, g_deemphasis);
+}
+
+/* LibreHU: RT+ tags of the last RDS data read by readRds: [toggle, running, type, start, additional length of the
+ * first tag, then of the second], or null when the driver gave none. */
+jintArray getRtPlus(JNIEnv *env, jobject thiz)
+{
+    int32_t info[8];
+    if (COM_get_rtplus(info) != 0) return NULL;
+    jintArray out = env->NewIntArray(8);
+    if (out != NULL) env->SetIntArrayRegion(out, 0, 8, (const jint *)info);
+    return out;
+}
+
 jshortArray getAFList(JNIEnv *env, jobject thiz)
 {
     int ret = 0;
@@ -364,6 +390,8 @@ static JNINativeMethod methodsRx[] = {
     {"isRdsSupport",	"()I", (void*)isRdsSupport},  //16
     {"switchAntenna", "(I)I", (void*)switchAntenna}, //17
     {"getRdsInfo", "()[I", (void*)getRdsInfo}, // LibreHU
+    {"setRegion", "(IIIIZ)V", (void*)setRegion}, // LibreHU
+    {"getRtPlus", "()[I", (void*)getRtPlus}, // LibreHU
 };
 
 /*

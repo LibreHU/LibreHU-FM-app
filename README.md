@@ -20,12 +20,30 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   souvent abrégés) sont rapprochés : « ICIVAUCL » trouve « ici Vaucluse » (ou son ancien nom « France Bleu
   Vaucluse »), « RTV FM » trouve « RTV » ou « Radio RTV ». Une station absente de Radio Browser : **toucher le
   logo** pour choisir une image pour cette fréquence (ou revenir au logo automatique).
-- Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris.
+- Recherche ▲▼, pas de 0,1 MHz (0,2 MHz aux Amériques), balayage de la bande, favoris.
+- **Bande et région** (Paramètres) : limites de la bande, pas d'accord, désaccentuation et noms des types de programme
+  de la région, choisis d'après le pays (celui des logos, sinon celui de l'autoradio) ou à la main :
+  - Europe, Afrique, Asie : 87,5–108 MHz, pas de 100 kHz, désaccentuation 50 µs, types de programme RDS ;
+  - Amériques et Corée du Sud : 87,5–107,9 MHz sur les dixièmes impairs (87,9, 88,1…), pas de 200 kHz,
+    désaccentuation **75 µs**, types de programme **RBDS** (Rock, Top 40, Talk…) ;
+  - Japon : 76–95 MHz, pas de 100 kHz, 50 µs.
+
+  Sources : articles Wikipédia [FM broadcast band](https://en.wikipedia.org/wiki/FM_broadcast_band) et
+  [FM broadcasting](https://en.wikipedia.org/wiki/FM_broadcasting), [Radio Data System](https://en.wikipedia.org/wiki/Radio_Data_System)
+  (types de programme RDS et RBDS). La désaccentuation est envoyée au pilote de l'AC8257 à la mise en marche
+  (`fm_tune_parm.deemphasis`) : avant, l'appli imposait 50 µs partout, d'où des aigus trop forts et plus de souffle
+  sur les stations américaines, émises avec une préaccentuation de 75 µs. Un changement de région redémarre la radio.
 - **RDS** décodé par la puce FM : nom de station, radiotexte, type de programme (PTY), TP / TA, fréquences
   alternatives (AF, option), nommage automatique des favoris. Le pilote FM de l'AC8257 rend un enregistrement RDS de
   720 octets (balises RT+ en plus) : l'appli, qui en demandait 688, n'en recevait aucun. Elle reconnaît maintenant
   les deux formats à la longueur rendue (analyse et premier correctif : Reo Au In).
-- **Paramètres** (roue dentée) : RDS, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
+  - **Accents** : le texte suit la table de caractères du RDS (EN 50067, annexe E : 0x82 = é, 0x8B = Ç, 0xA9 = €…) ;
+    la bibliothèque native remplaçait tout octet au-dessus de 0x7E par une espace (« Vous  coutez »).
+  - **RT+** (option, activée par défaut) : artiste et titre balisés par la station dans le radiotexte, affichés à la
+    place du radiotexte sous le nom de la station, sur le widget, la notification et la carte média du lanceur
+    (« Michael Jackson – Billie Jean »). Le pilote décode les balises (application 0x4BD7) ; l'appli les découpe
+    dans le texte (type 1 = titre, 4 = artiste, longueur codée = nombre de caractères moins un).
+- **Paramètres** (roue dentée) : RDS (dont RT+), bande et région, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
   Browser (automatique, miroir de la liste officielle ou URL personnalisée), pays, **bibliothèque hors ligne**
   (téléchargement des logos des stations du pays, les plus populaires ou toutes) et mode hors ligne.
 - `MediaSession` : touches au volant, notification, carte « média » du lanceur.
@@ -110,7 +128,7 @@ au paquet indiqué dans `reply_to`. Rien d'autre que `id` n'est lancé ; une sec
 
 ## Appli téléphone (LibreHU Bridge)
 
-Réglable depuis le téléphone par l'appli LibreHU Bridge (Android et iPhone), à travers LibreHU-service : la radio (marche, fréquence, stations, recherche, balayage) et tous les réglages (RDS, chemin audio, logos).
+Réglable depuis le téléphone par l'appli LibreHU Bridge (Android et iPhone), à travers LibreHU-service : la radio (marche, fréquence, stations, recherche, balayage) et tous les réglages (RDS et RT+, bande et région, chemin audio, logos).
 Fournisseur `<paquet>.bridge` (`bridge/BridgeProvider.kt`), réservé aux applis signées avec la clé LibreHU (permission
 `org.librehu.permission.BRIDGE`, vérifiée dans `call()` lui-même) ; format décrit dans
 [LibreHU-service, docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).

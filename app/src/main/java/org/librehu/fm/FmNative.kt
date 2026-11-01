@@ -55,10 +55,29 @@ object FmNative {
     /** [PI, PTY, TP, TA] of the last RDS data read by [readRds]. */
     @JvmStatic external fun getRdsInfo(): IntArray?
 
+    /**
+     * Band plan for the next power-up, seek and scan: [band] FM_BAND_UE (1) or FM_BAND_JAPAN (2), [space] 1 = 100 kHz or
+     * 2 = 200 kHz, limits in 100 kHz units, 75 µs de-emphasis (applied by the AC8257 driver at power-up).
+     */
+    @JvmStatic external fun setRegion(
+        band: Int,
+        space: Int,
+        low: Int,
+        high: Int,
+        deemphasis75: Boolean,
+    )
+
+    /**
+     * RT+ tags of the last RDS data read by [readRds] (AC8257 driver): [toggle, running, content type, start, length
+     * marker of the first tag, then of the second], or null.
+     */
+    @JvmStatic external fun getRtPlus(): IntArray?
+
     const val RDS_EVENT_FLAGS = 0x0001
     const val RDS_EVENT_PI_CODE = 0x0002
     const val RDS_EVENT_PTY_CODE = 0x0004
     const val RDS_EVENT_PROGRAMNAME = 0x0008
     const val RDS_EVENT_LAST_RADIOTEXT = 0x0040
     const val RDS_EVENT_AF = 0x0080
+    const val RDS_EVENT_RTP_TAG = 0x4000
 }
