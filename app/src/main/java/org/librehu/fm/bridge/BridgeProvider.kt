@@ -64,6 +64,7 @@ class BridgeProvider : BridgeKitProvider() {
                     when (it) {
                         Region.EUROPE -> R.string.set_region_europe
                         Region.AMERICAS -> R.string.set_region_americas
+                        Region.BRAZIL -> R.string.set_region_brazil
                         Region.JAPAN -> R.string.set_region_japan
                     },
                 )

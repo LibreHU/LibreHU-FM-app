@@ -73,6 +73,12 @@ object FmNative {
      */
     @JvmStatic external fun getRtPlus(): IntArray?
 
+    /**
+     * Raw RDS groups of the driver's last RDS interrupt (up to 12), as `[A, B, C, D, crc]` per group (crc: 0x08 block A
+     * good, 0x04 B, 0x02 C, 0x01 D), or null when there is nothing new: for what the driver does not decode ([Ert]).
+     */
+    @JvmStatic external fun readRdsGroups(): ShortArray?
+
     const val RDS_EVENT_FLAGS = 0x0001
     const val RDS_EVENT_PI_CODE = 0x0002
     const val RDS_EVENT_PTY_CODE = 0x0004

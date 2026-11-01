@@ -42,6 +42,7 @@
     <string name="set_region_auto">Automatique (%1$s : %2$s)</string>
     <string name="set_region_europe">Europe, Afrique, Asie</string>
     <string name="set_region_americas">Amériques, Corée du Sud</string>
+    <string name="set_region_brazil">Brésil (bande étendue)</string>
     <string name="set_region_japan">Japon</string>
     <string name="set_region_current">En service : %1$s–%2$s MHz, pas de %3$d kHz, désaccentuation %4$d µs%5$s</string>
     <string name="set_audio">Chemin audio</string>

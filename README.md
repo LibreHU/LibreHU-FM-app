@@ -26,6 +26,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   - Europe, Afrique, Asie : 87,5–108 MHz, pas de 100 kHz, désaccentuation 50 µs, types de programme RDS ;
   - Amériques et Corée du Sud : 87,5–107,9 MHz sur les dixièmes impairs (87,9, 88,1…), pas de 200 kHz,
     désaccentuation **75 µs**, types de programme **RBDS** (Rock, Top 40, Talk…) ;
+  - Brésil : **bande étendue** 76,1–107,9 MHz sur les dixièmes impairs (canaux 5 et 6 rendus à la radio, émetteurs
+    depuis mai 2021), pas de 200 kHz, 75 µs, types de programme RDS ; à choisir à la main au Chili (76–108 MHz annoncé
+    en 2023) ;
   - Japon : 76–95 MHz, pas de 100 kHz, 50 µs.
 
   Sources : articles Wikipédia [FM broadcast band](https://en.wikipedia.org/wiki/FM_broadcast_band) et
@@ -43,6 +46,13 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
     place du radiotexte sous le nom de la station, sur le widget, la notification et la carte média du lanceur
     (« Michael Jackson – Billie Jean »). Le pilote décode les balises (application 0x4BD7) ; l'appli les découpe
     dans le texte (type 1 = titre, 4 = artiste, longueur codée = nombre de caractères moins un).
+  - **Indicatif d'appel (États-Unis)** : calculé depuis le code PI selon la norme NRSC-4-B (annexe D : quatre lettres
+    K / W, table des stations à trois lettres, réseaux NPR / CBC), affiché à côté du type de programme, et comme nom
+    de la station quand elle n'envoie pas de PS. Seulement pour les États-Unis et leurs territoires : le Canada et le
+    Mexique attribuent leurs codes PI autrement, et les réémetteurs (*translators*) ont des codes au hasard.
+  - **Radiotexte étendu (eRT)** : texte UTF-8 (ou UCS-2) de 128 octets pour les écritures absentes du RDS (arabe,
+    chinois, cyrillique…), application 0x6552. Le pilote ne le décode pas : l'appli lit les groupes RDS bruts
+    (`FM_IOCTL_RDS_GET_LOG`) et le reconstruit ; il remplace le radiotexte quand la station en envoie un.
 - **Paramètres** (roue dentée) : RDS (dont RT+), bande et région, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
   Browser (automatique, miroir de la liste officielle ou URL personnalisée), pays, **bibliothèque hors ligne**
   (téléchargement des logos des stations du pays, les plus populaires ou toutes) et mode hors ligne.
