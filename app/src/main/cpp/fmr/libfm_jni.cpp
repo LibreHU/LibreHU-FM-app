@@ -247,6 +247,43 @@ jintArray getRtPlus(JNIEnv *env, jobject thiz)
     return out;
 }
 
+/*
+ * LibreHU: raw RDS groups of the driver's last RDS interrupt (FM_IOCTL_RDS_GET_LOG), for what the driver does not
+ * decode (eRT). The driver copies a struct rds_raw_t (int dirty, int len, then len bytes of struct rds_rx_t: sin, cos
+ * and up to 12 groups of {A, B, C, D, cbc, crc}) and keeps only the last interrupt; returned as [A, B, C, D, crc] per
+ * group (crc: 0x08 block A good, 0x04 B, 0x02 C, 0x01 D), or null when there is nothing new. The app's struct
+ * rds_raw_data has 2 bytes less than the driver's record: a buffer of the driver's size is used.
+ */
+jshortArray readRdsGroups(JNIEnv *env, jobject thiz)
+{
+    struct {
+        int32_t dirty;
+        int32_t len;
+        uint8_t data[148 + 4];
+    } raw;
+    jshort out[12 * 5];
+    int n, i;
+
+    memset(&raw, 0, sizeof(raw));
+    if (fmr_data.fd < 0 || ioctl(fmr_data.fd, FM_IOCTL_RDS_GET_LOG, &raw) < 0) return NULL;
+    if (raw.len > 148) raw.len = 148;
+    n = (raw.len - 4) / 12;
+    if (n <= 0) return NULL;
+    if (n > 12) n = 12;
+    for (i = 0; i < n; i++) {
+        uint16_t p[6];
+        memcpy(p, raw.data + 4 + 12 * i, sizeof(p));
+        out[5 * i] = p[0];
+        out[5 * i + 1] = p[1];
+        out[5 * i + 2] = p[2];
+        out[5 * i + 3] = p[3];
+        out[5 * i + 4] = p[5];
+    }
+    jshortArray arr = env->NewShortArray(5 * n);
+    if (arr != NULL) env->SetShortArrayRegion(arr, 0, 5 * n, out);
+    return arr;
+}
+
 jshortArray getAFList(JNIEnv *env, jobject thiz)
 {
     int ret = 0;
@@ -392,6 +429,7 @@ static JNINativeMethod methodsRx[] = {
     {"getRdsInfo", "()[I", (void*)getRdsInfo}, // LibreHU
     {"setRegion", "(IIIIZ)V", (void*)setRegion}, // LibreHU
     {"getRtPlus", "()[I", (void*)getRtPlus}, // LibreHU
+    {"readRdsGroups", "()[S", (void*)readRdsGroups}, // LibreHU
 };
 
 /*

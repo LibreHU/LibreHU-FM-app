@@ -28,6 +28,8 @@ data class RadioState(
     val stations: List<Station> = emptyList(),
     /** Logo of the current station (Radio Browser, cached), when found. */
     val logo: Bitmap? = null,
+    /** Call letters computed from the PI code (US stations, [Rbds]), "" elsewhere. */
+    val callSign: String = "",
     /** RDS programme type (0 = none, 1–31 per EN 50067), traffic programme / announcement flags. */
     val pty: Int = 0,
     val tp: Boolean = false,
@@ -37,9 +39,9 @@ data class RadioState(
 ) {
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 
-    /** Station name: RDS PS, else the preset name. */
+    /** Station name: RDS PS, else the preset name, else the call letters. */
     val title: String
-        get() = ps.ifBlank { presets.firstOrNull { it.frequency == frequency }?.name.orEmpty() }
+        get() = ps.ifBlank { presets.firstOrNull { it.frequency == frequency }?.name.orEmpty() }.ifBlank { callSign }
 
     /** Second line of the media card, the notification and the widget: "artist – title" (RT+), else the radiotext. */
     val nowPlaying: String
@@ -49,8 +51,9 @@ data class RadioState(
 /**
  * FM band plan of a part of the world, frequencies in 100 kHz units. Sources (Wikipedia, "FM broadcast band" and "FM
  * broadcasting"): channels every 200 kHz on odd tenths in the Americas (ITU region 2: 87.9 to 107.9 MHz in the United
- * States), the same odd tenths in South Korea; 76 to 95 MHz in Japan; 100 kHz elsewhere; de-emphasis of 75 µs in the
- * Americas and South Korea, 50 µs in the rest of the world.
+ * States), the same odd tenths in South Korea; 76 to 95 MHz in Japan; Brazil's extended band (eFM, channels 5 and 6,
+ * 76.1 to 87.5 MHz, on air since May 2021); 100 kHz elsewhere; de-emphasis of 75 µs in the Americas and South Korea,
+ * 50 µs in the rest of the world.
  */
 enum class Region(
     val min: Int,
@@ -62,11 +65,17 @@ enum class Region(
     val deemphasis75: Boolean,
     /** North American RDS (RBDS): programme types with other names. */
     val rbds: Boolean,
-    /** Band of the MediaTek FM library: FM_BAND_UE (1) or FM_BAND_JAPAN (2). */
+    /**
+     * Band of the MediaTek FM library: FM_BAND_UE (1), FM_BAND_JAPAN (2) or FM_BAND_SPECIAL (4: limits of [min] and [max],
+     * channels counted from [min]).
+     */
     val chipBand: Int,
 ) {
     EUROPE(875, 1080, 1, 1000, false, false, 1),
     AMERICAS(875, 1079, 2, 1001, true, true, 1),
+
+    /** Brazil with its extended band: 76.1 to 107.9 MHz on the odd tenths; RDS programme types (RBDS is the US one). */
+    BRAZIL(761, 1079, 2, 1001, true, false, 4),
     JAPAN(760, 950, 1, 800, false, false, 2),
     ;
 
@@ -74,10 +83,10 @@ enum class Region(
     val ptyNames: Int get() = if (rbds) R.array.pty_names_rbds else R.array.pty_names
 
     companion object {
-        /** Sovereign states of the Americas, the US territories and South Korea. */
+        /** Sovereign states of the Americas (Brazil apart), the US territories and South Korea. */
         private val AMERICAS_COUNTRIES =
             setOf(
-                "AG", "AR", "BB", "BO", "BR", "BS", "BZ", "CA", "CL", "CO", "CR", "CU", "DM", "DO", "EC", "GD", "GT", "GY",
+                "AG", "AR", "BB", "BO", "BS", "BZ", "CA", "CL", "CO", "CR", "CU", "DM", "DO", "EC", "GD", "GT", "GY",
                 "HN", "HT", "JM", "KN", "LC", "MX", "NI", "PA", "PE", "PY", "SR", "SV", "TT", "US", "UY", "VC", "VE",
                 "AS", "GU", "MP", "PR", "UM", "VI", "KR",
             )
@@ -86,6 +95,7 @@ enum class Region(
         fun forCountry(code: String): Region =
             when (code.uppercase(Locale.ROOT)) {
                 "JP" -> JAPAN
+                "BR" -> BRAZIL
                 in AMERICAS_COUNTRIES -> AMERICAS
                 else -> EUROPE
             }

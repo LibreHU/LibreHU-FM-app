@@ -42,6 +42,7 @@
     <string name="set_region_auto">Automatic (%1$s: %2$s)</string>
     <string name="set_region_europe">Europe, Africa, Asia</string>
     <string name="set_region_americas">Americas, South Korea</string>
+    <string name="set_region_brazil">Brazil (extended band)</string>
     <string name="set_region_japan">Japan</string>
     <string name="set_region_current">In use: %1$s–%2$s MHz, step %3$d kHz, de-emphasis %4$d µs%5$s</string>
     <string name="set_audio">Audio path</string>

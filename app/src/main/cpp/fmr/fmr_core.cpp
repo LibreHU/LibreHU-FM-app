@@ -514,6 +514,16 @@ int FMR_seek_Channel(int idx, int start_freq, int min_freq, int max_freq, int ba
     return 0;
 }
 
+/* LibreHU: a limit of the special band in the 10 kHz units of the seek and scan (setRegion gives 100 kHz units),
+ * kept within what the chip tunes. */
+static fm_u16 FMR_special_freq(int f)
+{
+    if (f < 2000) f *= 10;
+    if (f < 7600) f = 7600;
+    if (f > 10800) f = 10800;
+    return (fm_u16)f;
+}
+
 int FMR_seek(int idx, int start_freq, int dir, int *ret_freq)
 {
     fm_s32 ret = 0, i, j;
@@ -544,6 +554,12 @@ int FMR_seek(int idx, int start_freq, int dir, int *ret_freq)
         band_channel_no = (10800-7600)/seek_space + 1;
         min_freq = 7600;
         max_freq = 10800;
+    } else if (fmr_data.cfg_data.band == FM_BAND_SPECIAL) {
+        /* LibreHU: limits set by setRegion (100 kHz units), e.g. Brazil's extended band 76.1-107.9 MHz: the channels
+         * are counted from the lower limit, so 200 kHz steps from 76.1 stay on the odd tenths. */
+        min_freq = FMR_special_freq(fmr_data.cfg_data.low_band);
+        max_freq = FMR_special_freq(fmr_data.cfg_data.high_band);
+        band_channel_no = (max_freq - min_freq)/seek_space + 1;
     } else/* US/Europe band  87.5MHz ~ 108MHz (DEFAULT) */ {
         band_channel_no = (10800-8750)/seek_space + 1;
         min_freq = 8750;
@@ -787,6 +803,11 @@ int FMR_scan(int idx, uint16_t *scan_tbl, int *max_cnt)
         band_channel_no = (10800-7600)/seek_space + 1;
         Start_Freq = 7600;
         NF_Space = 640/seek_space;
+    } else if (fmr_data.cfg_data.band == FM_BAND_SPECIAL) {
+        /* LibreHU: see FMR_seek. */
+        Start_Freq = FMR_special_freq(fmr_data.cfg_data.low_band);
+        band_channel_no = (FMR_special_freq(fmr_data.cfg_data.high_band) - Start_Freq)/seek_space + 1;
+        NF_Space = (band_channel_no + 4)/5;
     } else/* US/Europe band  87.5MHz ~ 108MHz (DEFAULT) */ {
         band_channel_no = (10800-8750)/seek_space + 1;
         Start_Freq = 8750;
