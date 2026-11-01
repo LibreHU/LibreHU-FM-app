@@ -22,7 +22,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   logo** pour choisir une image pour cette fréquence (ou revenir au logo automatique).
 - Recherche ▲▼, pas de 0,1 MHz, balayage de la bande, favoris.
 - **RDS** décodé par la puce FM : nom de station, radiotexte, type de programme (PTY), TP / TA, fréquences
-  alternatives (AF, option), nommage automatique des favoris.
+  alternatives (AF, option), nommage automatique des favoris. Le pilote FM de l'AC8257 rend un enregistrement RDS de
+  720 octets (balises RT+ en plus) : l'appli, qui en demandait 688, n'en recevait aucun. Elle reconnaît maintenant
+  les deux formats à la longueur rendue (analyse et premier correctif : Reo Au In).
 - **Paramètres** (roue dentée) : RDS, chemin audio (automatique / patch matériel / recopie), logos : serveur Radio
   Browser (automatique, miroir de la liste officielle ou URL personnalisée), pays, **bibliothèque hors ligne**
   (téléchargement des logos des stations du pays, les plus populaires ou toutes) et mode hors ligne.
