@@ -79,6 +79,23 @@ object FmNative {
      */
     @JvmStatic external fun readRdsGroups(): ShortArray?
 
+    /** [RSSI in dBm, 1 stereo / 0 mono] of the tuned station, or null. */
+    @JvmStatic external fun getSignal(): IntArray?
+
+    /** Forced mono; false when the driver refused (its compat ioctl does not map FM_IOCTL_SETMONOSTERO). */
+    @JvmStatic external fun setForceMono(mono: Boolean): Boolean
+
+    /** RSSI threshold of seek and scan, in the chip's units of 6/16 dB (MediaTek default [SEARCH_DX]). */
+    @JvmStatic external fun setSearchThreshold(rssi: Int): Boolean
+
+    /** RDS clock of the last data read: [year, month, day, hour, minute (UTC), offset sign (1 = minus), half hours]. */
+    @JvmStatic external fun getClockTime(): IntArray?
+
+    /** Search thresholds: the driver's default (about -4 dBµV) and about 25 dBµV for strong (local) stations only. */
+    const val SEARCH_DX = -296
+    const val SEARCH_LOCAL = -219
+    const val RDS_EVENT_UTCDATETIME = 0x0010
+
     const val RDS_EVENT_FLAGS = 0x0001
     const val RDS_EVENT_PI_CODE = 0x0002
     const val RDS_EVENT_PTY_CODE = 0x0004

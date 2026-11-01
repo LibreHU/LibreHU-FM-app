@@ -24,6 +24,14 @@ data class Settings(
     val rtPlus: Boolean = true,
     /** Band plan (limits, step, de-emphasis, PTY names); null = the one of [countryCode]. */
     val region: Region? = null,
+    /** Mono even when the station is received in stereo: less hiss on weak stations. */
+    val forceMono: Boolean = false,
+    /** Seek and scan stop on strong stations only (local), not on distant ones (DX). */
+    val localSearch: Boolean = false,
+    /** Traffic announcements (TA) of the station: louder while the radio plays, played over another source. */
+    val trafficAnnouncements: Boolean = false,
+    /** Head unit clock set from the RDS clock time when it is more than a minute off. */
+    val rdsClock: Boolean = false,
     val audioMode: AudioMode = AudioMode.AUTO,
     val logos: Boolean = true,
     /** Logos from the downloaded library only, never from the network. */
@@ -79,6 +87,10 @@ object RadioSettings {
             .putBoolean("rds_preset_names", s.rdsPresetNames)
             .putBoolean("rt_plus", s.rtPlus)
             .putString("region", s.region?.name.orEmpty())
+            .putBoolean("force_mono", s.forceMono)
+            .putBoolean("local_search", s.localSearch)
+            .putBoolean("traffic_announcements", s.trafficAnnouncements)
+            .putBoolean("rds_clock", s.rdsClock)
             .putString("audio_mode", s.audioMode.name)
             .putBoolean("logos", s.logos)
             .putBoolean("logos_offline", s.logosOffline)
@@ -105,6 +117,10 @@ object RadioSettings {
             rdsPresetNames = p.getBoolean("rds_preset_names", d.rdsPresetNames),
             rtPlus = p.getBoolean("rt_plus", d.rtPlus),
             region = runCatching { Region.valueOf(p.getString("region", null).orEmpty()) }.getOrNull(),
+            forceMono = p.getBoolean("force_mono", d.forceMono),
+            localSearch = p.getBoolean("local_search", d.localSearch),
+            trafficAnnouncements = p.getBoolean("traffic_announcements", d.trafficAnnouncements),
+            rdsClock = p.getBoolean("rds_clock", d.rdsClock),
             audioMode = runCatching { AudioMode.valueOf(p.getString("audio_mode", null) ?: "") }.getOrDefault(d.audioMode),
             logos = p.getBoolean("logos", d.logos),
             logosOffline = p.getBoolean("logos_offline", d.logosOffline),

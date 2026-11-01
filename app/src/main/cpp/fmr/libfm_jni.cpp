@@ -284,6 +284,69 @@ jshortArray readRdsGroups(JNIEnv *env, jobject thiz)
     return arr;
 }
 
+/*
+ * LibreHU: signal of the tuned station: [RSSI in dBm, 1 stereo / 0 mono], or null. FM_IOCTL_GETRSSI (MT6631: RSSI
+ * register x 6 / 16, in dBm) and FM_IOCTL_GETMONOSTERO (stereo bit 0x1000 of the same register).
+ */
+jintArray getSignal(JNIEnv *env, jobject thiz)
+{
+    int32_t rssi = 0;
+    uint16_t stereo = 0;
+    if (fmr_data.fd < 0 || ioctl(fmr_data.fd, FM_IOCTL_GETRSSI, &rssi) < 0) return NULL;
+    if (ioctl(fmr_data.fd, FM_IOCTL_GETMONOSTERO, &stereo) < 0) stereo = 0;
+    jint info[2] = { rssi, stereo ? 1 : 0 };
+    jintArray out = env->NewIntArray(2);
+    if (out != NULL) env->SetIntArrayRegion(out, 0, 2, info);
+    return out;
+}
+
+/*
+ * LibreHU: forced mono (FM_IOCTL_SETMONOSTERO: 1 mono, 0 stereo when received). The driver declares this ioctl with
+ * an int32_t instead of a pointer: from this 32-bit app, its compat_ioctl gives it the size of a pointer and the
+ * 64-bit driver does not know the command (false), unless the driver's compat_ioctl maps it like PRE_SEARCH.
+ */
+jboolean setForceMono(JNIEnv *env, jobject thiz, jboolean mono)
+{
+    int32_t v = mono == JNI_TRUE ? 1 : 0;
+    if (fmr_data.fd < 0) return JNI_FALSE;
+    int ret = ioctl(fmr_data.fd, FM_IOCTL_SETMONOSTERO, &v);
+    if (ret < 0) LOGW("%s: FM_IOCTL_SETMONOSTERO refused (%d)\n", __func__, errno);
+    return ret < 0 ? JNI_FALSE : JNI_TRUE;
+}
+
+/*
+ * LibreHU: RSSI threshold of the seek and scan (FM_IOCTL_SET_SEARCH_THRESHOLD, type 0: a channel is valid from this
+ * RSSI, in the chip's units of 6/16 dB; the MediaTek default is -296, about -4 dBuV).
+ */
+jboolean setSearchThreshold(JNIEnv *env, jobject thiz, jint rssi)
+{
+    fm_search_threshold_t parm;
+    memset(&parm, 0, sizeof(parm));
+    parm.th_type = 0;
+    parm.th_val = rssi;
+    if (fmr_data.fd < 0) return JNI_FALSE;
+    return ioctl(fmr_data.fd, FM_IOCTL_SET_SEARCH_THRESHOLD, &parm) < 0 ? JNI_FALSE : JNI_TRUE;
+}
+
+/*
+ * LibreHU: RDS clock time (group 4A) of the last RDS data read by readRds, as the driver decodes it: [year, month,
+ * day, hour, minute (UTC), local offset sign (1 = minus), local offset in half hours].
+ */
+jintArray getClockTime(JNIEnv *env, jobject thiz)
+{
+    jint info[7];
+    info[0] = fmr_data.rds.CT.Year;
+    info[1] = fmr_data.rds.CT.Month;
+    info[2] = fmr_data.rds.CT.Day;
+    info[3] = fmr_data.rds.CT.Hour;
+    info[4] = fmr_data.rds.CT.Minute;
+    info[5] = fmr_data.rds.CT.Local_Time_offset_signbit;
+    info[6] = fmr_data.rds.CT.Local_Time_offset_half_hour;
+    jintArray out = env->NewIntArray(7);
+    if (out != NULL) env->SetIntArrayRegion(out, 0, 7, info);
+    return out;
+}
+
 jshortArray getAFList(JNIEnv *env, jobject thiz)
 {
     int ret = 0;
@@ -430,6 +493,10 @@ static JNINativeMethod methodsRx[] = {
     {"setRegion", "(IIIIZ)V", (void*)setRegion}, // LibreHU
     {"getRtPlus", "()[I", (void*)getRtPlus}, // LibreHU
     {"readRdsGroups", "()[S", (void*)readRdsGroups}, // LibreHU
+    {"getSignal", "()[I", (void*)getSignal}, // LibreHU
+    {"setForceMono", "(Z)Z", (void*)setForceMono}, // LibreHU
+    {"setSearchThreshold", "(I)Z", (void*)setSearchThreshold}, // LibreHU
+    {"getClockTime", "()[I", (void*)getClockTime}, // LibreHU
 };
 
 /*

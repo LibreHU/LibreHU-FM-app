@@ -62,6 +62,7 @@ import org.librehu.fm.RadioSettings
 import org.librehu.fm.Region
 import org.librehu.fm.Settings
 import org.librehu.fm.StationLogos
+import org.librehu.fm.TitleHistory
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -110,6 +111,12 @@ fun SettingsScreen(
                         SwitchRow(stringResource(R.string.set_radio_text), s.radioText) { on -> update { it.copy(radioText = on) } }
                         SwitchRow(stringResource(R.string.set_rt_plus), s.rtPlus, stringResource(R.string.set_rt_plus_hint)) { on ->
                             update { it.copy(rtPlus = on) }
+                        }
+                        SwitchRow(stringResource(R.string.set_ta), s.trafficAnnouncements, stringResource(R.string.set_ta_hint)) { on ->
+                            update { it.copy(trafficAnnouncements = on) }
+                        }
+                        SwitchRow(stringResource(R.string.set_rds_clock), s.rdsClock, stringResource(R.string.set_rds_clock_hint)) { on ->
+                            update { it.copy(rdsClock = on) }
                         }
                         SwitchRow(stringResource(R.string.set_pty), s.pty) { on -> update { it.copy(pty = on) } }
                         SwitchRow(stringResource(R.string.set_af), s.af, stringResource(R.string.set_af_hint)) { on ->
@@ -168,7 +175,19 @@ fun SettingsScreen(
                     )
                 }
 
+                Section(stringResource(R.string.set_reception)) {
+                    SwitchRow(stringResource(R.string.set_force_mono), s.forceMono, stringResource(R.string.set_force_mono_hint)) { on ->
+                        update { it.copy(forceMono = on) }
+                    }
+                    if (radio.monoUnsupported) Hint(stringResource(R.string.set_force_mono_unsupported))
+                    SwitchRow(stringResource(R.string.set_local_search), s.localSearch, stringResource(R.string.set_local_search_hint)) { on ->
+                        update { it.copy(localSearch = on) }
+                    }
+                }
+
                 LogoSection(s, update)
+
+                HistorySection()
 
                 Section(stringResource(R.string.set_log)) {
                     Hint(stringResource(R.string.set_log_hint))
@@ -178,6 +197,35 @@ fun SettingsScreen(
         }
     }
 }
+
+/** Songs heard (RT+ / eRT+), newest first: time, station, artist – title. */
+@Composable
+private fun HistorySection() {
+    val context = LocalContext.current
+    val titles by TitleHistory.get(context).collectAsStateWithLifecycle()
+    val time = remember { DateFormat.getTimeInstance(DateFormat.SHORT) }
+    val day = remember { DateFormat.getDateInstance(DateFormat.SHORT) }
+    Section(stringResource(R.string.set_history)) {
+        Hint(stringResource(R.string.set_history_hint))
+        if (titles.isEmpty()) {
+            BodyText(stringResource(R.string.set_history_empty))
+            return@Section
+        }
+        var lastDay = ""
+        titles.take(HISTORY_SHOWN).forEach { t ->
+            val d = day.format(Date(t.time))
+            if (d != lastDay) {
+                Hint(d)
+                lastDay = d
+            }
+            val song = listOf(t.artist, t.title).filter { it.isNotBlank() }.joinToString(" – ")
+            BodyText("${time.format(Date(t.time))} · ${t.station.ifBlank { "FM " + org.librehu.fm.Band.format(t.frequency) }} · $song")
+        }
+        Actions { Pill(stringResource(R.string.set_history_clear)) { TitleHistory.clear(context) } }
+    }
+}
+
+private const val HISTORY_SHOWN = 50
 
 /** Name of a band plan, as in the settings and the phone app. */
 @Composable
