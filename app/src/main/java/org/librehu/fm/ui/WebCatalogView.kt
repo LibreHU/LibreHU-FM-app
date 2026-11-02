@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -51,12 +52,14 @@ internal fun WebCatalogView(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val (cat, pickers) = rememberCatalogUi()
+    val cat = rememberCatalogUi()
+    if (cat.pick != CatalogPick.NONE) return CatalogGrid(cat, modifier.fillMaxSize(), 150.dp)
     val saved = s.webStations.map { it.url }.toSet()
     Column(modifier) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(cat.regionLabel(), cat.region != null, Modifier.weight(1f)) { cat.openPicker(1) }
-            FilterChip(cat.genreLabel(), cat.genre != null, Modifier.weight(1f)) { cat.openPicker(2) }
+            FilterChip(cat.countryLabel(), cat.country != cat.settings.countryCode, Modifier.weight(1f)) { cat.open(CatalogPick.COUNTRY) }
+            FilterChip(cat.regionLabel(), cat.region != null, Modifier.weight(1f)) { cat.open(CatalogPick.REGION) }
+            FilterChip(cat.genreLabel(), cat.genre != null, Modifier.weight(1f)) { cat.open(CatalogPick.GENRE) }
             IconButton(onClick = cat.refresh, enabled = !cat.loading, modifier = Modifier.size(48.dp)) {
                 if (cat.loading) {
                     CircularProgressIndicator(color = CarColors.Accent, modifier = Modifier.size(24.dp))
@@ -83,7 +86,6 @@ internal fun WebCatalogView(
             }
         }
     }
-    pickers()
 }
 
 @Composable

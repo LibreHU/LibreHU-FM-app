@@ -6,14 +6,23 @@ import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -27,11 +36,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -286,7 +300,19 @@ private fun java.io.InputStream.readNBytesCompat(max: Int): ByteArray {
 
 // --- Catalogue -----------------------------------------------------------------------------------------------------
 
-/** The catalogue of the country of the settings, its filters and what they show; [CatalogPickers] draws the choices. */
+/** What the catalogue shows instead of its list: a grid of big tiles to choose the country, the region or the genre. */
+internal enum class CatalogPick { NONE, COUNTRY, REGION, GENRE }
+
+/** A tile of the choice grid: its value ([key] null = all), its name and its number of stations. */
+internal class PickTile(
+    val key: String?,
+    val label: String,
+    val count: Int = 0,
+    /** Opens the second page of the grid (the small regions, the other countries…). */
+    val more: Boolean = false,
+)
+
+/** The catalogue of a country, its filters and what they show; [CatalogGrid] draws the choice grid. */
 internal class CatalogUi(
     val settings: Settings,
     /** Country of the list shown (ISO 3166 code) and its English name (Radio Browser writes it so as a region). */
@@ -297,13 +323,18 @@ internal class CatalogUi(
     val failed: Boolean,
     val regions: List<CatalogRegion>,
     val genres: List<Pair<String, Int>>,
+    val countries: List<Pair<String, Int>>,
     val entries: List<CatalogEntry>,
     val region: String?,
     val genre: String?,
     val query: String,
+    val pick: CatalogPick,
+    val more: Boolean,
     val setQuery: (String) -> Unit,
     val refresh: () -> Unit,
-    val openPicker: (Int) -> Unit,
+    val open: (CatalogPick) -> Unit,
+    val showMore: () -> Unit,
+    val choose: (String?) -> Unit,
 ) {
     @Composable
     fun regionLabel(): String =
@@ -316,37 +347,105 @@ internal class CatalogUi(
     @Composable
     fun genreLabel(): String = genre ?: stringResource(R.string.web_genre_all)
 
+    /** The country in the user's language ("France", "États-Unis"). */
+    fun countryLabel(): String = countryDisplay(country)
+
     @Composable
     fun countLine(): String =
         when {
             failed -> stringResource(R.string.web_catalog_failed)
             stations == null -> stringResource(R.string.web_catalog_loading)
-            else -> stringResource(R.string.web_catalog_count, entries.size, country)
+            else -> stringResource(R.string.web_catalog_count, entries.size, countryLabel())
         }
 
     /** Region of a station when it has one (shown under its name). */
     fun regionOf(st: CatalogStation): String = if (WebCatalog.regionKey(st.state, countryName).isEmpty()) "" else st.state
+
+    /**
+     * Tiles of the open choice. First page: "all", the biggest regions (5 stations or more: the 19 French regions with
+     * the most stations fit on one screen), the national ones, then "other regions"; second page: the small ones, A to Z.
+     * Same for the genres (the 21 most used first) and the countries (the head unit's first, then by size).
+     */
+    @Composable
+    fun tiles(): List<PickTile> =
+        when (pick) {
+            CatalogPick.REGION -> {
+                val big = regions.filter { it.count >= BIG_REGION }
+                val small = regions.filter { it.count < BIG_REGION }.sortedBy { it.label.lowercase(Locale.ROOT) }
+                if (more) {
+                    small.map { PickTile(it.key, it.label, it.count) }
+                } else {
+                    listOf(PickTile(null, stringResource(R.string.web_region_all))) +
+                        big.map { PickTile(it.key, it.label, it.count) } +
+                        PickTile(WebCatalog.NO_REGION, stringResource(R.string.web_region_none)) +
+                        (if (small.isEmpty()) emptyList() else listOf(PickTile(null, stringResource(R.string.web_region_other, small.size), more = true)))
+                }
+            }
+
+            CatalogPick.GENRE ->
+                if (more) {
+                    genres.drop(FIRST_GENRES).sortedBy { it.first }.map { PickTile(it.first, it.first, it.second) }
+                } else {
+                    listOf(PickTile(null, stringResource(R.string.web_genre_all))) +
+                        genres.take(FIRST_GENRES).map { PickTile(it.first, it.first, it.second) } +
+                        (if (genres.size > FIRST_GENRES) listOf(PickTile(null, stringResource(R.string.web_genre_other, genres.size - FIRST_GENRES), more = true)) else emptyList())
+                }
+
+            CatalogPick.COUNTRY -> {
+                val home = settings.countryCode
+                val ordered = countries.sortedByDescending { if (it.first == home) Int.MAX_VALUE else it.second }
+                if (more) {
+                    ordered.drop(FIRST_COUNTRIES).sortedBy { countryDisplay(it.first) }.map { PickTile(it.first, countryDisplay(it.first), it.second) }
+                } else {
+                    ordered.take(FIRST_COUNTRIES).map { PickTile(it.first, countryDisplay(it.first), it.second) } +
+                        (if (ordered.size > FIRST_COUNTRIES) listOf(PickTile(null, stringResource(R.string.web_country_other, ordered.size - FIRST_COUNTRIES), more = true)) else emptyList())
+                }
+            }
+
+            CatalogPick.NONE -> emptyList()
+        }
+
+    /** The tile of the value in use. */
+    fun isChosen(t: PickTile): Boolean =
+        !t.more &&
+            when (pick) {
+                CatalogPick.REGION -> t.key == region
+                CatalogPick.GENRE -> t.key == genre
+                CatalogPick.COUNTRY -> t.key == country
+                CatalogPick.NONE -> false
+            }
+
+    companion object {
+        private const val BIG_REGION = 5
+        private const val FIRST_GENRES = 21
+        private const val FIRST_COUNTRIES = 23
+
+        fun countryDisplay(iso: String): String =
+            runCatching { Locale.Builder().setRegion(iso).build().displayCountry }.getOrNull()?.ifBlank { null } ?: iso
+    }
 }
 
 /**
- * Downloads the catalogue once a week (the kept copy is shown at once, and without network), keeps the filters
- * (region, genre, name) and works out the entries for the quality setting.
+ * Downloads the catalogue of the chosen country once a week (the kept copy is shown at once, and without network),
+ * keeps the filters (country, region, genre, name) and works out the entries for the quality setting.
  */
 @Composable
-internal fun rememberCatalogUi(): Pair<CatalogUi, @Composable () -> Unit> {
+internal fun rememberCatalogUi(): CatalogUi {
     val context = LocalContext.current
     val settings by RadioSettings.get(context).collectAsStateWithLifecycle()
-    val country = settings.countryCode
+    val country = settings.webCountryCode
     val countryName = remember(country) { runCatching { Locale.Builder().setRegion(country).build().getDisplayCountry(Locale.ENGLISH) }.getOrDefault("") }
     val store = remember { CatalogStore(context.applicationContext) }
     var stations by remember(country) { mutableStateOf<List<CatalogStation>?>(null) }
+    var countries by remember { mutableStateOf<List<Pair<String, Int>>>(emptyList()) }
     var loading by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var refresh by remember { mutableIntStateOf(0) }
     var region by rememberSaveable(country) { mutableStateOf<String?>(null) }
     var genre by rememberSaveable(country) { mutableStateOf<String?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
-    var picker by remember { mutableIntStateOf(0) }
+    var pick by rememberSaveable { mutableStateOf(CatalogPick.NONE) }
+    var more by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(country, refresh) {
         loading = true
@@ -359,75 +458,116 @@ internal fun rememberCatalogUi(): Pair<CatalogUi, @Composable () -> Unit> {
         }
         loading = false
     }
+    LaunchedEffect(pick) {
+        if (pick == CatalogPick.COUNTRY && countries.isEmpty()) countries = withContext(Dispatchers.IO) { store.countries(settings.serverUrl) }
+    }
 
     val list = stations.orEmpty()
     val regions = remember(list, countryName) { WebCatalog.regions(list, countryName) }
-    val genres = remember(list) { WebCatalog.genres(list) }
+    val genres = remember(list) { WebCatalog.genres(list, max = 200) }
     val entries = remember(list, region, genre, query, settings.webQuality) { WebCatalog.entries(list, settings.webQuality, region, genre, query, countryName) }
-    val ui =
-        CatalogUi(
-            settings, country, countryName, stations, loading, failed, regions, genres, entries, region, genre, query,
-            setQuery = { query = it },
-            refresh = { refresh++ },
-            openPicker = { picker = it },
-        )
-    val pickers: @Composable () -> Unit = {
-        when (picker) {
-            1 ->
-                PickerDialog(
-                    title = stringResource(R.string.web_region),
-                    options =
-                        listOf<Pair<String?, String>>(null to stringResource(R.string.web_region_all)) +
-                            regions.map { it.key to "${it.label} (${it.count})" } +
-                            (WebCatalog.NO_REGION to stringResource(R.string.web_region_none)),
-                    onPick = {
-                        region = it
-                        picker = 0
-                    },
-                    onDismiss = { picker = 0 },
-                )
-
-            2 ->
-                PickerDialog(
-                    title = stringResource(R.string.web_genre),
-                    options = listOf<Pair<String?, String>>(null to stringResource(R.string.web_genre_all)) + genres.map { it.first to "${it.first} (${it.second})" },
-                    onPick = {
-                        genre = it
-                        picker = 0
-                    },
-                    onDismiss = { picker = 0 },
-                )
-        }
-    }
-    return ui to pickers
+    return CatalogUi(
+        settings, country, countryName, stations, loading, failed, regions, genres, countries, entries, region, genre, query, pick, more,
+        setQuery = { query = it },
+        refresh = { refresh++ },
+        open = {
+            pick = it
+            more = false
+        },
+        showMore = { more = true },
+        choose = { key ->
+            when (pick) {
+                CatalogPick.REGION -> region = key
+                CatalogPick.GENRE -> genre = key
+                CatalogPick.COUNTRY -> if (key != null) RadioSettings.update(context) { it.copy(webCountry = if (key == it.countryCode) "" else key) }
+                CatalogPick.NONE -> {}
+            }
+            pick = CatalogPick.NONE
+            more = false
+        },
+    )
 }
 
+/**
+ * The choice grid, in place of the list: big tiles (name and number of stations), the value in use lit, a touch
+ * chooses; a title line with Back (to the first page, then to the list). Drawn in the look of the screen.
+ */
 @Composable
-private fun PickerDialog(
-    title: String,
-    options: List<Pair<String?, String>>,
-    onPick: (String?) -> Unit,
-    onDismiss: () -> Unit,
+internal fun CatalogGrid(
+    cat: CatalogUi,
+    modifier: Modifier = Modifier,
+    minTile: Dp = 180.dp,
 ) {
-    CarAlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
-            LazyColumn(Modifier.heightIn(max = 420.dp)) {
-                items(options) { (value, label) ->
-                    Text(
-                        label,
-                        color = if (carStyled) KitLight else CarColors.Text,
-                        fontSize = 18.sp,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable { onPick(value) }
-                                .padding(vertical = 12.dp, horizontal = 8.dp),
-                    )
-                }
+    val tiles = cat.tiles()
+    val title =
+        stringResource(
+            when (cat.pick) {
+                CatalogPick.COUNTRY -> R.string.web_country
+                CatalogPick.REGION -> R.string.web_region
+                else -> R.string.web_genre
+            },
+        )
+    Column(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)) {
+            GridTile(PickTile(null, "‹  " + stringResource(R.string.web_back)), chosen = false, Modifier.width(minTile)) {
+                if (cat.more) cat.open(cat.pick) else cat.open(CatalogPick.NONE)
             }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } },
-    )
+            Spacer(Modifier.width(16.dp))
+            Text(title, color = if (carStyled) KitLight else CarColors.Text, fontSize = 22.sp)
+        }
+        if (tiles.isEmpty()) {
+            Text(stringResource(R.string.web_catalog_loading), color = if (carStyled) KitDim else CarColors.TextDim, fontSize = 18.sp)
+            return
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minTile),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(tiles.size) { i ->
+                val t = tiles[i]
+                GridTile(t, cat.isChosen(t), Modifier.fillMaxWidth()) { if (t.more) cat.showMore() else cat.choose(t.key) }
+            }
+        }
+    }
+}
+
+/** A big tile of the grid: a white frame (factory), the lit key (LHU-Link), a rounded tile (modern). */
+@Composable
+private fun GridTile(
+    t: PickTile,
+    chosen: Boolean,
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
+    val content: @Composable () -> Unit = {
+        Column(Modifier.padding(horizontal = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            val fg =
+                when {
+                    RetroLook.factory && chosen -> CarColors.Accent
+                    carStyled -> KitLight
+                    chosen -> CarColors.OnAccent
+                    else -> CarColors.Text
+                }
+            Text(t.label, color = fg, fontSize = 18.sp, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            if (t.count > 0) Text(t.count.toString(), color = fg.copy(alpha = 0.7f), fontSize = 13.sp)
+        }
+    }
+    val m = modifier.height(72.dp)
+    when {
+        RetroLook.factory ->
+            FramedKey(m.then(if (chosen) Modifier.border(BorderStroke(1.5.dp, CarColors.Accent)) else Modifier), onClick = onClick) { content() }
+
+        RetroLook.ambient -> AmbientGridKey(m, selected = chosen, onClick = onClick) { content() }
+
+        else ->
+            Box(
+                m
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(if (chosen) CarColors.Accent else CarColors.SurfaceHigh)
+                    .clickable(onClick = onClick),
+                contentAlignment = Alignment.Center,
+            ) { content() }
+    }
 }
