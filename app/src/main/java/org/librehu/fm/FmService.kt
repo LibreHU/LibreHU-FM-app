@@ -9,21 +9,28 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaMetadata
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,17 +50,9 @@ import kotlinx.coroutines.withContext
 import org.librehu.fm.headunit.HeadUnitBridge
 import org.librehu.fm.web.CatalogStore
 import org.librehu.fm.web.WebCatalog
+import org.librehu.fm.web.WebLogos
 import org.librehu.fm.web.WebPlayer
 import org.librehu.fm.web.WebStation
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
 /**
  * Owns the FM chip: power, tuning, seek, scan, RDS, audio, audio focus and the media session (used by the
@@ -139,10 +138,12 @@ class FmService : Service() {
                     _state.update { if (it.frequency == freq) it.copy(fmWeb = found) else it }
                 }
         }
-        // Logo of the internet station played: kept per station, downloaded once.
+        // Logo of the internet station played: chosen by hand, or kept per station and downloaded once.
         scope.launch {
-            state.map { it.web }.distinctUntilChanged().collectLatest { st ->
-                val bitmap = if (st == null) null else withContext(Dispatchers.IO) { webLogo(st) }
+            combine(state.map { it.web }.distinctUntilChanged(), WebLogos.changed, settings.map { it.logos && !it.logosOffline }) { st, _, dl ->
+                st to dl
+            }.collectLatest { (st, download) ->
+                val bitmap = if (st == null) null else withContext(Dispatchers.IO) { WebLogos.load(this@FmService, st, download) }
                 _state.update { if (it.web?.id == st?.id) it.copy(webLogo = bitmap) else it }
             }
         }
@@ -415,6 +416,12 @@ class FmService : Service() {
 
     /** What the internet player reports (main thread). */
     private fun onWebStatus(w: WebPlayer.Status) {
+        // A new song title sent by the stream: into the history of the titles heard ("Artist - Title").
+        if (w.playing && w.title.isNotBlank() && w.title != state.value.webTitle) {
+            val parts = w.title.split(" - ", limit = 2).map { it.trim() }
+            val (artist, song) = if (parts.size == 2 && parts.all { it.isNotEmpty() }) parts[0] to parts[1] else "" to w.title
+            TitleHistory.add(this, HeardTitle(System.currentTimeMillis(), 0, w.station?.name.orEmpty(), artist, song))
+        }
         _state.update {
             it.copy(
                 webWanted = w.wanted,
@@ -456,17 +463,6 @@ class FmService : Service() {
         return WebCatalog.matchFm(name, candidates, quality)?.toWebStation()
     }
 
-    /** Logo of an internet station: kept file, else its address (catalogue), else none. */
-    private fun webLogo(st: WebStation): Bitmap? {
-        val dir = java.io.File(filesDir, "web_logos").apply { mkdirs() }
-        val f = java.io.File(dir, st.id.replace(Regex("[^A-Za-z0-9._-]"), "_") + ".png")
-        if (f.exists()) return BitmapFactory.decodeFile(f.path)
-        if (st.logoUrl.isBlank() || !settings.value.logos || settings.value.logosOffline) return null
-        val bitmap = runCatching { RadioBrowser.Http(this).logo(st.logoUrl) }.getOrNull() ?: return null
-        f.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-        return bitmap
-    }
-
     /** "online" follows the network that has a validated internet connection (offer of the FM stations' streams). */
     private fun watchNetwork() {
         val cm = getSystemService(ConnectivityManager::class.java)
@@ -478,7 +474,10 @@ class FmService : Service() {
                 ) {
                     val ok = caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
                         caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    val was = state.value.online
                     _state.update { it.copy(online = ok) }
+                    // Back online while a stream waits to reconnect (tunnel, no coverage): at once.
+                    if (ok && !was) scope.launch { web.retryNow() }
                 }
 
                 override fun onLost(n: Network) {
@@ -1309,6 +1308,7 @@ class FmService : Service() {
             val store = RadioStore(context)
             val list = store.webStations.filterNot { it.id == id }
             store.webStations = list
+            Thread({ WebLogos.forget(context.applicationContext, id) }, "web-logo").start()
             _state.update { it.copy(webStations = list, web = if (it.web?.id == id && !it.webWanted) list.firstOrNull() else it.web) }
         }
 

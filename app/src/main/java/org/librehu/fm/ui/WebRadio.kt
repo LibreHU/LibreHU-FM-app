@@ -1,10 +1,5 @@
 package org.librehu.fm.ui
 
-import android.content.Context
-import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,24 +21,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
-import androidx.compose.material.icons.filled.Radio
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -62,8 +53,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,8 +61,6 @@ import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
 import org.librehu.fm.Source
-import org.librehu.fm.web.Playlists
-import org.librehu.fm.web.WebPlayer
 import org.librehu.fm.web.WebStation
 
 /** "FM | Internet" choice at the top of the now-playing card: what the screen shows (the source changes on play). */
@@ -84,38 +71,57 @@ internal fun SourceTabs(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        SmallTab(stringResource(R.string.source_fm), !internet) { onInternet(false) }
-        SmallTab(stringResource(R.string.source_web), internet) { onInternet(true) }
+        PillTab(stringResource(R.string.source_fm), !internet, 16) { onInternet(false) }
+        PillTab(stringResource(R.string.source_web), internet, 16) { onInternet(true) }
     }
 }
 
 @Composable
-private fun SmallTab(
+private fun PillTab(
     label: String,
     selected: Boolean,
+    size: Int,
     onClick: () -> Unit,
 ) {
     Text(
         label,
         color = if (selected) CarColors.OnAccent else CarColors.Text,
-        fontSize = 16.sp,
+        fontSize = size.sp,
         fontWeight = FontWeight.Medium,
         modifier =
             Modifier
                 .clip(RoundedCornerShape(50))
                 .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
                 .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = if (size > 16) 20.dp else 16.dp, vertical = if (size > 16) 12.dp else 8.dp),
     )
 }
 
-/** Now-playing card of an internet station: logo, name, song title from the stream, audio of the stream, controls. */
+/** The modern look's internet radio: now-playing card on the left, saved stations or the catalogue on the right. */
 @Composable
-internal fun WebNowPlaying(
+internal fun WebRadioScreen(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
     onInternet: (Boolean) -> Unit,
+    modifier: Modifier,
+) {
+    val ui = rememberWebUi()
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        WebNowPlaying(s, send, onSettings, onInternet, ui, Modifier.weight(1.1f).fillMaxSize())
+        WebPanel(s, ui, Modifier.weight(1f).fillMaxSize())
+    }
+    WebDialogs(ui)
+}
+
+/** Now-playing card of an internet station: logo, name, song title from the stream, audio of the stream, controls. */
+@Composable
+private fun WebNowPlaying(
+    s: RadioState,
+    send: (String, Int?) -> Unit,
+    onSettings: () -> Unit,
+    onInternet: (Boolean) -> Unit,
+    ui: WebUi,
     modifier: Modifier,
 ) {
     val context = LocalContext.current
@@ -138,7 +144,8 @@ internal fun WebNowPlaying(
             }
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                WebLogo(if (active) s.webLogo else null, current?.name.orEmpty())
+                // A touch: choose a picture as the station's logo (or go back to the automatic one).
+                WebLogo(if (active) s.webLogo else null, current?.name.orEmpty()) { if (current != null) ui.logoFor = current }
                 Spacer(Modifier.width(20.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -149,15 +156,14 @@ internal fun WebNowPlaying(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    val audio = if (active) audioLabel(s) else ""
-                    val saved = current == null || s.webStations.any { it.url == current.url }
-                    if (!saved && current != null) {
+                    if (s.webCanSave && current != null) {
                         TextButton(onClick = { FmService.addWebStations(context, listOf(current)) }) {
                             Icon(Icons.Default.StarBorder, contentDescription = null, tint = CarColors.Accent)
                             Spacer(Modifier.width(6.dp))
                             Text(stringResource(R.string.web_save), color = CarColors.Accent, fontSize = 16.sp)
                         }
                     }
+                    val audio = webAudio(s)
                     if (audio.isNotBlank()) {
                         Spacer(Modifier.height(6.dp))
                         Text(
@@ -175,19 +181,7 @@ internal fun WebNowPlaying(
                 }
             }
             Spacer(Modifier.height(12.dp))
-            Text(
-                when {
-                    !active || !s.webWanted -> stringResource(if (current == null) R.string.web_empty_hint else R.string.off)
-                    s.webRetrying -> stringResource(R.string.web_reconnecting)
-                    s.webBuffering && !s.webPlaying -> stringResource(R.string.web_connecting)
-                    s.webTitle.isNotBlank() -> s.webTitle
-                    else -> " "
-                },
-                color = CarColors.TextDim,
-                fontSize = 20.sp,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Text(webStatus(s).ifBlank { " " }, color = CarColors.TextDim, fontSize = 20.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
             // Switched from an FM station (its internet stream): one touch goes back to it.
             if (active && s.webFromFm != 0) {
                 Spacer(Modifier.height(8.dp))
@@ -203,27 +197,21 @@ internal fun WebNowPlaying(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             WebRoundButton(Icons.Default.SkipPrevious, R.string.previous) { if (active) send(FmService.ACTION_PREVIOUS, null) }
-            val playing = active && s.webWanted
             Box(
                 modifier =
                     Modifier
                         .size(96.dp)
                         .clip(CircleShape)
                         .background(CarColors.Accent)
-                        .clickable {
-                            when {
-                                playing -> send(FmService.ACTION_PAUSE, null)
-                                current != null -> FmService.playWeb(context, current.id)
-                            }
-                        },
+                        .clickable { webToggle(context, s, send) },
                 contentAlignment = Alignment.Center,
             ) {
-                if (playing && !s.webPlaying) {
+                if (s.webActive && !s.webPlaying) {
                     CircularProgressIndicator(color = CarColors.OnAccent, modifier = Modifier.size(40.dp))
                 } else {
                     Icon(
-                        if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = stringResource(if (playing) R.string.pause else R.string.play),
+                        if (s.webActive) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = stringResource(if (s.webActive) R.string.pause else R.string.play),
                         tint = CarColors.OnAccent,
                         modifier = Modifier.size(52.dp),
                     )
@@ -235,55 +223,10 @@ internal fun WebNowPlaying(
 }
 
 @Composable
-private fun PanelTab(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    Text(
-        label,
-        color = if (selected) CarColors.OnAccent else CarColors.Text,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Medium,
-        modifier =
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-    )
-}
-
-/** A line with an icon and a text in the accent colour, touched to act: offer of a stream, back to FM. */
-@Composable
-internal fun OfferChip(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier =
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(CarColors.SurfaceHigh)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(icon, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(22.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(label, color = CarColors.Text, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-/** Codec and bitrate of the stream played ("AAC 128 kbit/s"), from the stream itself. */
-private fun audioLabel(s: RadioState): String =
-    listOf(s.webCodec, if (s.webBitrate > 0) "${s.webBitrate} kbit/s" else "").filter { it.isNotBlank() }.joinToString(" ")
-
-@Composable
 private fun WebLogo(
     logo: android.graphics.Bitmap?,
     name: String,
+    onClick: () -> Unit,
 ) {
     Box(
         modifier =
@@ -291,6 +234,7 @@ private fun WebLogo(
                 .size(112.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .background(if (logo != null) Color.White else CarColors.SurfaceHigh)
+                .clickable(onClick = onClick)
                 .padding(if (logo != null) 8.dp else 28.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -323,22 +267,17 @@ private fun WebRoundButton(
 }
 
 /**
- * Internet stations saved: a touch plays one, a long press offers to remove it. "+" adds a station by its address
- * (stream, M3U or PLS link); the file button imports every station of an M3U / PLS file (USB key, internal storage).
+ * Internet stations saved (a touch plays one, a long press offers to remove it; "+" adds one by its address, the file
+ * button imports an M3U / PLS file), or the catalogue.
  */
 @Composable
-internal fun WebPanel(
+private fun WebPanel(
     s: RadioState,
+    ui: WebUi,
     modifier: Modifier,
 ) {
     val context = LocalContext.current
-    var adding by remember { mutableStateOf(false) }
-    var removing by remember { mutableStateOf<WebStation?>(null) }
     var catalogTab by rememberSaveable { mutableStateOf(false) }
-    val import =
-        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            if (uri != null) importPlaylist(context, uri)
-        }
     Column(
         modifier =
             modifier
@@ -347,16 +286,15 @@ internal fun WebPanel(
                 .padding(16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            PanelTab(stringResource(R.string.web_stations), !catalogTab) { catalogTab = false }
+            PillTab(stringResource(R.string.web_stations), !catalogTab, 18) { catalogTab = false }
             Spacer(Modifier.width(8.dp))
-            PanelTab(stringResource(R.string.web_catalog), catalogTab) { catalogTab = true }
+            PillTab(stringResource(R.string.web_catalog), catalogTab, 18) { catalogTab = true }
             Spacer(Modifier.weight(1f))
             if (!catalogTab) {
-                IconButton(onClick = { adding = true }, modifier = Modifier.size(56.dp)) {
+                IconButton(onClick = { ui.adding = true }, modifier = Modifier.size(56.dp)) {
                     Icon(Icons.Default.Add, stringResource(R.string.web_add), tint = CarColors.Text, modifier = Modifier.size(32.dp))
                 }
-                // Any type: file managers and USB keys often give playlists no MIME type, or a wrong one.
-                IconButton(onClick = { import.launch(arrayOf("*/*")) }, modifier = Modifier.size(56.dp)) {
+                IconButton(onClick = { ui.import() }, modifier = Modifier.size(56.dp)) {
                     Icon(Icons.Default.FileOpen, stringResource(R.string.web_import), tint = CarColors.Text, modifier = Modifier.size(32.dp))
                 }
             }
@@ -378,26 +316,11 @@ internal fun WebPanel(
                         st,
                         selected = s.source == Source.WEB && s.web?.id == st.id,
                         onClick = { FmService.playWeb(context, st.id) },
-                        onLongClick = { removing = st },
+                        onLongClick = { ui.removing = st },
                     )
                 }
             }
         }
-    }
-    if (adding) AddWebStationDialog(onDismiss = { adding = false })
-    removing?.let { st ->
-        CarAlertDialog(
-            onDismissRequest = { removing = null },
-            title = { Text(st.name) },
-            text = { Text(stringResource(R.string.web_remove_confirm)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    FmService.removeWebStation(context, st.id)
-                    removing = null
-                }) { Text(stringResource(R.string.web_remove)) }
-            },
-            dismissButton = { TextButton(onClick = { removing = null }) { Text(stringResource(android.R.string.cancel)) } },
-        )
     }
 }
 
@@ -421,90 +344,29 @@ private fun WebTile(
     ) {
         val fg = if (selected) CarColors.OnAccent else CarColors.Text
         Text(st.name, color = fg, fontSize = 20.sp, fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        val info = listOf(st.codec, if (st.bitrate > 0) "${st.bitrate} kbit/s" else "").filter { it.isNotBlank() }.joinToString(" ")
+        val info = stationAudio(st.codec, st.bitrate).let { if (it.isNotBlank() && st.bitrate > 0) "$it kbit/s" else it }
         if (info.isNotBlank()) Text(info, color = fg, fontSize = 14.sp, maxLines = 1)
     }
 }
 
-/** Station added by hand: its address (stream, or M3U / PLS link) and a name (the address's host when left empty). */
+/** A line with an icon and a text in the accent colour, touched to act: offer of a stream, back to FM. */
 @Composable
-private fun AddWebStationDialog(onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    var name by remember { mutableStateOf("") }
-    var url by remember { mutableStateOf("") }
-    val valid = Playlists.isStreamUrl(url.trim())
-    CarAlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.web_add)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.web_add_hint), color = CarColors.TextDim, fontSize = 15.sp)
-                WebField(url, { url = it }, stringResource(R.string.web_address), "https://…", KeyboardType.Uri)
-                WebField(name, { name = it }, stringResource(R.string.web_name), stringResource(R.string.web_name_hint), KeyboardType.Text)
-            }
-        },
-        confirmButton = {
-            TextButton(enabled = valid, onClick = {
-                val u = url.trim()
-                FmService.addWebStations(context, listOf(WebStation(name = name.trim().ifBlank { Playlists.nameFromUrl(u) }, url = u)))
-                onDismiss()
-            }) { Text(stringResource(R.string.web_add_confirm)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } },
-    )
-}
-
-@Composable
-private fun WebField(
-    value: String,
-    onValue: (String) -> Unit,
+internal fun OfferChip(
+    icon: ImageVector,
     label: String,
-    placeholder: String,
-    type: KeyboardType,
+    onClick: () -> Unit,
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValue,
-        label = { Text(label) },
-        placeholder = { Text(placeholder) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = type, imeAction = ImeAction.Next),
-        colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = CarColors.Text,
-                unfocusedTextColor = CarColors.Text,
-                focusedBorderColor = CarColors.Accent,
-                unfocusedBorderColor = CarColors.SurfaceHigh,
-                focusedLabelColor = CarColors.Accent,
-                unfocusedLabelColor = CarColors.TextDim,
-                cursorColor = CarColors.Accent,
-            ),
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-/** Every station of an M3U / PLS file, added to the list (names from #EXTINF / TitleN, else the host). */
-private fun importPlaylist(
-    context: Context,
-    uri: Uri,
-) {
-    Thread({
-        val stations =
-            try {
-                val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: ByteArray(0)
-                Playlists.parse(WebPlayer.decode(bytes)).map { e -> WebStation(name = e.name.ifBlank { Playlists.nameFromUrl(e.url) }, url = e.url) }
-            } catch (_: Exception) {
-                emptyList()
-            }
-        android.os.Handler(android.os.Looper.getMainLooper()).post {
-            FmService.addWebStations(context, stations)
-            val msg =
-                if (stations.isEmpty()) {
-                    context.getString(R.string.web_import_none)
-                } else {
-                    context.resources.getQuantityString(R.plurals.web_imported, stations.size, stations.size)
-                }
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-        }
-    }, "web-import").start()
+    Row(
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(50))
+                .background(CarColors.SurfaceHigh)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(22.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(label, color = CarColors.Text, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
 }

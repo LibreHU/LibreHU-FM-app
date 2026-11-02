@@ -236,4 +236,12 @@
     <string name="set_web_quality_hint">When a station has several streams: the best sound (FLAC, then AAC / MP3 at the highest bitrate) or the least data (lowest bitrate, at least 48 kbit/s). 128 kbit/s use about 58 MB per hour, 320 kbit/s about 144 MB.</string>
     <string name="set_web_suggest">Offer the internet stream of the FM station</string>
     <string name="set_web_suggest_hint">When the station heard on FM is also on the internet and the internet works, the FM screen offers to switch to its stream (a touch). The RDS name and the country are sent to Radio Browser to find it.</string>
+    <string name="web_add_short">Add</string>
+    <string name="web_import_short">Import</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo of %s</string>
+    <string name="web_playing">Playing</string>
+    <string name="web_catalog_update">Update</string>
+    <string name="web_catalog_loading_short">Downloading…</string>
+    <string name="web_source">Source</string>
 </resources>

@@ -1,7 +1,6 @@
 package org.librehu.fm.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -26,19 +25,20 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.filled.ArrowLeft
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Radio
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.SkipNext
 import androidx.compose.material.icons.outlined.SkipPrevious
-import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.Stop
-import androidx.compose.material.icons.filled.ArrowLeft
-import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -63,6 +63,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,11 +71,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import org.librehu.fm.Band
 import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
-import kotlin.math.roundToInt
 
 /*
  * The radio in LibreHU Launcher's two car styles. Factory (Modularer Infotainment-Baukasten): the frequency between
@@ -110,6 +111,7 @@ internal fun FactoryRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
+    onInternet: (Boolean) -> Unit,
 ) {
     var view by rememberSaveable { mutableStateOf(FactoryView.PRESETS) }
     FactoryScreen(
@@ -127,7 +129,8 @@ internal fun FactoryRadio(
                     stringResource(if (s.poweredOn) R.string.pause else R.string.play),
                     if (s.poweredOn) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
                 ) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
-                null,
+                // The original's band key: here the internet stations.
+                SoftKey(stringResource(R.string.source_web), Icons.Outlined.Public) { onInternet(true) },
                 null,
                 null,
                 SoftKey(stringResource(R.string.car_setup), Icons.Outlined.Settings, onClick = onSettings),
@@ -138,6 +141,7 @@ internal fun FactoryRadio(
             else ->
                 Column(Modifier.fillMaxSize()) {
                     FactoryFrequency(s, send, manual = view == FactoryView.MANUAL)
+                    FactoryOffer(s)
                     Box(Modifier.weight(1f).fillMaxWidth()) {
                         if (view == FactoryView.MANUAL) {
                             TuningScale(s.frequency, ambient = false, modifier = Modifier.align(Alignment.Center).fillMaxWidth().height(150.dp).padding(horizontal = 40.dp)) {
@@ -179,6 +183,22 @@ private fun FactoryFrequency(
         }
         FramedKey(onClick = { send(if (manual) FmService.ACTION_STEP_UP else FmService.ACTION_SEEK_UP, null) }) {
             Icon(Icons.Outlined.ChevronRight, stringResource(if (manual) R.string.step_up else R.string.seek_up), tint = Color.White, modifier = Modifier.size(40.dp))
+        }
+    }
+}
+
+/** The FM station is also on the internet and the internet works: a framed key offers its stream. */
+@Composable
+private fun FactoryOffer(s: RadioState) {
+    val offer = s.webOffer ?: return
+    val context = LocalContext.current
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        FramedKey(Modifier.height(52.dp), onClick = { FmService.playWebStation(context, offer, s.frequency) }) {
+            Row(Modifier.padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Outlined.Public, null, tint = CarColors.Accent, modifier = Modifier.size(26.dp))
+                Spacer(Modifier.width(10.dp))
+                Text(offerText(offer), color = Color.White, fontSize = 21.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
         }
     }
 }
@@ -375,16 +395,21 @@ internal fun AmbientRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
+    onInternet: (Boolean) -> Unit,
 ) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    val context = LocalContext.current
+    val offer = s.webOffer
     AmbientScreen(
         title = "FM",
         keys =
             listOf(
+                AmbientKey(stringResource(R.string.source_web)) { onInternet(true) },
                 AmbientKey(stringResource(if (s.poweredOn) R.string.pause else R.string.play)) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
             ),
         options =
-            listOf(
+            listOfNotNull(
+                offer?.let { AmbientOption(offerText(it)) { FmService.playWebStation(context, it, s.frequency) } },
                 AmbientOption(stringResource(if (s.scanning) R.string.fm_stop_search else R.string.fm_update_list), enabled = s.poweredOn || s.scanning) {
                     send(if (s.scanning) FmService.ACTION_STOP_SCAN else FmService.ACTION_SCAN, null)
                 },
@@ -472,6 +497,21 @@ private fun AmbientFrequencies(
                     }
                 }
                 AmbientSideKey(Icons.Outlined.SkipNext) { send(FmService.ACTION_SEEK_UP, null) }
+            }
+            // The station is also on the internet and the internet works: a small lit key offers its stream.
+            val offer = s.webOffer
+            if (offer != null) {
+                val context = LocalContext.current
+                AmbientGridKey(
+                    Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp).height(40.dp),
+                    onClick = { FmService.playWebStation(context, offer, s.frequency) },
+                ) {
+                    Row(Modifier.padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Public, null, tint = KitLight, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(offerText(offer), color = KitLight, fontSize = 16.sp, fontWeight = FontWeight.Light, maxLines = 1)
+                    }
+                }
             }
         }
     }

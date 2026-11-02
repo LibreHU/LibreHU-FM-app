@@ -93,6 +93,11 @@ class WebCatalogTest {
     }
 
     @Test
+    fun streamTagsAreNotGenres() {
+        assertEquals(listOf("jazz", "news", "pop rock"), listOf("aac", "jazz", "mp3", "128k", "news", "pop rock", "HQ").filter { WebCatalog.isGenreTag(it) })
+    }
+
+    @Test
     fun genresByUse() {
         val list =
             listOf(
