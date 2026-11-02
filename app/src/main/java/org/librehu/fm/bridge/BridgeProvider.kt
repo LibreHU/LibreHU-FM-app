@@ -10,10 +10,11 @@ import org.librehu.fm.R
 import org.librehu.fm.RadioSettings
 import org.librehu.fm.Region
 import org.librehu.fm.StationLogos
+import org.librehu.fm.WebQuality
 
 /**
  * The radio for LibreHU's phone app (through LibreHU-service's bridge, [BridgeKitProvider]): the radio itself (on /
- * off, frequency, stations, seek, scan) and every setting (RDS, audio path, station logos). Same labels and same
+ * off, frequency, stations, seek, scan) and every setting (RDS, audio path, internet radio, station logos). Same labels and same
  * settings as the app's screens.
  */
 class BridgeProvider : BridgeKitProvider() {
@@ -97,6 +98,13 @@ class BridgeProvider : BridgeKitProvider() {
                     },
                 )
             }) { v -> update { it.copy(audioMode = v) } }
+            section(s(R.string.set_web))
+            pick("web_quality", s(R.string.set_web), st.webQuality, s(R.string.set_web_quality_hint), label = {
+                s(if (it == WebQuality.BEST) R.string.set_web_best else R.string.set_web_eco)
+            }) { v -> update { it.copy(webQuality = v) } }
+            switch("web_suggest", s(R.string.set_web_suggest), st.webSuggest, s(R.string.set_web_suggest_hint)) { v ->
+                update { it.copy(webSuggest = v) }
+            }
             section(s(R.string.set_logos))
             switch("logos", s(R.string.set_logos_enable), st.logos, s(R.string.set_logos_hint)) { v -> update { it.copy(logos = v) } }
             switch("logos_offline", s(R.string.set_logos_offline), st.logosOffline, s(R.string.set_logos_offline_hint)) { v ->

@@ -17,8 +17,12 @@
         android:name="android.permission.SET_TIME"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Station logos (Radio Browser). -->
+    <!-- Station logos (Radio Browser) and internet radio. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Internet radio: Wi-Fi kept awake while a stream plays (ExoPlayer wake mode "network"). -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Internet radio: the stream of the FM station played is offered only while the internet works. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Privileged install only (see README): FM capture source and /dev/fm (gid media). -->
     <uses-permission
         android:name="android.permission.CAPTURE_AUDIO_OUTPUT"
@@ -42,8 +46,10 @@
         android:name="org.librehu.permission.BRIDGE"
         android:protectionLevel="signature" />
 
+    <!-- usesCleartextTraffic: many radio streams (SHOUTcast, Icecast) are plain http, refused otherwise since API 28. -->
     <application
         android:allowBackup="false"
+        android:usesCleartextTraffic="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"

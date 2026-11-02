@@ -126,7 +126,7 @@ internal fun FactoryRadio(
                 SoftKey(
                     stringResource(if (s.poweredOn) R.string.pause else R.string.play),
                     if (s.poweredOn) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
-                ) { send(FmService.ACTION_TOGGLE, null) },
+                ) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
                 null,
                 null,
                 null,
@@ -381,7 +381,7 @@ internal fun AmbientRadio(
         title = "FM",
         keys =
             listOf(
-                AmbientKey(stringResource(if (s.poweredOn) R.string.pause else R.string.play)) { send(FmService.ACTION_TOGGLE, null) },
+                AmbientKey(stringResource(if (s.poweredOn) R.string.pause else R.string.play)) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
             ),
         options =
             listOf(
