@@ -190,4 +190,28 @@
     <string name="fm_store_preset">Mémoriser la station</string>
     <string name="fm_remove_preset">Retirer des présélections</string>
     <string name="fm_no_presets">Aucune présélection : Options → Mémoriser la station.</string>
+    <!-- Internet radio -->
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Radio internet</string>
+    <string name="web_connecting">Connexion…</string>
+    <string name="web_reconnecting">Connexion perdue, reconnexion…</string>
+    <string name="web_none">Aucune station internet</string>
+    <string name="web_empty_hint">Ajoutez une station avec + (adresse du flux, lien M3U ou PLS) ou importez un fichier M3U / PLS.</string>
+    <string name="web_stations">Stations internet</string>
+    <string name="web_add">Ajouter une station</string>
+    <string name="web_import">Importer un fichier M3U / PLS</string>
+    <string name="web_no_stations">Aucune station internet : + en ajoute une par son adresse, le bouton fichier importe une liste M3U ou PLS.</string>
+    <string name="web_remove">Retirer</string>
+    <string name="web_remove_confirm">Retirer cette station de la liste ?</string>
+    <string name="web_add_hint">Adresse du flux, ou celle d\'une liste M3U / PLS (le lien « écouter » de la station).</string>
+    <string name="web_address">Adresse</string>
+    <string name="web_name">Nom</string>
+    <string name="web_name_hint">Facultatif : sinon le nom du serveur</string>
+    <string name="web_add_confirm">Ajouter</string>
+    <string name="web_import_none">Aucune station dans ce fichier (M3U ou PLS avec des adresses http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d station ajoutée</item>
+        <item quantity="other">%d stations ajoutées</item>
+    </plurals>
 </resources>

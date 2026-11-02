@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import org.json.JSONArray
 import org.json.JSONObject
+import org.librehu.fm.web.WebStation
 import java.util.Locale
 
 /** One saved station. [frequency] in 100 kHz units (1015 = 101.5 MHz). */
@@ -11,6 +12,9 @@ data class Station(
     val frequency: Int,
     val name: String = "",
 )
+
+/** What the radio plays: the FM chip, or an internet stream. */
+enum class Source { FM, WEB }
 
 data class RadioState(
     val available: Boolean = true,
@@ -46,7 +50,35 @@ data class RadioState(
     val announcing: Boolean = false,
     /** Forced mono asked but refused by the FM driver. */
     val monoUnsupported: Boolean = false,
+    /** Source played (or played last): FM or internet. */
+    val source: Source = Source.FM,
+    /** Internet stations saved, and the one played (or last played). */
+    val webStations: List<WebStation> = emptyList(),
+    val web: WebStation? = null,
+    /** Internet stream: wanted by the user, playing, buffering, reconnecting (after a network loss). */
+    val webWanted: Boolean = false,
+    val webPlaying: Boolean = false,
+    val webBuffering: Boolean = false,
+    val webRetrying: Boolean = false,
+    /** "Artist - Title" sent by the stream (ICY), "" when none. */
+    val webTitle: String = "",
+    /** Audio of the stream: codec label ("AAC", "MP3"…), kbit/s (0 = unknown). */
+    val webCodec: String = "",
+    val webBitrate: Int = 0,
+    /** Logo of the internet station (its address in the catalogue), when found. */
+    val webLogo: Bitmap? = null,
 ) {
+    /** Sound coming out: the FM chip or the internet stream. */
+    val playing: Boolean get() = if (source == Source.WEB) webWanted else poweredOn
+
+    /** Station name for the media card, the notification and the widget, whatever the source. */
+    val shownTitle: String get() = if (source == Source.WEB) web?.name.orEmpty() else title
+
+    /** Second line, whatever the source: the stream's title for an internet station. */
+    val shownNowPlaying: String get() = if (source == Source.WEB) webTitle else nowPlaying
+
+    val shownLogo: Bitmap? get() = if (source == Source.WEB) webLogo else logo
+
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 
     /** Station name: RDS PS, else the preset name, else the call letters. */
@@ -166,6 +198,20 @@ class RadioStore(
     var stations: List<Station>
         get() = read("stations")
         set(value) = write("stations", value)
+
+    /** Internet stations saved, in the user's order. */
+    var webStations: List<WebStation>
+        get() = WebStation.listFromJson(prefs.getString("web_stations", "[]"))
+        set(value) = prefs.edit().putString("web_stations", WebStation.listToJson(value)).apply()
+
+    /** Source played last, and the internet station played last (its id). */
+    var source: Source
+        get() = if (prefs.getString("source", "fm") == "web") Source.WEB else Source.FM
+        set(value) = prefs.edit().putString("source", if (value == Source.WEB) "web" else "fm").apply()
+
+    var webCurrent: String
+        get() = prefs.getString("web_current", "").orEmpty()
+        set(value) = prefs.edit().putString("web_current", value).apply()
 
     private fun read(key: String): List<Station> =
         try {

@@ -72,11 +72,15 @@ import org.librehu.fm.Band
 import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
+import org.librehu.fm.Source
 import org.librehu.fm.Station
 import org.librehu.fm.StationLogos
 import kotlin.math.roundToInt
 
-/** Car-style radio screen: now-playing card with transport controls on the left, presets / stations on the right. */
+/**
+ * Car-style radio screen: now-playing card with transport controls on the left, presets / stations on the right.
+ * "FM | Internet" at the top switches between the FM radio and the internet stations ([WebNowPlaying], [WebPanel]).
+ */
 @Composable
 fun RadioScreen(
     send: (String, Int?) -> Unit,
@@ -86,6 +90,7 @@ fun RadioScreen(
     // LibreHU Launcher's car styles: the launcher asks the app for them (see RetroLook).
     if (RetroLook.factory) return FactoryRadio(s, send, onSettings)
     if (RetroLook.ambient) return AmbientRadio(s, send, onSettings)
+    var internet by rememberSaveable { mutableStateOf(s.source == Source.WEB) }
     Row(
         modifier =
             Modifier
@@ -95,8 +100,13 @@ fun RadioScreen(
                 .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        NowPlaying(s, send, onSettings, Modifier.weight(1.1f).fillMaxHeight())
-        StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
+        if (internet) {
+            WebNowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
+            WebPanel(s, Modifier.weight(1f).fillMaxHeight())
+        } else {
+            NowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
+            StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
+        }
     }
 }
 
@@ -105,6 +115,7 @@ private fun NowPlaying(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
+    onInternet: (Boolean) -> Unit,
     modifier: Modifier,
 ) {
     Column(
@@ -117,7 +128,7 @@ private fun NowPlaying(
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.app_name), color = CarColors.TextDim, fontSize = 18.sp, modifier = Modifier.weight(1f))
+                SourceTabs(false, onInternet, Modifier.weight(1f))
                 IconButton(onClick = onSettings, modifier = Modifier.size(48.dp)) {
                     Icon(
                         Icons.Default.Settings,
@@ -181,7 +192,8 @@ private fun NowPlaying(
                         .size(96.dp)
                         .clip(CircleShape)
                         .background(CarColors.Accent)
-                        .clickable { send(FmService.ACTION_TOGGLE, null) },
+                        // FM screen: play means FM, even when an internet station played last.
+                        .clickable { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
                 contentAlignment = Alignment.Center,
             ) {
                 if (s.busy) {

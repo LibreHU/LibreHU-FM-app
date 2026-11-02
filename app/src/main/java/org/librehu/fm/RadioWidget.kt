@@ -18,7 +18,7 @@ class RadioWidget : AppWidgetProvider() {
         manager: AppWidgetManager,
         appWidgetIds: IntArray,
     ) {
-        val s = FmService.state.value.let { if (it.presets.isEmpty() && !it.poweredOn) withStore(context, it) else it }
+        val s = FmService.state.value.let { if (it.presets.isEmpty() && !it.playing) withStore(context, it) else it }
         manager.updateAppWidget(appWidgetIds, views(context, s))
     }
 
@@ -26,7 +26,7 @@ class RadioWidget : AppWidgetProvider() {
         /** Redraws the widgets with the last known state (theme change while the radio is off). */
         fun refresh(context: Context) {
             val s = FmService.state.value
-            updateAll(context, if (!s.poweredOn) withStore(context, s) else s)
+            updateAll(context, if (!s.playing) withStore(context, s) else s)
         }
 
         fun updateAll(
@@ -100,24 +100,29 @@ class RadioWidget : AppWidgetProvider() {
                 setInt(R.id.widget_next, "setColorFilter", text)
                 setInt(R.id.widget_toggle_disc, "setColorFilter", accent)
                 setInt(R.id.widget_toggle, "setColorFilter", onAccent)
-                setTextViewText(R.id.widget_frequency, Band.format(s.frequency))
-                setTextViewText(R.id.widget_title, s.title.ifBlank { context.getString(R.string.app_name) })
+                // Internet station: no frequency, the source is named instead.
+                setTextViewText(
+                    R.id.widget_frequency,
+                    if (s.source == Source.WEB) context.getString(R.string.source_web) else Band.format(s.frequency),
+                )
+                setTextViewText(R.id.widget_title, s.shownTitle.ifBlank { context.getString(R.string.app_name) })
                 setTextViewText(
                     R.id.widget_text,
                     when {
-                        s.nowPlaying.isNotBlank() -> s.nowPlaying
+                        s.shownNowPlaying.isNotBlank() -> s.shownNowPlaying
+                        s.source == Source.WEB && s.webWanted -> context.getString(R.string.web_radio)
                         s.poweredOn -> "FM ${Band.format(s.frequency)} MHz"
                         else -> context.getString(R.string.off)
                     },
                 )
-                if (s.logo != null) {
-                    setImageViewBitmap(R.id.widget_logo, s.logo)
+                if (s.shownLogo != null) {
+                    setImageViewBitmap(R.id.widget_logo, s.shownLogo)
                     setInt(R.id.widget_logo, "setColorFilter", 0)
                 } else {
                     setImageViewResource(R.id.widget_logo, R.drawable.ic_radio)
                     setInt(R.id.widget_logo, "setColorFilter", accent)
                 }
-                setImageViewResource(R.id.widget_toggle, if (s.poweredOn) R.drawable.ic_pause else R.drawable.ic_play)
+                setImageViewResource(R.id.widget_toggle, if (s.playing) R.drawable.ic_pause else R.drawable.ic_play)
                 setOnClickPendingIntent(R.id.widget_previous, FmService.servicePending(context, FmService.ACTION_PREVIOUS))
                 setOnClickPendingIntent(R.id.widget_toggle, FmService.servicePending(context, FmService.ACTION_TOGGLE))
                 setOnClickPendingIntent(R.id.widget_next, FmService.servicePending(context, FmService.ACTION_NEXT))

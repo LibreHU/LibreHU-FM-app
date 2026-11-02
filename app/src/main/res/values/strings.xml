@@ -190,4 +190,28 @@
     <string name="fm_store_preset">Store the station</string>
     <string name="fm_remove_preset">Remove from the presets</string>
     <string name="fm_no_presets">No preset yet: Options → Store the station.</string>
+    <!-- Internet radio -->
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Internet radio</string>
+    <string name="web_connecting">Connecting…</string>
+    <string name="web_reconnecting">Connection lost, reconnecting…</string>
+    <string name="web_none">No internet station</string>
+    <string name="web_empty_hint">Add a station with + (stream address, M3U or PLS link) or import an M3U / PLS file.</string>
+    <string name="web_stations">Internet stations</string>
+    <string name="web_add">Add a station</string>
+    <string name="web_import">Import an M3U / PLS file</string>
+    <string name="web_no_stations">No internet station yet: + adds one by its address, the file button imports an M3U or PLS playlist.</string>
+    <string name="web_remove">Remove</string>
+    <string name="web_remove_confirm">Remove this station from the list?</string>
+    <string name="web_add_hint">Stream address, or the address of an M3U / PLS playlist (the station\'s \"listen\" link).</string>
+    <string name="web_address">Address</string>
+    <string name="web_name">Name</string>
+    <string name="web_name_hint">Optional: the address\'s host otherwise</string>
+    <string name="web_add_confirm">Add</string>
+    <string name="web_import_none">No station found in this file (M3U or PLS with http / https addresses).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d station added</item>
+        <item quantity="other">%d stations added</item>
+    </plurals>
 </resources>
