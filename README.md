@@ -118,6 +118,12 @@ liste française de Radio Browser du 02/11/2026 ; pas encore refaites par l'acti
 - **Catalogue** (onglet *Catalogue*) : la liste de [Radio Browser](https://www.radio-browser.info) (base communautaire,
   déjà utilisée pour les logos) du pays des réglages, téléchargée en une fois (environ 4 Mo pour la France) et gardée
   une semaine (bouton Actualiser), utilisable hors ligne ensuite :
+  - **choix en grandes tuiles** (pays, région, genre), à la place de la liste, pensé pour un écran de voiture : un
+    toucher sur la touche du filtre ouvre une grille, un toucher choisit. Régions : « Toutes », les régions d'au moins
+    5 stations (19 pour la France : tout tient sur un écran), « Nationales / sans région », puis « Autres régions »
+    (les petites, de A à Z). Genres : les 21 plus utilisés, puis « Autres genres ». **Pays** : celui de l'autoradio
+    en premier, puis par nombre de stations, puis « Autres pays » ; ce choix ne change pas la bande FM (réglage à part
+    du pays de la FM) ;
   - **par région** : champ « state » de Radio Browser, écritures fusionnées (« Ile de France » = « Île-de-France ») ;
     le pays lui-même, « Europe » et les stations sans région sont rangés dans **Nationales / sans région**. Relevé du
     02/11/2026 : une station française sur cinq seulement a une région (760 sur 3 547) ; les grands réseaux nationaux

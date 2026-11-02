@@ -72,6 +72,28 @@ class CatalogStore(
         http.get("$server/json/url/${URLEncoder.encode(uuid, "UTF-8")}", 64 * 1024)
     }
 
+    /** Countries of the catalogue (ISO code, number of stations), the biggest first; kept a month. */
+    fun countries(server: String): List<Pair<String, Int>> {
+        val f = File(dir, "countries.json")
+        val fresh = f.exists() && System.currentTimeMillis() - f.lastModified() < 30L * 24 * 3600 * 1000
+        val body =
+            (if (fresh) f.readText() else null)
+                ?: http.get("$server/json/countries?order=stationcount&reverse=true&hidebroken=true")?.toString(Charsets.UTF_8)?.also { f.writeText(it) }
+                ?: (if (f.exists()) f.readText() else return emptyList())
+        return try {
+            val a = JSONArray(body)
+            (0 until a.length())
+                .map { a.getJSONObject(it) }
+                .map { it.optString("iso_3166_1").uppercase(Locale.ROOT) to it.optInt("stationcount") }
+                .filter { it.first.length == 2 && it.second > 0 }
+                .groupBy { it.first }
+                .map { (iso, l) -> iso to l.sumOf { it.second } }
+                .sortedByDescending { it.second }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
     private fun file(country: String) = File(dir, "${country.uppercase(Locale.ROOT)}.json")
 
     companion object {
