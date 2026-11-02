@@ -100,4 +100,9 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.coroutines.android)
+    // Internet radio: streams (MP3, AAC, Opus, FLAC, HLS) and their song titles (ICY).
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.hls)
+    testImplementation(libs.junit)
+    testImplementation(libs.json)
 }

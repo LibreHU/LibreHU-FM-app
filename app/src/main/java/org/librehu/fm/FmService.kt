@@ -9,6 +9,11 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -36,6 +41,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.librehu.fm.headunit.HeadUnitBridge
+import org.librehu.fm.web.CatalogStore
+import org.librehu.fm.web.WebCatalog
+import org.librehu.fm.web.WebPlayer
+import org.librehu.fm.web.WebStation
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -48,7 +57,8 @@ import kotlin.math.roundToInt
 
 /**
  * Owns the FM chip: power, tuning, seek, scan, RDS, audio, audio focus and the media session (used by the
- * launcher, the steering wheel keys and the notification). All chip calls run on one thread.
+ * launcher, the steering wheel keys and the notification). All chip calls run on one thread. Also plays the internet
+ * stations ([WebPlayer], main thread): one source at a time, behind the same media session.
  */
 class FmService : Service() {
     private val chip = Executors.newSingleThreadExecutor { r -> Thread(r, "fm-chip") }
@@ -60,6 +70,9 @@ class FmService : Service() {
     private lateinit var session: MediaSession
     private lateinit var audioManager: AudioManager
     private lateinit var settings: StateFlow<Settings>
+    private lateinit var web: WebPlayer
+    private lateinit var catalog: CatalogStore
+    private var network: ConnectivityManager.NetworkCallback? = null
     private var focusRequest: AudioFocusRequest? = null
     private var deviceOpen = false
 
@@ -94,6 +107,7 @@ class FmService : Service() {
         // Band plan before any power-up (queued first on the chip thread).
         chip.execute { applyRegion(settings.value.band) }
         bridge = HeadUnitBridge.create(this)
+        val webStations = store.webStations
         _state.update {
             it.copy(
                 available = FmNative.loadError == null,
@@ -101,7 +115,36 @@ class FmService : Service() {
                 frequency = store.frequency,
                 presets = store.presets,
                 stations = store.stations,
+                source = store.source,
+                webStations = webStations,
+                web = webStations.firstOrNull { st -> st.id == store.webCurrent } ?: webStations.firstOrNull(),
             )
+        }
+        web = WebPlayer(this, userAgent(), ::onWebStatus)
+        catalog = CatalogStore(this)
+        watchNetwork()
+        // Internet stream of the FM station played, once its name is stable: offered on the FM screen.
+        scope.launch {
+            combine(state.map { Triple(it.frequency, it.logoName, it.poweredOn) }, settings) { st, set ->
+                Triple(st, set.webSuggest, set.webQuality)
+            }.distinctUntilChanged()
+                .collectLatest { (st, suggest, quality) ->
+                    val (freq, name, on) = st
+                    if (!suggest || !on || name.isEmpty()) {
+                        _state.update { it.copy(fmWeb = null) }
+                        return@collectLatest
+                    }
+                    delay(LOGO_NAME_STABLE_MS)
+                    val found = withContext(Dispatchers.IO) { fmStream(name, quality) }
+                    _state.update { if (it.frequency == freq) it.copy(fmWeb = found) else it }
+                }
+        }
+        // Logo of the internet station played: kept per station, downloaded once.
+        scope.launch {
+            state.map { it.web }.distinctUntilChanged().collectLatest { st ->
+                val bitmap = if (st == null) null else withContext(Dispatchers.IO) { webLogo(st) }
+                _state.update { if (it.web?.id == st?.id) it.copy(webLogo = bitmap) else it }
+            }
         }
         session =
             MediaSession(this, "LibreHU-FM").apply {
@@ -180,7 +223,7 @@ class FmService : Service() {
             state.map { it.copy(rssi = null, stereo = false) }.distinctUntilChanged().collect { s ->
                 updateSession(s)
                 RadioWidget.updateAll(this@FmService, s)
-                if (s.poweredOn || s.standby) notify(s)
+                if (s.playing || s.standby) notify(s)
             }
         }
         // Forced mono and search threshold applied at once while the chip is on.
@@ -230,15 +273,28 @@ class FmService : Service() {
         startForegroundCompat(state.value)
         when (intent?.action) {
             ACTION_PLAY -> {
-                powerOn()
+                play()
             }
 
             ACTION_PAUSE -> {
-                powerOff()
+                pause()
             }
 
             ACTION_TOGGLE -> {
-                if (state.value.poweredOn) powerOff() else powerOn()
+                if (state.value.playing) pause() else play()
+            }
+
+            ACTION_PLAY_WEB -> {
+                val id = intent.getStringExtra(EXTRA_STATION)
+                // A station of the catalogue (not saved) comes whole; a saved one by its id.
+                val given = intent.getStringExtra(EXTRA_STATION_JSON)?.let { runCatching { WebStation.fromJson(org.json.JSONObject(it)) }.getOrNull() }
+                val st = given ?: state.value.webStations.firstOrNull { it.id == id } ?: state.value.web
+                val fromFm = intent.getIntExtra(EXTRA_FROM_FM, 0)
+                if (st != null) playWeb(st, fromFm)
+            }
+
+            ACTION_PLAY_FM -> {
+                playFm()
             }
 
             ACTION_NEXT -> {
@@ -267,6 +323,8 @@ class FmService : Service() {
 
             ACTION_TUNE -> {
                 tune(intent.getIntExtra(EXTRA_FREQUENCY, state.value.frequency))
+                // An FM station chosen while an internet station plays: the radio goes back to FM.
+                if (state.value.source == Source.WEB && state.value.webWanted) playFm()
             }
 
             ACTION_SCAN -> {
@@ -287,17 +345,162 @@ class FmService : Service() {
 
             else -> {}
         }
-        chip.execute { if (!state.value.poweredOn && !standby) scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) } }
+        chip.execute { if (!state.value.playing && !standby) scope.launch { stopForeground(STOP_FOREGROUND_REMOVE) } }
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
         chip.execute { if (state.value.poweredOn || standby) powerDownChip() }
         chip.shutdown()
+        web.release()
+        network?.let { getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(it) }
         session.release()
         bridge.release()
         scope.cancel()
         super.onDestroy()
+    }
+
+    // --- Source: FM or internet (main thread) ----------------------------------------------------------------------
+
+    /** Play: the source played last. */
+    private fun play() {
+        val s = state.value
+        val st = s.web
+        if (s.source == Source.WEB && st != null) playWeb(st) else playFm()
+    }
+
+    private fun pause() {
+        if (state.value.source == Source.WEB) web.stop() else powerOff()
+    }
+
+    /** FM again: the internet stream stopped, then the chip powered. */
+    private fun playFm() {
+        // Source first: the stream's stop must not take the service out of the foreground that FM now needs.
+        setSource(Source.FM)
+        if (web.current.wanted) web.stop()
+        powerOn()
+    }
+
+    /**
+     * An internet station: the FM chip is switched off (the traffic announcement standby too), then the stream plays.
+     * The state says "playing" at once so that the service stays in the foreground meanwhile.
+     */
+    private fun playWeb(
+        st: WebStation,
+        fromFm: Int = 0,
+    ) {
+        setSource(Source.WEB)
+        store.webCurrent = st.id
+        _state.update {
+            it.copy(web = st, webWanted = true, webTitle = if (it.web?.id == st.id) it.webTitle else "", error = "", webFromFm = fromFm)
+        }
+        if (st.rbUuid.isNotBlank()) {
+            val server = settings.value.serverUrl
+            scope.launch(Dispatchers.IO) { runCatching { catalog.countClick(server, st.rbUuid) } }
+        }
+        chip.execute {
+            if (state.value.poweredOn || standby) powerDownChip()
+            scope.launch {
+                startForegroundCompat(state.value)
+                web.play(st)
+            }
+        }
+    }
+
+    private fun setSource(source: Source) {
+        if (state.value.source == source) return
+        store.source = source
+        _state.update { it.copy(source = source) }
+    }
+
+    /** What the internet player reports (main thread). */
+    private fun onWebStatus(w: WebPlayer.Status) {
+        _state.update {
+            it.copy(
+                webWanted = w.wanted,
+                webPlaying = w.playing,
+                webBuffering = w.buffering,
+                webRetrying = w.retrying,
+                webTitle = w.title,
+                webCodec = codecLabel(w.mime),
+                webBitrate = w.bitrate,
+            )
+        }
+        if (!w.wanted && state.value.source == Source.WEB && !standby) stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    /** Next / previous internet station, in the list order (wraps around). */
+    private fun nextWeb(forward: Boolean) {
+        val s = state.value
+        val list = s.webStations
+        if (list.isEmpty()) return
+        val i = list.indexOfFirst { it.id == s.web?.id }
+        val target = if (i < 0) list.first() else list[(i + if (forward) 1 else list.size - 1) % list.size]
+        playWeb(target)
+    }
+
+    /**
+     * Internet stream of the FM station named [name]: the catalogue kept for the country when there is one, else a
+     * search by name on Radio Browser (as for the logos); only a good name match ([WebCatalog.matchFm]).
+     */
+    private fun fmStream(
+        name: String,
+        quality: WebQuality,
+    ): WebStation? {
+        val set = settings.value
+        val kept = catalog.cached(set.countryCode)?.first
+        val candidates =
+            kept ?: StationLogos.queries(name).flatMap { q ->
+                runCatching { catalog.search(set.serverUrl, set.countryCode, q) }.getOrDefault(emptyList())
+            }
+        return WebCatalog.matchFm(name, candidates, quality)?.toWebStation()
+    }
+
+    /** Logo of an internet station: kept file, else its address (catalogue), else none. */
+    private fun webLogo(st: WebStation): Bitmap? {
+        val dir = java.io.File(filesDir, "web_logos").apply { mkdirs() }
+        val f = java.io.File(dir, st.id.replace(Regex("[^A-Za-z0-9._-]"), "_") + ".png")
+        if (f.exists()) return BitmapFactory.decodeFile(f.path)
+        if (st.logoUrl.isBlank() || !settings.value.logos || settings.value.logosOffline) return null
+        val bitmap = runCatching { RadioBrowser.Http(this).logo(st.logoUrl) }.getOrNull() ?: return null
+        f.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        return bitmap
+    }
+
+    /** "online" follows the network that has a validated internet connection (offer of the FM stations' streams). */
+    private fun watchNetwork() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val cb =
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onCapabilitiesChanged(
+                    n: Network,
+                    caps: NetworkCapabilities,
+                ) {
+                    val ok = caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    _state.update { it.copy(online = ok) }
+                }
+
+                override fun onLost(n: Network) {
+                    _state.update { it.copy(online = false) }
+                }
+            }
+        try {
+            cm.registerDefaultNetworkCallback(cb)
+            network = cb
+        } catch (e: Exception) {
+            Log.w(TAG, "network callback: ${e.message}")
+        }
+    }
+
+    private fun userAgent(): String {
+        val version =
+            try {
+                packageManager.getPackageInfo(packageName, 0).versionName
+            } catch (_: Exception) {
+                null
+            }
+        return "LibreHU-FM/${version ?: "dev"}"
     }
 
     // --- Chip ----------------------------------------------------------------------------------------------------
@@ -657,9 +860,13 @@ class FmService : Service() {
             setFrequency(target)
         }
 
-    /** Next / previous preset, or seek when there is none. */
+    /** Next / previous preset, or seek when there is none; next / previous internet station on the internet. */
     private fun next(forward: Boolean) {
         val s = state.value
+        if (s.source == Source.WEB) {
+            nextWeb(forward)
+            return
+        }
         if (!s.poweredOn) {
             powerOn()
             return
@@ -909,11 +1116,12 @@ class FmService : Service() {
 
     private val sessionCallback =
         object : MediaSession.Callback() {
-            override fun onPlay() = powerOn()
+            override fun onPlay() = play()
 
-            override fun onPause() = powerOff()
+            override fun onPause() = pause()
 
             override fun onStop() {
+                web.stop()
                 powerOff(keepTa = false)
                 chip.execute { if (standby) powerDownChip() }
             }
@@ -923,15 +1131,33 @@ class FmService : Service() {
             override fun onSkipToPrevious() = next(false)
         }
 
+    /** Station name for the session and the notification, with a fallback per source. */
+    private fun shownName(s: RadioState): String =
+        s.shownTitle.ifBlank { if (s.source == Source.WEB) getString(R.string.web_radio) else "FM ${Band.format(s.frequency)}" }
+
+    private fun shownLine(s: RadioState): String =
+        s.shownNowPlaying.ifBlank {
+            if (s.source == Source.WEB) webLine(s) else "FM ${Band.format(s.frequency)} MHz"
+        }
+
+    /** Internet station without a song title: its state (connection, reconnection) or the stream's audio. */
+    private fun webLine(s: RadioState): String =
+        when {
+            s.webRetrying -> getString(R.string.web_reconnecting)
+            s.webBuffering -> getString(R.string.web_connecting)
+            else -> listOf(s.webCodec, if (s.webBitrate > 0) "${s.webBitrate} kbit/s" else "").filter { it.isNotBlank() }
+                .joinToString(" ").ifBlank { getString(R.string.web_radio) }
+        }
+
     private fun updateSession(s: RadioState) {
         session.setMetadata(
             MediaMetadata
                 .Builder()
-                .putString(MediaMetadata.METADATA_KEY_TITLE, s.title.ifBlank { "FM ${Band.format(s.frequency)}" })
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, s.nowPlaying.ifBlank { "FM ${Band.format(s.frequency)} MHz" })
+                .putString(MediaMetadata.METADATA_KEY_TITLE, shownName(s))
+                .putString(MediaMetadata.METADATA_KEY_ARTIST, shownLine(s))
                 .putString(MediaMetadata.METADATA_KEY_ALBUM, getString(R.string.app_name))
-                .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, s.logo)
-                .putBitmap(MediaMetadata.METADATA_KEY_ART, s.logo)
+                .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, s.shownLogo)
+                .putBitmap(MediaMetadata.METADATA_KEY_ART, s.shownLogo)
                 .build(),
         )
         session.setPlaybackState(
@@ -941,12 +1167,12 @@ class FmService : Service() {
                     PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or
                         PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS or PlaybackState.ACTION_STOP,
                 ).setState(
-                    if (s.poweredOn) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED,
+                    if (s.playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED,
                     PlaybackState.PLAYBACK_POSITION_UNKNOWN,
                     1f,
                 ).build(),
         )
-        session.isActive = s.poweredOn
+        session.isActive = s.playing
     }
 
     private fun buildNotification(s: RadioState): Notification {
@@ -973,21 +1199,21 @@ class FmService : Service() {
                 when {
                     s.announcing -> getString(R.string.ta_announcing)
                     s.standby -> getString(R.string.ta_standby)
-                    else -> s.title.ifBlank { "FM ${Band.format(s.frequency)}" }
+                    else -> shownName(s)
                 },
             ).setContentText(
                 if (s.standby && !s.announcing) {
                     s.title.ifBlank { "FM ${Band.format(s.frequency)}" }
                 } else {
-                    s.nowPlaying.ifBlank { "${Band.format(s.frequency)} MHz" }
+                    shownLine(s)
                 },
             )
-            .setLargeIcon(s.logo)
+            .setLargeIcon(s.shownLogo)
             .setContentIntent(session.controller.sessionActivity)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
             .addAction(action(R.drawable.ic_skip_previous, R.string.previous, ACTION_PREVIOUS))
             .addAction(
-                if (s.poweredOn) {
+                if (s.playing) {
                     action(R.drawable.ic_pause, R.string.pause, ACTION_PAUSE)
                 } else {
                     action(R.drawable.ic_play, R.string.play, ACTION_PLAY)
@@ -1041,6 +1267,72 @@ class FmService : Service() {
         const val ACTION_TOGGLE_PRESET = "org.librehu.fm.TOGGLE_PRESET"
         const val ACTION_STOP_STANDBY = "org.librehu.fm.STOP_STANDBY"
         const val EXTRA_FREQUENCY = "frequency"
+
+        /** Plays the internet station [EXTRA_STATION] (its id; the last one played without it). */
+        const val ACTION_PLAY_WEB = "org.librehu.fm.PLAY_WEB"
+
+        /** Back to FM (the internet stream stops). */
+        const val ACTION_PLAY_FM = "org.librehu.fm.PLAY_FM"
+        const val EXTRA_STATION = "station"
+        const val EXTRA_STATION_JSON = "station_json"
+        const val EXTRA_FROM_FM = "from_fm"
+
+        /** Codec label from a MIME type ("audio/mp4a-latm" -> "AAC"). */
+        fun codecLabel(mime: String): String =
+            when (mime.lowercase(Locale.ROOT)) {
+                "" -> ""
+                "audio/mpeg", "audio/mpeg-l2", "audio/mpeg-l1" -> "MP3"
+                "audio/mp4a-latm", "audio/aac" -> "AAC"
+                "audio/opus" -> "Opus"
+                "audio/vorbis" -> "Vorbis"
+                "audio/flac" -> "FLAC"
+                else -> mime.substringAfter('/').uppercase(Locale.ROOT)
+            }
+
+        /** Internet stations added (by hand or from a playlist file): kept, shown at once. Same process as the UI. */
+        fun addWebStations(
+            context: Context,
+            added: List<WebStation>,
+        ) {
+            if (added.isEmpty()) return
+            val store = RadioStore(context)
+            val known = store.webStations
+            val list = known + added.filter { a -> known.none { it.url == a.url } }
+            store.webStations = list
+            _state.update { it.copy(webStations = list, web = it.web ?: list.firstOrNull()) }
+        }
+
+        fun removeWebStation(
+            context: Context,
+            id: String,
+        ) {
+            val store = RadioStore(context)
+            val list = store.webStations.filterNot { it.id == id }
+            store.webStations = list
+            _state.update { it.copy(webStations = list, web = if (it.web?.id == id && !it.webWanted) list.firstOrNull() else it.web) }
+        }
+
+        fun playWeb(
+            context: Context,
+            id: String,
+        ) {
+            context.startForegroundService(Intent(context, FmService::class.java).setAction(ACTION_PLAY_WEB).putExtra(EXTRA_STATION, id))
+        }
+
+        /** Plays a station that may not be saved (catalogue, offer of an FM station's stream from [fromFm]). */
+        fun playWebStation(
+            context: Context,
+            st: WebStation,
+            fromFm: Int = 0,
+        ) {
+            context.startForegroundService(
+                Intent(context, FmService::class.java)
+                    .setAction(ACTION_PLAY_WEB)
+                    .putExtra(EXTRA_STATION, st.id)
+                    .putExtra(EXTRA_STATION_JSON, st.toJson().toString())
+                    .putExtra(EXTRA_FROM_FM, fromFm),
+            )
+        }
 
         private val _state = MutableStateFlow(RadioState())
 
