@@ -36,6 +36,7 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   (types de programme RDS et RBDS). La désaccentuation est envoyée au pilote de l'AC8257 à la mise en marche
   (`fm_tune_parm.deemphasis`) : avant, l'appli imposait 50 µs partout, d'où des aigus trop forts et plus de souffle
   sur les stations américaines, émises avec une préaccentuation de 75 µs. Un changement de région redémarre la radio.
+  **Essai (02/11/2026)** : région Amériques et RDS américain (RBDS) parfaits chez Reo Au In, aux États-Unis.
 - **RDS** décodé par la puce FM : nom de station, radiotexte, type de programme (PTY), TP / TA, fréquences
   alternatives (AF, option), nommage automatique des favoris. Le pilote FM de l'AC8257 rend un enregistrement RDS de
   720 octets (balises RT+ en plus) : l'appli, qui en demandait 688, n'en recevait aucun. Elle reconnaît maintenant
@@ -118,8 +119,8 @@ adb reboot
 L'APK vient de la release `latest-<branche>` du dépôt (build *release* signé avec la clé commune des applis LibreHU).
 Au premier lancement, accepter la permission micro (`RECORD_AUDIO`, demandée par Android pour toute capture).
 
-Non testé sur l'appareil à ce stade : la séquence est celle d'AOSP et de l'app Jancar, mais le comportement réel
-(niveau audio, RDS) reste à valider.
+Essayé aux États-Unis par Reo Au In (02/11/2026) : région Amériques et RDS américain (RBDS) OK. Le reste (niveau
+audio, autres régions) reste à valider sur l'appareil ; la séquence est celle d'AOSP et de l'app Jancar.
 
 ### Journal FM
 **Réglages → Journal → Exporter le journal** : un fichier texte (`librehu-fm-<date>.log`, enregistré où on veut) avec
