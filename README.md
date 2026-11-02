@@ -1,7 +1,8 @@
 # LibreHU FM
 
-Radio FM pour autoradios Autochips AC8257 (Jancar UJC201) et autres appareils MediaTek, au style des interfaces
-voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceur
+Radio FM **et radio internet** (voir [Radio internet](#radio-internet)) pour autoradios Autochips AC8257 (Jancar UJC201)
+et autres appareils MediaTek, au style des interfaces voiture (thème sombre, grosses cibles tactiles), avec **widget**
+pour le lanceur
 [LibreHU-Launcher](https://github.com/LibreHU/LibreHU-Launcher-App).
 
 - Puce FM interne MediaTek (combo **MT6631**) pilotée par `/dev/fm`, via le JNI FM d'AOSP (Apache 2.0, voir
@@ -84,6 +85,51 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
   le flux média de la sortie principale, donc tout le son d'Android et l'AUX) et le remet à 0 au démarrage et à
   l'arrêt de la radio.
 
+## Radio internet
+
+Onglets **FM | Internet** en haut de l'écran (style moderne) : la même appli joue la FM ou une station internet, une
+seule à la fois, derrière la même session média (carte du lanceur, touches du volant, widget, notification, LibreHU
+EasySource).
+
+- **Lecteur** : [Media3 ExoPlayer](https://developer.android.com/media/media3/exoplayer/supported-formats) (MP3, AAC /
+  HE-AAC, Opus, Vorbis, FLAC, flux HLS). Le titre envoyé par le flux (métadonnées ICY des serveurs SHOUTcast / Icecast,
+  [`IcyInfo`](https://developer.android.com/reference/androidx/media3/extractor/metadata/icy/IcyInfo)) s'affiche
+  comme le RT+ de la FM ; codec et débit réellement reçus sous le nom. Tampon de 15 à 60 s et **reconnexion
+  automatique** après une coupure (tunnel, pas de réseau) : 2, 4, 8, 15 s puis toutes les 30 s tant que la station est
+  demandée. Focus audio géré par le lecteur (pause pendant un appel, volume baissé pendant un guidage).
+- **Ajouter à la main** (onglet *Stations internet*) : **+** = adresse du flux, ou d'une liste **M3U / M3U étendu /
+  PLS** (le lien « écouter » d'une station), lue à chaque lecture (une station qui change de serveur garde le même lien) ;
+  bouton fichier = **import d'un fichier M3U ou PLS** (clé USB, mémoire interne) : chaque station du fichier est
+  ajoutée, avec le nom de `#EXTINF` ou `TitleN`. Un `.m3u8` qui est un flux HLS (`#EXT-X-`) est joué comme tel. Appui
+  long sur une station : la retirer. Flux `http://` acceptés (beaucoup de radios n'ont pas de https).
+- **Catalogue** (onglet *Catalogue*) : la liste de [Radio Browser](https://www.radio-browser.info) (base communautaire,
+  déjà utilisée pour les logos) du pays des réglages, téléchargée en une fois (environ 4 Mo pour la France) et gardée
+  une semaine (bouton Actualiser), utilisable hors ligne ensuite :
+  - **par région** : champ « state » de Radio Browser, écritures fusionnées (« Ile de France » = « Île-de-France ») ;
+    le pays lui-même, « Europe » et les stations sans région sont rangés dans **Nationales / sans région**. Relevé du
+    02/11/2026 : une station française sur cinq seulement a une région (760 sur 3 547) ; les grands réseaux nationaux
+    n'en ont pas. La liste étant communautaire, une région manquante se corrige sur radio-browser.info ;
+  - **par genre** (étiquettes de Radio Browser, celles d'au moins 3 stations : jazz, rock, news… et réseaux) et par
+    **nom** ;
+  - **une ligne par station** : ses différents flux (France Inter en a 8 : AAC 192, MP3 128…) sont regroupés et celui
+    joué suit le réglage de **qualité** ; un toucher joue, l'étoile enregistre. L'appli signale chaque lecture à Radio
+    Browser (`json/url/<id>`, demandé par sa documentation pour classer les stations).
+- **Qualité** (Réglages → Radio internet) : **Meilleur son** (FLAC en premier, puis le plus haut débit, AAC / Opus
+  comptés 1,5 fois le MP3) ou **Moins de données** (plus petit débit, 48 kbit/s au moins). Repères : 128 kbit/s ≈ 58 Mo
+  par heure, 320 kbit/s ≈ 144 Mo, FLAC 300 à 450 Mo. La sortie d'Android vers la puce son de l'UJC201 (BD37534,
+  analogique) est en stéréo 48 kHz / 16 bits : au-delà de la qualité CD, rien ne s'entend en plus.
+- **Passer de la FM à internet** (Réglages → Radio internet, activé par défaut) : pendant l'écoute FM, quand la station
+  (nom RDS, ou indicatif aux États-Unis) existe aussi sur internet **et** qu'internet marche (réseau validé), l'écran FM
+  propose « Aussi sur internet (AAC 192 kbit/s) : écouter son flux » ; un toucher bascule, et « Revenir en FM » ramène
+  la fréquence. Recherche dans le catalogue gardé, sinon par nom sur Radio Browser (comme les logos). **Seulement sur
+  un nom sans doute** : deux stations presque aussi proches du nom RDS tronqué à 8 caractères (« FRANCE I » : France
+  Info ou France Inter ?) = rien n'est proposé. Essai sur la liste française (02/11/2026) : 15 noms RDS courants sur 20
+  trouvent leur flux (FIP, RTL, Skyrock, Europe 1, Mouv', Nostalgie en AAC 320…) ; les abréviations (« FRINTER »)
+  et les noms ambigus (« NRJ ») ne proposent rien.
+- **Limites** : pas d'écran internet dans les styles Modularer Infotainment-Baukasten et LHU-Link (la touche lecture y
+  joue la FM) ; logos des stations ajoutées à la main absents ; la « HD Radio » américaine (numérique sur la bande FM)
+  demande une puce de démodulation que l'UJC201 n'a pas : seule la qualité des flux internet est concernée ici.
+
 ## Captures d'écran
 
 | | |
@@ -161,7 +207,7 @@ Superuser) : le noyau ne détourne `/system/bin/su` que pour les applis autoris�
 
 ## Appli téléphone (LibreHU Bridge)
 
-Réglable depuis le téléphone par l'appli LibreHU Bridge (Android et iPhone), à travers LibreHU-service : la radio (marche, fréquence, stations, recherche, balayage) et tous les réglages (RDS et RT+, bande et région, chemin audio, logos).
+Réglable depuis le téléphone par l'appli LibreHU Bridge (Android et iPhone), à travers LibreHU-service : la radio (marche, fréquence, stations, recherche, balayage) et tous les réglages (RDS et RT+, bande et région, chemin audio, radio internet, logos).
 Fournisseur `<paquet>.bridge` (`bridge/BridgeProvider.kt`), réservé aux applis signées avec la clé LibreHU (permission
 `org.librehu.permission.BRIDGE`, vérifiée dans `call()` lui-même) ; format décrit dans
 [LibreHU-service, docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).
