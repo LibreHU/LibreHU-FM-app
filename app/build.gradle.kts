@@ -102,4 +102,5 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.hls)
     testImplementation(libs.junit)
+    testImplementation(libs.json)
 }

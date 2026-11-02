@@ -9,6 +9,9 @@ import java.util.Locale
 /** How the FM audio reaches the speakers (see [FmAudio]). */
 enum class AudioMode { AUTO, PATCH, RENDER }
 
+/** Stream chosen when an internet station has several: the best sound, or the least data. */
+enum class WebQuality { BEST, ECO }
+
 /** User settings of the radio. */
 data class Settings(
     /** RDS decoding (station name, radiotext, PTY, TP / TA). */
@@ -40,6 +43,10 @@ data class Settings(
     val logoServer: String = "",
     /** Country of the stations (ISO 3166 code); empty = the head unit's country. */
     val country: String = "",
+    /** Internet stations: stream chosen among a station's streams. */
+    val webQuality: WebQuality = WebQuality.BEST,
+    /** Offers the internet stream of the FM station played, when there is one and the internet works. */
+    val webSuggest: Boolean = true,
 ) {
     /** Base URL of the Radio Browser API, without trailing slash. */
     val serverUrl: String
@@ -96,6 +103,8 @@ object RadioSettings {
             .putBoolean("logos_offline", s.logosOffline)
             .putString("logo_server", s.logoServer)
             .putString("country", s.country)
+            .putString("web_quality", s.webQuality.name)
+            .putBoolean("web_suggest", s.webSuggest)
             .apply()
     }
 
@@ -126,6 +135,8 @@ object RadioSettings {
             logosOffline = p.getBoolean("logos_offline", d.logosOffline),
             logoServer = p.getString("logo_server", d.logoServer).orEmpty(),
             country = p.getString("country", d.country).orEmpty(),
+            webQuality = runCatching { WebQuality.valueOf(p.getString("web_quality", null) ?: "") }.getOrDefault(d.webQuality),
+            webSuggest = p.getBoolean("web_suggest", d.webSuggest),
         )
     }
 }

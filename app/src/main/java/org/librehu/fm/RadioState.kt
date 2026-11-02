@@ -67,6 +67,12 @@ data class RadioState(
     val webBitrate: Int = 0,
     /** Logo of the internet station (its address in the catalogue), when found. */
     val webLogo: Bitmap? = null,
+    /** Internet usable (a network with a validated connection). */
+    val online: Boolean = false,
+    /** Internet stream of the FM station played, offered on the FM screen; null when none was found. */
+    val fmWeb: WebStation? = null,
+    /** FM frequency the internet station was switched to from (offer of [fmWeb]), 0 otherwise: "back to FM". */
+    val webFromFm: Int = 0,
 ) {
     /** Sound coming out: the FM chip or the internet stream. */
     val playing: Boolean get() = if (source == Source.WEB) webWanted else poweredOn

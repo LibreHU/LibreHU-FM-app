@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -175,6 +176,17 @@ private fun NowPlaying(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
+            // The station is also on the internet and the internet works: offer to switch to its stream.
+            val offer = s.fmWeb
+            if (s.poweredOn && s.online && offer != null) {
+                val context = LocalContext.current
+                val audio = listOf(offer.codec, if (offer.bitrate > 0) "${offer.bitrate} kbit/s" else "").filter { it.isNotBlank() }.joinToString(" ")
+                Spacer(Modifier.height(8.dp))
+                OfferChip(
+                    androidx.compose.material.icons.Icons.Default.Public,
+                    if (audio.isBlank()) stringResource(R.string.web_offer) else stringResource(R.string.web_offer_audio, audio),
+                ) { FmService.playWebStation(context, offer, s.frequency) }
+            }
         }
 
         TunerBar(s.frequency) { send(FmService.ACTION_TUNE, it) }

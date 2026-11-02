@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Internet radio: Wi-Fi kept awake while a stream plays (ExoPlayer wake mode "network"). -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Internet radio: the stream of the FM station played is offered only while the internet works. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Privileged install only (see README): FM capture source and /dev/fm (gid media). -->
     <uses-permission
         android:name="android.permission.CAPTURE_AUDIO_OUTPUT"

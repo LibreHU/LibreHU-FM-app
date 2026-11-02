@@ -36,6 +36,9 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material.icons.filled.Radio
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +67,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.librehu.fm.Band
 import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
@@ -145,6 +150,14 @@ internal fun WebNowPlaying(
                         overflow = TextOverflow.Ellipsis,
                     )
                     val audio = if (active) audioLabel(s) else ""
+                    val saved = current == null || s.webStations.any { it.url == current.url }
+                    if (!saved && current != null) {
+                        TextButton(onClick = { FmService.addWebStations(context, listOf(current)) }) {
+                            Icon(Icons.Default.StarBorder, contentDescription = null, tint = CarColors.Accent)
+                            Spacer(Modifier.width(6.dp))
+                            Text(stringResource(R.string.web_save), color = CarColors.Accent, fontSize = 16.sp)
+                        }
+                    }
                     if (audio.isNotBlank()) {
                         Spacer(Modifier.height(6.dp))
                         Text(
@@ -175,6 +188,14 @@ internal fun WebNowPlaying(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
+            // Switched from an FM station (its internet stream): one touch goes back to it.
+            if (active && s.webFromFm != 0) {
+                Spacer(Modifier.height(8.dp))
+                OfferChip(Icons.Default.Radio, stringResource(R.string.web_back_to_fm, Band.format(s.webFromFm))) {
+                    send(FmService.ACTION_TUNE, s.webFromFm)
+                    send(FmService.ACTION_PLAY_FM, null)
+                }
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -210,6 +231,48 @@ internal fun WebNowPlaying(
             }
             WebRoundButton(Icons.Default.SkipNext, R.string.next) { if (active) send(FmService.ACTION_NEXT, null) }
         }
+    }
+}
+
+@Composable
+private fun PanelTab(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Text(
+        label,
+        color = if (selected) CarColors.OnAccent else CarColors.Text,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium,
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(50))
+                .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+    )
+}
+
+/** A line with an icon and a text in the accent colour, touched to act: offer of a stream, back to FM. */
+@Composable
+internal fun OfferChip(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(50))
+                .background(CarColors.SurfaceHigh)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(22.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(label, color = CarColors.Text, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -271,6 +334,7 @@ internal fun WebPanel(
     val context = LocalContext.current
     var adding by remember { mutableStateOf(false) }
     var removing by remember { mutableStateOf<WebStation?>(null) }
+    var catalogTab by rememberSaveable { mutableStateOf(false) }
     val import =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri != null) importPlaylist(context, uri)
@@ -283,28 +347,24 @@ internal fun WebPanel(
                 .padding(16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.web_stations),
-                color = CarColors.OnAccent,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                modifier =
-                    Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(CarColors.Accent)
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
-            )
+            PanelTab(stringResource(R.string.web_stations), !catalogTab) { catalogTab = false }
+            Spacer(Modifier.width(8.dp))
+            PanelTab(stringResource(R.string.web_catalog), catalogTab) { catalogTab = true }
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = { adding = true }, modifier = Modifier.size(56.dp)) {
-                Icon(Icons.Default.Add, stringResource(R.string.web_add), tint = CarColors.Text, modifier = Modifier.size(32.dp))
-            }
-            // Any type: file managers and USB keys often give playlists no MIME type, or a wrong one.
-            IconButton(onClick = { import.launch(arrayOf("*/*")) }, modifier = Modifier.size(56.dp)) {
-                Icon(Icons.Default.FileOpen, stringResource(R.string.web_import), tint = CarColors.Text, modifier = Modifier.size(32.dp))
+            if (!catalogTab) {
+                IconButton(onClick = { adding = true }, modifier = Modifier.size(56.dp)) {
+                    Icon(Icons.Default.Add, stringResource(R.string.web_add), tint = CarColors.Text, modifier = Modifier.size(32.dp))
+                }
+                // Any type: file managers and USB keys often give playlists no MIME type, or a wrong one.
+                IconButton(onClick = { import.launch(arrayOf("*/*")) }, modifier = Modifier.size(56.dp)) {
+                    Icon(Icons.Default.FileOpen, stringResource(R.string.web_import), tint = CarColors.Text, modifier = Modifier.size(32.dp))
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
-        if (s.webStations.isEmpty()) {
+        if (catalogTab) {
+            WebCatalogView(s)
+        } else if (s.webStations.isEmpty()) {
             Text(stringResource(R.string.web_no_stations), color = CarColors.TextDim, fontSize = 18.sp, modifier = Modifier.padding(16.dp))
         } else {
             LazyVerticalGrid(

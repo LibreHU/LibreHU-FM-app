@@ -214,4 +214,26 @@
         <item quantity="one">%d station added</item>
         <item quantity="other">%d stations added</item>
     </plurals>
+    <string name="web_catalog">Catalogue</string>
+    <string name="web_region">Region</string>
+    <string name="web_region_all">All regions</string>
+    <string name="web_region_none">National / no region</string>
+    <string name="web_genre">Genre</string>
+    <string name="web_genre_all">All genres</string>
+    <string name="web_search">Search a station</string>
+    <string name="web_catalog_refresh">Download the list again</string>
+    <string name="web_catalog_loading">Downloading the station list (Radio Browser)…</string>
+    <string name="web_catalog_failed">List not available: no internet, or Radio Browser server not reachable (Settings → Logos → server).</string>
+    <string name="web_catalog_count">%1$d stations · %2$s · Radio Browser (community list)</string>
+    <string name="web_streams">%d streams</string>
+    <string name="web_save">Save</string>
+    <string name="web_back_to_fm">Back to FM %s</string>
+    <string name="web_offer">Also on the internet: listen to its stream</string>
+    <string name="web_offer_audio">Also on the internet (%s): listen to its stream</string>
+    <string name="set_web">Internet radio</string>
+    <string name="set_web_best">Best sound</string>
+    <string name="set_web_eco">Less data</string>
+    <string name="set_web_quality_hint">When a station has several streams: the best sound (FLAC, then AAC / MP3 at the highest bitrate) or the least data (lowest bitrate, at least 48 kbit/s). 128 kbit/s use about 58 MB per hour, 320 kbit/s about 144 MB.</string>
+    <string name="set_web_suggest">Offer the internet stream of the FM station</string>
+    <string name="set_web_suggest_hint">When the station heard on FM is also on the internet and the internet works, the FM screen offers to switch to its stream (a touch). The RDS name and the country are sent to Radio Browser to find it.</string>
 </resources>

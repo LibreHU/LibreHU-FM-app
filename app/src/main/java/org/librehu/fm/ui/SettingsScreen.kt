@@ -63,6 +63,7 @@ import org.librehu.fm.Region
 import org.librehu.fm.Settings
 import org.librehu.fm.StationLogos
 import org.librehu.fm.TitleHistory
+import org.librehu.fm.WebQuality
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -182,6 +183,20 @@ fun SettingsScreen(
                     if (radio.monoUnsupported) Hint(stringResource(R.string.set_force_mono_unsupported))
                     SwitchRow(stringResource(R.string.set_local_search), s.localSearch, stringResource(R.string.set_local_search_hint)) { on ->
                         update { it.copy(localSearch = on) }
+                    }
+                }
+
+                Section(stringResource(R.string.set_web)) {
+                    Hint(stringResource(R.string.set_web_quality_hint))
+                    Choices(
+                        listOf(
+                            WebQuality.BEST to stringResource(R.string.set_web_best),
+                            WebQuality.ECO to stringResource(R.string.set_web_eco),
+                        ),
+                        s.webQuality,
+                    ) { q -> update { it.copy(webQuality = q) } }
+                    SwitchRow(stringResource(R.string.set_web_suggest), s.webSuggest, stringResource(R.string.set_web_suggest_hint)) { on ->
+                        update { it.copy(webSuggest = on) }
                     }
                 }
 
