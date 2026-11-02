@@ -557,7 +557,7 @@ class FmService : Service() {
         val stamp = SimpleDateFormat("MMddHHmmyyyy.ss", Locale.ROOT).apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date(utc))
         return try {
             val p =
-                ProcessBuilder("su", "-c", "date -u $stamp && am broadcast -a android.intent.action.TIME_SET")
+                ProcessBuilder(*Su.argv("date -u $stamp && am broadcast -a android.intent.action.TIME_SET"))
                     .redirectErrorStream(true)
                     .start()
             p.inputStream.readBytes()

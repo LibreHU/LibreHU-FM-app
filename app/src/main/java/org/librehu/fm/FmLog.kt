@@ -40,10 +40,10 @@ object FmLog {
             appendLine("state: ${FmService.state.value}")
             appendLine("settings: ${RadioSettings.get(context).value}")
             appendLine()
-            val root = run("su", "-c", "id") != null
+            val root = run(*Su.argv("id")) != null
             val logcat =
                 if (root) {
-                    run("su", "-c", "logcat -d -v threadtime -b main -b system -b radio -b events")
+                    run(*Su.argv("logcat -d -v threadtime -b main -b system -b radio -b events"))
                 } else {
                     run("logcat", "-d", "-v", "threadtime")
                 }.orEmpty()
@@ -56,7 +56,7 @@ object FmLog {
             appendLine()
             appendLine("== Kernel (dmesg, FM / combo chip) ==")
             if (root) {
-                run("su", "-c", "dmesg")
+                run(*Su.argv("dmesg"))
                     .orEmpty()
                     .lines()
                     .filter { RELEVANT.containsMatchIn(it) || it.contains("[FM]", ignoreCase = true) }
