@@ -87,21 +87,34 @@ pour le lanceur
 
 ## Radio internet
 
-Onglets **FM | Internet** en haut de l'écran (style moderne) : la même appli joue la FM ou une station internet, une
-seule à la fois, derrière la même session média (carte du lanceur, touches du volant, widget, notification, LibreHU
-EasySource).
+Onglets **FM | Internet** en haut de l'écran (style moderne), touche **Internet** dans les styles Modularer
+Infotainment-Baukasten et LHU-Link : la même appli joue la FM ou une station internet, une seule à la fois, derrière la
+même session média (carte du lanceur, touches du volant, widget, notification, LibreHU EasySource).
+
+| | |
+|---|---|
+| ![Radio internet](docs/screenshots/internet.png)<br>Radio internet | ![Catalogue](docs/screenshots/internet-catalog.png)<br>Catalogue |
+| ![Style Modularer Infotainment-Baukasten : internet](docs/screenshots/style-mib-internet.png)<br>Style Modularer Infotainment-Baukasten : internet | ![Style Modularer Infotainment-Baukasten : proposition du flux](docs/screenshots/style-mib-fm-offer.png)<br>Style Modularer Infotainment-Baukasten : proposition du flux |
+| ![Style LHU-Link : internet](docs/screenshots/style-lhu-link-internet.png)<br>Style LHU-Link : internet | ![Style LHU-Link : proposition du flux](docs/screenshots/style-lhu-link-fm-offer.png)<br>Style LHU-Link : proposition du flux |
+
+Captures rendues par Paparazzi (Compose sur la JVM, 1280×720, 160 dpi, en français) avec des données d'exemple et la
+liste française de Radio Browser du 02/11/2026 ; pas encore refaites par l'action Screenshots.
 
 - **Lecteur** : [Media3 ExoPlayer](https://developer.android.com/media/media3/exoplayer/supported-formats) (MP3, AAC /
   HE-AAC, Opus, Vorbis, FLAC, flux HLS). Le titre envoyé par le flux (métadonnées ICY des serveurs SHOUTcast / Icecast,
   [`IcyInfo`](https://developer.android.com/reference/androidx/media3/extractor/metadata/icy/IcyInfo)) s'affiche
   comme le RT+ de la FM ; codec et débit réellement reçus sous le nom. Tampon de 15 à 60 s et **reconnexion
   automatique** après une coupure (tunnel, pas de réseau) : 2, 4, 8, 15 s puis toutes les 30 s tant que la station est
-  demandée. Focus audio géré par le lecteur (pause pendant un appel, volume baissé pendant un guidage).
+  demandée, et **tout de suite quand le réseau revient** (réseau validé par Android). Focus audio géré par le lecteur
+  (pause pendant un appel, volume baissé pendant un guidage). Les titres envoyés par le flux vont dans les **Titres
+  entendus** (Paramètres), avec le nom de la station.
 - **Ajouter à la main** (onglet *Stations internet*) : **+** = adresse du flux, ou d'une liste **M3U / M3U étendu /
   PLS** (le lien « écouter » d'une station), lue à chaque lecture (une station qui change de serveur garde le même lien) ;
   bouton fichier = **import d'un fichier M3U ou PLS** (clé USB, mémoire interne) : chaque station du fichier est
   ajoutée, avec le nom de `#EXTINF` ou `TitleN`. Un `.m3u8` qui est un flux HLS (`#EXT-X-`) est joué comme tel. Appui
-  long sur une station : la retirer. Flux `http://` acceptés (beaucoup de radios n'ont pas de https).
+  long sur une station : la retirer. Flux `http://` acceptés (beaucoup de radios n'ont pas de https). **Logo** : celui
+  du catalogue, ou une image de l'autoradio choisie pour la station (toucher le logo, ou la touche / l'option Logo
+  dans les styles de voiture), comme pour la FM ; retour au logo automatique au même endroit.
 - **Catalogue** (onglet *Catalogue*) : la liste de [Radio Browser](https://www.radio-browser.info) (base communautaire,
   déjà utilisée pour les logos) du pays des réglages, téléchargée en une fois (environ 4 Mo pour la France) et gardée
   une semaine (bouton Actualiser), utilisable hors ligne ensuite :
@@ -126,9 +139,23 @@ EasySource).
   Info ou France Inter ?) = rien n'est proposé. Essai sur la liste française (02/11/2026) : 15 noms RDS courants sur 20
   trouvent leur flux (FIP, RTL, Skyrock, Europe 1, Mouv', Nostalgie en AAC 320…) ; les abréviations (« FRINTER »)
   et les noms ambigus (« NRJ ») ne proposent rien.
-- **Limites** : pas d'écran internet dans les styles Modularer Infotainment-Baukasten et LHU-Link (la touche lecture y
-  joue la FM) ; logos des stations ajoutées à la main absents ; la « HD Radio » américaine (numérique sur la bande FM)
-  demande une puce de démodulation que l'UJC201 n'a pas : seule la qualité des flux internet est concernée ici.
+- **Styles de LibreHU Launcher** :
+  - **Modularer Infotainment-Baukasten** : touche **Internet** sur l'écran FM (à la place de la touche de bande de
+    l'original) ; écran internet = la station entre ‹ › (station enregistrée précédente / suivante), son titre ou son
+    état, touches encadrées Enregistrer / Logo / Revenir en FM, puis les stations enregistrées en **tuiles de 6** (appui
+    long : retirer) ; touches du bas FM, Catalogue, lecture / pause, Ajouter, Importer, Réglages ; catalogue en liste
+    (touches Région, Genre, Actualiser, recherche ; étoile = enregistrer). Sur l'écran FM, la proposition du flux est
+    une touche encadrée sous la fréquence ;
+  - **LHU-Link** : touche **Internet** dans la barre du bas de l'écran FM ; écran « Radio internet » à onglets
+    **Lecture / Stations internet / Catalogue** dans les cadres de l'original (panneau de la station avec ⏮ ⏭ sur les
+    côtés, logo encadré, drapeaux du codec et du débit ; listes sur le trait rouge de sélection) ; barre FM / lecture,
+    Options : ajouter, importer, enregistrer, logo, revenir en FM, réglages. Sur l'écran FM, la proposition du flux est
+    une petite touche éclairée dans le panneau de la station (et une ligne des Options).
+- **Appli téléphone (Bridge)** : page radio : marche / arrêt de la source jouée, choix **FM / Radio internet**, choix
+  de la **station internet** enregistrée ; page des réglages : qualité et proposition du flux.
+- **Limites** : les annonces trafic (TA) ne se font qu'en FM (la puce FM est éteinte pendant une station internet) ;
+  la « HD Radio » américaine (numérique sur la bande FM) demande une puce de démodulation que l'UJC201 n'a pas : seule
+  la qualité des flux internet est concernée ici.
 
 ## Captures d'écran
 

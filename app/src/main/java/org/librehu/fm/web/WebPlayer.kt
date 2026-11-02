@@ -17,6 +17,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.extractor.metadata.icy.IcyHeaders
 import androidx.media3.extractor.metadata.icy.IcyInfo
+import java.io.ByteArrayOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.Charset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,10 +29,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import java.nio.charset.Charset
 
 /**
  * Internet radio player (Media3 ExoPlayer, main thread): resolves the station's address (playlist files, HLS), plays
@@ -82,6 +82,15 @@ class WebPlayer(
         player?.stop()
         player?.clearMediaItems()
         update { it.copy(wanted = false, playing = false, buffering = false, retrying = false, error = "") }
+    }
+
+    /** Network back while waiting to reconnect: connect now instead of at the end of the wait. */
+    fun retryNow() {
+        val station = status.station ?: return
+        if (!status.wanted || !status.retrying) return
+        job?.cancel()
+        Log.i(TAG, "network back: reconnecting to ${station.name} now")
+        start(station)
     }
 
     fun release() {

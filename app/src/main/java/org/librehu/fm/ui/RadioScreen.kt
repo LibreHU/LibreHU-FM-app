@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlin.math.roundToInt
 import org.librehu.fm.Band
 import org.librehu.fm.FmService
 import org.librehu.fm.R
@@ -76,7 +77,6 @@ import org.librehu.fm.RadioState
 import org.librehu.fm.Source
 import org.librehu.fm.Station
 import org.librehu.fm.StationLogos
-import kotlin.math.roundToInt
 
 /**
  * Car-style radio screen: now-playing card with transport controls on the left, presets / stations on the right.
@@ -88,10 +88,28 @@ fun RadioScreen(
     onSettings: () -> Unit,
 ) {
     val s by FmService.state.collectAsStateWithLifecycle()
-    // LibreHU Launcher's car styles: the launcher asks the app for them (see RetroLook).
-    if (RetroLook.factory) return FactoryRadio(s, send, onSettings)
-    if (RetroLook.ambient) return AmbientRadio(s, send, onSettings)
+    // FM or internet stations on screen (the source played changes only when something is played).
     var internet by rememberSaveable { mutableStateOf(s.source == Source.WEB) }
+    // LibreHU Launcher's car styles: the launcher asks the app for them (see RetroLook).
+    if (RetroLook.factory) {
+        return if (internet) FactoryWebRadio(s, send, onSettings) { internet = it } else FactoryRadio(s, send, onSettings) { internet = it }
+    }
+    if (RetroLook.ambient) {
+        return if (internet) AmbientWebRadio(s, send, onSettings) { internet = it } else AmbientRadio(s, send, onSettings) { internet = it }
+    }
+    if (internet) {
+        return WebRadioScreen(
+            s,
+            send,
+            onSettings,
+            { internet = it },
+            Modifier
+                .fillMaxSize()
+                .background(CarColors.Background)
+                .safeDrawingPadding()
+                .padding(16.dp),
+        )
+    }
     Row(
         modifier =
             Modifier
@@ -101,13 +119,8 @@ fun RadioScreen(
                 .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (internet) {
-            WebNowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
-            WebPanel(s, Modifier.weight(1f).fillMaxHeight())
-        } else {
-            NowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
-            StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
-        }
+        NowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
+        StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
     }
 }
 
@@ -177,15 +190,11 @@ private fun NowPlaying(
                 overflow = TextOverflow.Ellipsis,
             )
             // The station is also on the internet and the internet works: offer to switch to its stream.
-            val offer = s.fmWeb
-            if (s.poweredOn && s.online && offer != null) {
+            val offer = s.webOffer
+            if (offer != null) {
                 val context = LocalContext.current
-                val audio = listOf(offer.codec, if (offer.bitrate > 0) "${offer.bitrate} kbit/s" else "").filter { it.isNotBlank() }.joinToString(" ")
                 Spacer(Modifier.height(8.dp))
-                OfferChip(
-                    androidx.compose.material.icons.Icons.Default.Public,
-                    if (audio.isBlank()) stringResource(R.string.web_offer) else stringResource(R.string.web_offer_audio, audio),
-                ) { FmService.playWebStation(context, offer, s.frequency) }
+                OfferChip(Icons.Default.Public, offerText(offer)) { FmService.playWebStation(context, offer, s.frequency) }
             }
         }
 
