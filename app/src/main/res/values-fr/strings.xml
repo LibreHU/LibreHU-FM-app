@@ -44,7 +44,7 @@
     <string name="set_reception">Réception</string>
     <string name="set_force_mono">Mono forcé</string>
     <string name="set_force_mono_hint">Moins de souffle sur les stations faibles, sans la stéréo</string>
-    <string name="set_force_mono_unsupported">Refusé par le pilote FM : sa couche de compatibilité 32 bits ne transmet pas cette commande (correctif à venir dans le noyau LibreHU).</string>
+    <string name="set_force_mono_unsupported">Refusé par le pilote FM : sa couche de compatibilité 32 bits ne transmettait pas cette commande avant le noyau LibreHU r146 (zips kernel-stable / conn-modules-stable, ou module KernelSU de connectivité).</string>
     <string name="set_local_search">Recherche : stations fortes seulement (locales)</string>
     <string name="set_local_search_hint">Recherche et balayage s\'arrêtent seulement sur les stations locales (environ 25 dBµV), pas sur les lointaines (DX)</string>
     <string name="set_history">Titres entendus</string>

@@ -56,8 +56,9 @@ voiture (thème sombre, grosses cibles tactiles), avec **widget** pour le lanceu
 - **Réception** : **barres de signal** (RSSI du pilote en dBm, environ 17 / 27 / 37 / 47 dBµV par barre) et **ST**
   quand la station passe en stéréo ; **mono forcé** (moins de souffle sur les stations faibles) ; **recherche des
   stations fortes seulement** (« Local », seuil d'environ 25 dBµV au lieu de -4 dBµV, le réglage MediaTek, « DX »).
-  Le mono forcé demande un correctif du pilote FM (sa couche de compatibilité 32 bits ne transmet pas
-  `FM_IOCTL_SETMONOSTERO`) : l'appli le signale tant qu'il manque.
+  Le mono forcé demande le noyau LibreHU **r146** ou plus récent, avec ses modules : la couche de compatibilité
+  32 bits du pilote FM ne transmettait pas `FM_IOCTL_SETMONOSTERO` (ni `FM_IOCTL_RESTORE_SEARCH`, la remise en état
+  après un balayage) ; l'appli le signale si le pilote refuse.
 - **Annonces trafic (TA, option)** : pendant une annonce de la station (TP et TA), volume plein si la radio joue
   (baissée par une autre appli) ; si vous écoutez autre chose, la radio reste allumée sans son (« veille », notification
   avec une touche Arrêter), prend la main pendant l'annonce (l'autre appli se met en pause) puis la rend. 10 minutes au
