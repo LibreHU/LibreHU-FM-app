@@ -236,4 +236,12 @@
     <string name="set_web_quality_hint">Quand une station a plusieurs flux : le meilleur son (FLAC, puis AAC / MP3 au plus haut débit) ou le moins de données (plus petit débit, 48 kbit/s au moins). 128 kbit/s consomment environ 58 Mo par heure, 320 kbit/s environ 144 Mo.</string>
     <string name="set_web_suggest">Proposer le flux internet de la station FM</string>
     <string name="set_web_suggest_hint">Quand la station écoutée en FM est aussi sur internet et qu\'internet marche, l\'écran FM propose de passer sur son flux (un toucher). Le nom RDS et le pays sont envoyés à Radio Browser pour le trouver.</string>
+    <string name="web_add_short">Ajouter</string>
+    <string name="web_import_short">Importer</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo de %s</string>
+    <string name="web_playing">Lecture</string>
+    <string name="web_catalog_update">Actualiser</string>
+    <string name="web_catalog_loading_short">Téléchargement…</string>
+    <string name="web_source">Source</string>
 </resources>

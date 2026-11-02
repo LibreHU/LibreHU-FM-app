@@ -9,6 +9,7 @@ import org.librehu.fm.LogoLibrary
 import org.librehu.fm.R
 import org.librehu.fm.RadioSettings
 import org.librehu.fm.Region
+import org.librehu.fm.Source
 import org.librehu.fm.StationLogos
 import org.librehu.fm.WebQuality
 
@@ -34,7 +35,28 @@ class BridgeProvider : BridgeKitProvider() {
     private fun radio(c: Context): KitPage {
         val r = FmService.state.value
         return page(c, "radio", c.getString(R.string.app_name), "radio") {
-            switch("on", s(R.string.play), r.poweredOn) { on -> send(c, if (on) FmService.ACTION_PLAY else FmService.ACTION_PAUSE) }
+            // The source played last (FM or internet) plays and pauses; the choice below switches it.
+            switch("on", s(R.string.play), r.playing) { on -> send(c, if (on) FmService.ACTION_PLAY else FmService.ACTION_PAUSE) }
+            choice(
+                "source",
+                s(R.string.web_source),
+                r.source.name,
+                listOf(Source.FM.name to s(R.string.source_fm), Source.WEB.name to s(R.string.web_radio)),
+            ) { v ->
+                if (v == Source.FM.name) {
+                    send(c, FmService.ACTION_PLAY_FM)
+                } else {
+                    send(c, FmService.ACTION_PLAY_WEB)
+                }
+            }
+            if (r.webStations.isNotEmpty()) {
+                choice(
+                    "web_station",
+                    s(R.string.web_stations),
+                    r.web?.id.orEmpty(),
+                    r.webStations.map { it.id to it.name },
+                ) { id -> send(c, FmService.ACTION_PLAY_WEB) { putExtra(FmService.EXTRA_STATION, id) } }
+            }
             slider("frequency", "MHz", r.frequency, Band.MIN, Band.MAX, Band.STEP, display = { Band.format(it) }) { f ->
                 send(c, FmService.ACTION_TUNE) { putExtra(FmService.EXTRA_FREQUENCY, f) }
             }

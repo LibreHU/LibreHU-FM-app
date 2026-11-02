@@ -189,6 +189,12 @@ object WebCatalog {
         return pick(groups.getValue(byExtra[0]), quality)
     }
 
+    /** A tag that tells a genre or a network, not the stream ("aac", "mp3", "128k" are left out of the genres). */
+    fun isGenreTag(tag: String): Boolean {
+        val t = StationLogos.normalize(tag)
+        return t.isNotEmpty() && t.split(' ').none { it in STREAM_WORDS || it.matches(BITRATE) }
+    }
+
     private const val ECO_MIN_KBPS = 48
     private const val MIN_FM_SCORE = 2
     private const val EXACT_SCORE = 3
