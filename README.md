@@ -151,9 +151,15 @@ adb logcat -d -s LibreHU-FM FMLIB_COM FMLIB_CORE FMLIB_JNI FMLIB_ERR > fm_logcat
 Cette appli a besoin du root par SuperSU (installé dans la ROM) ; chaque demande doit être accordée avec « Se
 souvenir ». Pour que toutes les fenêtres SuperSU arrivent au même moment, l'assistant de premier démarrage de LibreHU
 Launcher (« Autoriser le root pour toutes les applis LibreHU ») interroge chaque appli LibreHU l'une après l'autre :
-`RootRequestReceiver`, sur `org.librehu.action.REQUEST_ROOT` envoyé à ce paquet, lance une fois `su -c id` (SuperSU
+`RootRequestReceiver`, sur `org.librehu.action.REQUEST_ROOT` envoyé à ce paquet, lance une fois `id` par `su` (SuperSU
 affiche alors la demande de cette appli), puis répond `org.librehu.action.ROOT_RESULT` (extras `package`, `granted`)
 au paquet indiqué dans `reply_to`. Rien d'autre que `id` n'est lancé ; une seconde demande dans les 20 s est ignorée. Seule une appli signée avec la clé LibreHU peut l'envoyer (permission de signature `org.librehu.permission.ROOT_REQUEST`).
+
+Toutes les commandes root passent par `Su.kt` : `su -c COMMANDE` pour Magisk, KernelSU, KernelSU Next, APatch et
+SuperSU, `su 0 sh -c COMMANDE` pour le vieux `su` d'AOSP de certaines ROM Jancar (`/system/xbin/su` :
+`su [UID [COMMANDE…]]`, refuse `-c` avec « invalid uid/gid »), reconnu une fois par `su -v` (les autres y répondent
+par leur version, sans demande de root). Avec KernelSU / KernelSU Next, autoriser l'appli dans le gestionnaire (liste
+Superuser) : le noyau ne détourne `/system/bin/su` que pour les applis autorisées.
 
 ## Appli téléphone (LibreHU Bridge)
 
