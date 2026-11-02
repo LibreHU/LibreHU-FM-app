@@ -240,12 +240,14 @@ private fun FactoryWebTiles(
 @Composable
 private fun FactoryCatalog(s: RadioState) {
     val context = LocalContext.current
-    val (cat, pickers) = rememberCatalogUi()
+    val cat = rememberCatalogUi()
+    if (cat.pick != CatalogPick.NONE) return CatalogGrid(cat, Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 10.dp), 220.dp)
     val saved = s.webStations.map { it.url }.toSet()
     Column(Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            FramedTextKey(cat.regionLabel()) { cat.openPicker(1) }
-            FramedTextKey(cat.genreLabel()) { cat.openPicker(2) }
+            FramedTextKey(cat.countryLabel()) { cat.open(CatalogPick.COUNTRY) }
+            FramedTextKey(cat.regionLabel()) { cat.open(CatalogPick.REGION) }
+            FramedTextKey(cat.genreLabel()) { cat.open(CatalogPick.GENRE) }
             FramedTextKey(stringResource(if (cat.loading) R.string.web_catalog_loading_short else R.string.web_catalog_update)) { if (!cat.loading) cat.refresh() }
             Spacer(Modifier.width(12.dp))
             WebField(cat.query, cat.setQuery, null, stringResource(R.string.web_search), KeyboardType.Text, Modifier.weight(1f), ImeAction.Search)
@@ -264,7 +266,6 @@ private fun FactoryCatalog(s: RadioState) {
             }
         }
     }
-    pickers()
 }
 
 /** The star of a catalogue line: touched, the station is saved; filled once it is. */
@@ -461,12 +462,14 @@ private fun AmbientWebStations(
 @Composable
 private fun AmbientCatalog(s: RadioState) {
     val context = LocalContext.current
-    val (cat, pickers) = rememberCatalogUi()
+    val cat = rememberCatalogUi()
+    if (cat.pick != CatalogPick.NONE) return CatalogGrid(cat, Modifier.fillMaxSize().padding(14.dp), 220.dp)
     val saved = s.webStations.map { it.url }.toSet()
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-            StyledPill(cat.regionLabel(), selected = cat.region != null) { cat.openPicker(1) }
-            StyledPill(cat.genreLabel(), selected = cat.genre != null) { cat.openPicker(2) }
+            StyledPill(cat.countryLabel(), selected = cat.country != cat.settings.countryCode) { cat.open(CatalogPick.COUNTRY) }
+            StyledPill(cat.regionLabel(), selected = cat.region != null) { cat.open(CatalogPick.REGION) }
+            StyledPill(cat.genreLabel(), selected = cat.genre != null) { cat.open(CatalogPick.GENRE) }
             StyledPill(stringResource(if (cat.loading) R.string.web_catalog_loading_short else R.string.web_catalog_update), enabled = !cat.loading) { cat.refresh() }
             WebField(cat.query, cat.setQuery, null, stringResource(R.string.web_search), KeyboardType.Text, Modifier.weight(1f), ImeAction.Search)
         }
@@ -483,5 +486,4 @@ private fun AmbientCatalog(s: RadioState) {
             }
         }
     }
-    pickers()
 }

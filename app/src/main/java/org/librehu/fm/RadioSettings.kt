@@ -47,6 +47,8 @@ data class Settings(
     val webQuality: WebQuality = WebQuality.BEST,
     /** Offers the internet stream of the FM station played, when there is one and the internet works. */
     val webSuggest: Boolean = true,
+    /** Country of the internet catalogue (ISO 3166), "" = [countryCode]; apart so that the FM band plan stays. */
+    val webCountry: String = "",
 ) {
     /** Base URL of the Radio Browser API, without trailing slash. */
     val serverUrl: String
@@ -59,6 +61,10 @@ data class Settings(
 
     val countryCode: String
         get() = country.trim().uppercase(Locale.ROOT).ifBlank { Locale.getDefault().country.ifBlank { "FR" } }
+
+    /** Country of the internet catalogue. */
+    val webCountryCode: String
+        get() = webCountry.trim().uppercase(Locale.ROOT).ifBlank { countryCode }
 
     /** Band plan in use. */
     val band: Region
@@ -105,6 +111,7 @@ object RadioSettings {
             .putString("country", s.country)
             .putString("web_quality", s.webQuality.name)
             .putBoolean("web_suggest", s.webSuggest)
+            .putString("web_country", s.webCountry)
             .apply()
     }
 
@@ -137,6 +144,7 @@ object RadioSettings {
             country = p.getString("country", d.country).orEmpty(),
             webQuality = runCatching { WebQuality.valueOf(p.getString("web_quality", null) ?: "") }.getOrDefault(d.webQuality),
             webSuggest = p.getBoolean("web_suggest", d.webSuggest),
+            webCountry = p.getString("web_country", d.webCountry).orEmpty(),
         )
     }
 }

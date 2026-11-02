@@ -244,4 +244,9 @@
     <string name="web_catalog_update">Actualiser</string>
     <string name="web_catalog_loading_short">Téléchargement…</string>
     <string name="web_source">Source</string>
+    <string name="web_country">Pays</string>
+    <string name="web_back">Retour</string>
+    <string name="web_region_other">Autres régions (%d)</string>
+    <string name="web_genre_other">Autres genres (%d)</string>
+    <string name="web_country_other">Autres pays (%d)</string>
 </resources>
