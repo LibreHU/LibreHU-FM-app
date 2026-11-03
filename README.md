@@ -90,9 +90,16 @@ pour le lanceur
 
 ## Radio internet
 
-Onglets **FM | Internet** en haut de l'écran (style moderne), touche **Internet** dans les styles Modularer
-Infotainment-Baukasten et LHU-Link : la même appli joue la FM ou une station internet, une seule à la fois, derrière la
-même session média (carte du lanceur, touches du volant, widget, notification, LibreHU EasySource).
+Sélecteur **FM | Internet** en haut à gauche (style moderne : icône radio / globe, un point sur la source qui joue
+quand l'autre est affichée), touche **Internet** dans les styles Modularer Infotainment-Baukasten et LHU-Link : la même
+appli joue la FM ou une station internet, une seule à la fois, derrière la même session média (carte du lanceur,
+touches du volant, widget, notification, LibreHU EasySource).
+
+Style moderne pensé pour la voiture : sélecteurs, touches d'icône, filtres du catalogue, lignes, propositions et
+touches des fenêtres font au moins **76 dp**, la taille tactile minimale de Google pour un écran de voiture
+([Design for Driving, Sizing](https://developers.google.com/cars/design/android-auto/design-system/sizing)) ; noms des
+tuiles sur deux lignes, coupés après un trait d'union mais jamais au milieu d'un mot. Rendus vérifiés avec Paparazzi en
+1280×720 (avec et sans barres système) et 1024×600 ; pas encore essayé sur l'autoradio.
 
 | | |
 |---|---|
@@ -101,7 +108,7 @@ même session média (carte du lanceur, touches du volant, widget, notification,
 | ![Style LHU-Link : internet](docs/screenshots/style-lhu-link-internet.png)<br>Style LHU-Link : internet | ![Style LHU-Link : proposition du flux](docs/screenshots/style-lhu-link-fm-offer.png)<br>Style LHU-Link : proposition du flux |
 
 Captures rendues par Paparazzi (Compose sur la JVM, 1280×720, 160 dpi, en français) avec des données d'exemple et la
-liste française de Radio Browser du 02/11/2026 ; pas encore refaites par l'action Screenshots.
+liste française de Radio Browser du 02/11/2026 (refaites le 03/11/2026) ; pas encore refaites par l'action Screenshots.
 
 - **Lecteur** : [Media3 ExoPlayer](https://developer.android.com/media/media3/exoplayer/supported-formats) (MP3, AAC /
   HE-AAC, Opus, Vorbis, FLAC, flux HLS). Le titre envoyé par le flux (métadonnées ICY des serveurs SHOUTcast / Icecast,
@@ -175,7 +182,7 @@ liste française de Radio Browser du 02/11/2026 ; pas encore refaites par l'acti
 | ![Réglages (3)](docs/screenshots/settings-3.png)<br>Réglages (3) | ![Style Modularer Infotainment-Baukasten](docs/screenshots/style-mib.png)<br>Style Modularer Infotainment-Baukasten |
 | ![Style LHU-Link](docs/screenshots/style-lhu-link.png)<br>Style LHU-Link |   |
 
-Captures sur l'émulateur Android 11 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots). Galerie : [librehu.github.io/screenshots/fm.html](https://librehu.github.io/screenshots/fm.html).
+Captures sur l'émulateur Android 11 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Écran principal et Stations : rendus Paparazzi du 03/11/2026 (données d'exemple), en attendant l'action Screenshots. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots). Galerie : [librehu.github.io/screenshots/fm.html](https://librehu.github.io/screenshots/fm.html).
 
 ## Branches
 

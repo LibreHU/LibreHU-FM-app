@@ -6,19 +6,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -51,8 +56,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,39 +72,126 @@ import org.librehu.fm.RadioState
 import org.librehu.fm.Source
 import org.librehu.fm.web.WebStation
 
-/** "FM | Internet" choice at the top of the now-playing card: what the screen shows (the source changes on play). */
+/**
+ * Top of the now-playing card: the "FM | Internet" switch (what the screen shows; the source changes on play, a dot
+ * marks the source that plays) and the settings key.
+ */
 @Composable
-internal fun SourceTabs(
+internal fun SourceHeader(
     internet: Boolean,
+    s: RadioState,
     onInternet: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
+    onSettings: () -> Unit,
 ) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        PillTab(stringResource(R.string.source_fm), !internet, 16) { onInternet(false) }
-        PillTab(stringResource(R.string.source_web), internet, 16) { onInternet(true) }
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        val playing = if (s.playing) s.source else null
+        CarTabs(
+            listOf(
+                CarTab(stringResource(R.string.source_fm), Icons.Default.Radio, dot = playing == Source.FM),
+                CarTab(stringResource(R.string.source_web), Icons.Default.Public, dot = playing == Source.WEB),
+            ),
+            if (internet) 1 else 0,
+            Modifier.weight(1f, fill = false).widthIn(max = 440.dp),
+        ) { onInternet(it == 1) }
+        CarIconButton(Icons.Default.Settings, stringResource(R.string.settings), tint = CarColors.TextDim, onClick = onSettings)
     }
 }
 
+/** A choice of [CarTabs]: its name, an icon, a dot (the source that plays). */
+internal class CarTab(
+    val label: String,
+    val icon: ImageVector? = null,
+    val dot: Boolean = false,
+)
+
+/**
+ * Segmented choice of the modern look, the chosen one lit: [TOUCH] high, Google's minimum touch target in a car
+ * (Design for Driving, Sizing: 76 x 76 dp). The names get smaller together rather than being cut.
+ */
 @Composable
-private fun PillTab(
-    label: String,
-    selected: Boolean,
-    size: Int,
+internal fun CarTabs(
+    tabs: List<CarTab>,
+    selected: Int,
+    modifier: Modifier = Modifier,
+    onSelect: (Int) -> Unit,
+) {
+    BoxWithConstraints(
+        modifier
+            .height(TOUCH)
+            .clip(RoundedCornerShape(50))
+            .background(CarColors.SurfaceHigh)
+            .padding(4.dp),
+    ) {
+        // One size for all the names: the biggest (22 sp down to 15 sp) at which each fits its half.
+        val measurer = rememberTextMeasurer()
+        val extra = 24.dp + (if (tabs.any { it.icon != null }) 38.dp else 0.dp) + (if (tabs.any { it.dot }) 20.dp else 0.dp)
+        val room = with(LocalDensity.current) { (maxWidth / tabs.size - extra).roundToPx() }
+        val labels = tabs.map { it.label }
+        val size =
+            remember(labels, room) {
+                (22 downTo 15).firstOrNull { sp ->
+                    labels.all { measurer.measure(it, TextStyle(fontSize = sp.sp, fontWeight = FontWeight.Medium), maxLines = 1).size.width <= room }
+                } ?: 15
+            }
+        Row(Modifier.fillMaxSize()) {
+            tabs.forEachIndexed { i, t ->
+                val chosen = i == selected
+                val fg = if (chosen) CarColors.OnAccent else CarColors.Text
+                Row(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(50))
+                        .background(if (chosen) CarColors.Accent else Color.Transparent)
+                        .selectable(selected = chosen, role = Role.Tab) { onSelect(i) }
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (t.icon != null) {
+                        Icon(t.icon, contentDescription = null, tint = fg, modifier = Modifier.size(28.dp))
+                        Spacer(Modifier.width(10.dp))
+                    }
+                    Text(
+                        t.label,
+                        color = fg,
+                        fontSize = size.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (t.dot) {
+                        Spacer(Modifier.width(10.dp))
+                        Box(
+                            Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(if (chosen) CarColors.OnAccent else CarColors.Accent),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Icon key of the modern look at the car touch size ([TOUCH]). */
+@Composable
+internal fun CarIconButton(
+    icon: ImageVector,
+    description: String,
+    tint: Color = CarColors.Text,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    Text(
-        label,
-        color = if (selected) CarColors.OnAccent else CarColors.Text,
-        fontSize = size.sp,
-        fontWeight = FontWeight.Medium,
-        modifier =
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
-                .clickable(onClick = onClick)
-                .padding(horizontal = if (size > 16) 20.dp else 16.dp, vertical = if (size > 16) 12.dp else 8.dp),
-    )
+    IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(TOUCH)) {
+        Icon(icon, description, tint = tint, modifier = Modifier.size(34.dp))
+    }
 }
+
+/** Touch target size in a car (Google, Design for Driving, Sizing: 76 x 76 dp at least). */
+internal val TOUCH = 76.dp
 
 /** The modern look's internet radio: now-playing card on the left, saved stations or the catalogue on the right. */
 @Composable
@@ -136,12 +232,7 @@ private fun WebNowPlaying(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                SourceTabs(true, onInternet, Modifier.weight(1f))
-                IconButton(onClick = onSettings, modifier = Modifier.size(48.dp)) {
-                    Icon(Icons.Default.Settings, stringResource(R.string.settings), tint = CarColors.TextDim, modifier = Modifier.size(28.dp))
-                }
-            }
+            SourceHeader(true, s, onInternet, onSettings)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // A touch: choose a picture as the station's logo (or go back to the automatic one).
@@ -152,15 +243,16 @@ private fun WebNowPlaying(
                         current?.name ?: stringResource(R.string.web_none),
                         color = CarColors.Text,
                         fontSize = 34.sp,
+                        lineHeight = 40.sp,
                         fontWeight = FontWeight.Medium,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                     if (s.webCanSave && current != null) {
-                        TextButton(onClick = { FmService.addWebStations(context, listOf(current)) }) {
-                            Icon(Icons.Default.StarBorder, contentDescription = null, tint = CarColors.Accent)
-                            Spacer(Modifier.width(6.dp))
-                            Text(stringResource(R.string.web_save), color = CarColors.Accent, fontSize = 16.sp)
+                        TextButton(onClick = { FmService.addWebStations(context, listOf(current)) }, modifier = Modifier.heightIn(min = TOUCH)) {
+                            Icon(Icons.Default.StarBorder, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(28.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.web_save), color = CarColors.Accent, fontSize = 18.sp)
                         }
                     }
                     val audio = webAudio(s)
@@ -256,7 +348,7 @@ private fun WebRoundButton(
     Box(
         modifier =
             Modifier
-                .size(72.dp)
+                .size(TOUCH)
                 .clip(CircleShape)
                 .background(CarColors.SurfaceHigh)
                 .clickable(onClick = onClick),
@@ -285,17 +377,16 @@ private fun WebPanel(
                 .background(CarColors.Surface)
                 .padding(16.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            PillTab(stringResource(R.string.web_stations), !catalogTab, 18) { catalogTab = false }
-            Spacer(Modifier.width(8.dp))
-            PillTab(stringResource(R.string.web_catalog), catalogTab, 18) { catalogTab = true }
-            Spacer(Modifier.weight(1f))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            CarTabs(
+                listOf(CarTab(stringResource(R.string.web_stations)), CarTab(stringResource(R.string.web_catalog))),
+                if (catalogTab) 1 else 0,
+                Modifier.weight(1f, fill = false).widthIn(max = 440.dp),
+            ) { catalogTab = it == 1 }
             if (!catalogTab) {
-                IconButton(onClick = { ui.adding = true }, modifier = Modifier.size(56.dp)) {
-                    Icon(Icons.Default.Add, stringResource(R.string.web_add), tint = CarColors.Text, modifier = Modifier.size(32.dp))
-                }
-                IconButton(onClick = { ui.import() }, modifier = Modifier.size(56.dp)) {
-                    Icon(Icons.Default.FileOpen, stringResource(R.string.web_import), tint = CarColors.Text, modifier = Modifier.size(32.dp))
+                Row {
+                    CarIconButton(Icons.Default.Add, stringResource(R.string.web_add)) { ui.adding = true }
+                    CarIconButton(Icons.Default.FileOpen, stringResource(R.string.web_import)) { ui.import() }
                 }
             }
         }
@@ -339,11 +430,11 @@ private fun WebTile(
                 .clip(RoundedCornerShape(20.dp))
                 .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
                 .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.Center,
     ) {
         val fg = if (selected) CarColors.OnAccent else CarColors.Text
-        Text(st.name, color = fg, fontSize = 20.sp, fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(st.name, color = fg, fontSize = 18.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
         val info = stationAudio(st.codec, st.bitrate).let { if (it.isNotBlank() && st.bitrate > 0) "$it kbit/s" else it }
         if (info.isNotBlank()) Text(info, color = fg, fontSize = 14.sp, maxLines = 1)
     }
@@ -359,14 +450,15 @@ internal fun OfferChip(
     Row(
         modifier =
             Modifier
+                .heightIn(min = TOUCH)
                 .clip(RoundedCornerShape(50))
                 .background(CarColors.SurfaceHigh)
                 .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(22.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(label, color = CarColors.Text, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Icon(icon, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(28.dp))
+        Spacer(Modifier.width(12.dp))
+        Text(label, color = CarColors.Text, fontSize = 18.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
