@@ -3,7 +3,7 @@ package org.librehu.fm
 /**
  * United States RBDS: the call letters a station's PI code is computed from (NRSC-4-B, annex D.7, "Call letter
  * conversion method"), worked backwards; the cases and tables follow redsea's `getCallsignFromPI` (Oona Räisänen,
- * ISC licence), which cites the same annex. Canada and Mexico assign PI codes otherwise, and FM translators get
+ * MIT licence), which cites the same annex. Canada and Mexico assign PI codes otherwise, and FM translators get
  * random ones: only for the US (see [appliesTo]); a station sending a wrong PI shows wrong letters.
  */
 object Rbds {

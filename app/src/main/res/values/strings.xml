@@ -48,7 +48,7 @@
     <string name="set_local_search">Search: strong stations only (local)</string>
     <string name="set_local_search_hint">Seek and scan stop on local stations only (about 25 dBµV), not on distant ones (DX)</string>
     <string name="set_antenna_power">Antenna amplifier</string>
-    <string name="set_antenna_power_hint">Antenna power (MCU 43) while the FM radio plays, for an active antenna or an antenna amplifier. Off: passive antenna</string>
+    <string name="set_antenna_power_hint">Antenna power (MCU 43) while the FM radio plays, for an active antenna or an antenna amplifier. Off: passive antenna, or a clearer FM reception without the amplifier</string>
     <string name="set_history">Songs heard</string>
     <string name="set_history_hint">Artist and title tagged by the stations (RT+), with the time.</string>
     <string name="set_history_empty">None yet: the station must send RT+.</string>
