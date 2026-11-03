@@ -145,7 +145,7 @@ private fun NowPlaying(
     ) {
         Column {
             SourceHeader(Source.FM, s, onSource, onSettings)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(HEADER_GAP))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StationLogo(s)
                 Spacer(Modifier.width(20.dp))
@@ -409,7 +409,7 @@ private fun StationPanel(
                 ) { send(if (s.scanning) FmService.ACTION_STOP_SCAN else FmService.ACTION_SCAN, null) }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(PANEL_GAP))
         val list = if (tab == 0) s.presets else s.stations
         if (list.isEmpty()) {
             Text(

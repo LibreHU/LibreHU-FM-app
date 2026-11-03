@@ -5,7 +5,7 @@ package org.librehu.fm
  * the RDS character set lacks. The FM driver does not decode it, so it is rebuilt here from the raw groups
  * (`FmNative.readRdsGroups`): group 3A announces the group type carrying it and the encoding (bit 0 of block C:
  * UTF-8, else UCS-2), then each group of that type carries 4 bytes at segment address (block B bits 0-4) x 4; 0x0D
- * ends the text. Layout as decoded by redsea (Oona Räisänen, ISC licence), `Station::parseEnhancedRT`.
+ * ends the text. Layout as decoded by redsea (Oona Räisänen, MIT licence), `Station::parseEnhancedRT`.
  *
  * eRT+ (0x4BD8): the RT+ tags of the eRT, same group layout as RT+ (`parseRadioTextPlus` in redsea): item toggle and
  * running bits, two tags of content type, start and length marker (characters minus one), positions in bytes of

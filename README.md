@@ -62,8 +62,10 @@ pour le lanceur
   32 bits du pilote FM ne transmettait pas `FM_IOCTL_SETMONOSTERO` (ni `FM_IOCTL_RESTORE_SEARCH`, la remise en état
   après un balayage) ; l'appli le signale si le pilote refuse. **Ampli d'antenne** (option, activé par défaut) :
   l'antenne est alimentée (GPIO 110 + commande MCU `43`) pendant que la puce FM est allumée ; à couper avec une
-  antenne passive. Réglage affiché seulement dans l'édition `librehu-service` (LibreHU-service, API 2) : avec Jancar
-  ivi-services, c'est ivi-services qui décide à l'ouverture de la radio.
+  antenne passive. D'après l'essai de **Reo Au In** (ampli coupé par LibreHU-service et la commande MCU `43`), la
+  réception FM est meilleure sans l'ampli sur son autoradio : à couper aussi si la réception est saturée ou bruitée.
+  Réglage affiché seulement dans l'édition `librehu-service` (LibreHU-service, API 2) : avec Jancar ivi-services,
+  c'est ivi-services qui décide à l'ouverture de la radio.
 - **Annonces trafic (TA, option)** : pendant une annonce de la station (TP et TA), volume plein si la radio joue
   (baissée par une autre appli) ; si vous écoutez autre chose, la radio reste allumée sans son (« veille », notification
   avec une touche Arrêter), prend la main pendant l'annonce (l'autre appli se met en pause) puis la rend. 10 minutes au
@@ -343,6 +345,44 @@ taille du widget, donc coupé avec « … », aligné et sur ses lignes comme d'
 chaque texte des layouts `widget*.xml` par `tools/segment_widgets.py` (à relancer après avoir modifié un layout de
 widget). Les fonds rétro sont des couleurs unies (Android 9 ne teinte pas un fond de widget ; la case arrondie du
 launcher les découpe).
+
+## Crédits
+
+**Code repris** (licences dans les fichiers, `dab/` et `third_party/`) :
+
+- [DABplay+](https://github.com/jvspier/dabplayplus) de **jvspier** (MIT) : tout le moteur DAB+ (`dab/`, voir
+  [dab/README.md](dab/README.md)) et la base de la clé USB et du focus audio
+  (`app/src/main/java/org/librehu/fm/dab/DabRadio.kt`).
+- **JNI FM d'AOSP** (The Android Open Source Project, Apache 2.0), version
+  [LineageOS FMRadio](https://github.com/LineageOS/android_packages_apps_FMRadio/tree/lineage-16.0/jni/fmr) :
+  `app/src/main/cpp/fmr/` ([README](app/src/main/cpp/fmr/README.md)), avis dans `third_party/AOSP-NOTICE.txt`.
+- [redsea](https://github.com/windytan/redsea) d'**Oona Räisänen** (MIT, `third_party/redsea-LICENSE.txt`) : table de
+  caractères RDS, décodage eRT / eRT+ et indicatifs RBDS (`RdsText.kt`, `Ert.kt`, `Rbds.kt`).
+
+**API et données** :
+
+- [Radio Browser](https://www.radio-browser.info) (base communautaire, serveur
+  [radiobrowser-api-rust](https://github.com/segler-alex/radiobrowser-api-rust) de **segler-alex**, API
+  `all.api.radio-browser.info`, [documentation](https://docs.radio-browser.info/)) : logos des stations FM, catalogue
+  de la radio internet, compteur d'écoutes ; l'appli envoie son User-Agent comme la documentation le demande.
+- Normes : RDS (EN 50067 / IEC 62106), RBDS (NRSC-4-B), DAB (ETSI EN 300 401) et DAB+ (ETSI TS 102 563), ces deux
+  dernières dans le moteur DABplay+.
+- Pilote `/dev/fm` de MediaTek (ioctl du noyau) ; structure d'accord de l'AC8257 relevée dans la `libfmjni.so` de
+  Jancar (interopérabilité).
+- [LibreHU-service](https://github.com/LibreHU/LibreHU-service) (API `setRadioAntenna`) et Jancar ivi-services
+  (`IRadio`) pour l'alimentation de l'antenne.
+
+**Bibliothèques** (Apache 2.0) : AndroidX Media3 / ExoPlayer, Jetpack Compose et Material Icons, AndroidX Core /
+Activity / Lifecycle, kotlinx.coroutines. Tests : JUnit 4 (EPL 1.0), org.json (domaine public).
+
+**Polices et sons** (`third_party/`) : Source Sans 3 (Adobe, SIL OFL 1.1) ; « LibreHU Seg14 » tirée de DSEG14 de
+**keshikan** (SIL OFL 1.1) ; sons des touches de **Kenney** (CC0, version WAV de **Hugo Locurcio / Calinou**) et
+d'AOSP (Apache 2.0).
+
+**Guides** : taille tactile minimale en voiture de Google
+([Design for Driving, Sizing](https://developers.google.com/cars/design/android-auto/design-system/sizing)).
+
+**Essais** : **Reo Au In** (FM et RBDS aux États-Unis ; réception FM meilleure avec l'ampli d'antenne coupé).
 
 ## Soutenir le projet
 
