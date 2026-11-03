@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CellTower
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -78,21 +79,26 @@ import org.librehu.fm.web.WebStation
  */
 @Composable
 internal fun SourceHeader(
-    internet: Boolean,
+    shown: Source,
     s: RadioState,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
     onSettings: () -> Unit,
 ) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         val playing = if (s.playing) s.source else null
+        // DAB+ only once a dongle was plugged in (or stations were found with one).
+        val sources = listOfNotNull(Source.FM, if (s.dabAvailable) Source.DAB else null, Source.WEB)
         CarTabs(
-            listOf(
-                CarTab(stringResource(R.string.source_fm), Icons.Default.Radio, dot = playing == Source.FM),
-                CarTab(stringResource(R.string.source_web), Icons.Default.Public, dot = playing == Source.WEB),
-            ),
-            if (internet) 1 else 0,
-            Modifier.weight(1f, fill = false).widthIn(max = 440.dp),
-        ) { onInternet(it == 1) }
+            sources.map { src ->
+                when (src) {
+                    Source.FM -> CarTab(stringResource(R.string.source_fm), Icons.Default.Radio, dot = playing == src)
+                    Source.DAB -> CarTab(stringResource(R.string.source_dab), Icons.Default.CellTower, dot = playing == src)
+                    Source.WEB -> CarTab(stringResource(R.string.source_web), Icons.Default.Public, dot = playing == src)
+                }
+            },
+            sources.indexOf(shown).coerceAtLeast(0),
+            Modifier.weight(1f, fill = false).widthIn(max = if (sources.size > 2) 560.dp else 440.dp),
+        ) { onSource(sources[it]) }
         CarIconButton(Icons.Default.Settings, stringResource(R.string.settings), tint = CarColors.TextDim, onClick = onSettings)
     }
 }
@@ -122,16 +128,23 @@ internal fun CarTabs(
             .background(CarColors.SurfaceHigh)
             .padding(4.dp),
     ) {
-        // One size for all the names: the biggest (22 sp down to 15 sp) at which each fits its half.
+        // One size for all the names: the biggest (22 sp down to 15 sp) at which each fits its segment; when even 15 sp
+        // does not fit, the icons make room.
         val measurer = rememberTextMeasurer()
-        val extra = 24.dp + (if (tabs.any { it.icon != null }) 38.dp else 0.dp) + (if (tabs.any { it.dot }) 20.dp else 0.dp)
-        val room = with(LocalDensity.current) { (maxWidth / tabs.size - extra).roundToPx() }
+        val density = LocalDensity.current
         val labels = tabs.map { it.label }
-        val size =
-            remember(labels, room) {
-                (22 downTo 15).firstOrNull { sp ->
-                    labels.all { measurer.measure(it, TextStyle(fontSize = sp.sp, fontWeight = FontWeight.Medium), maxLines = 1).size.width <= room }
-                } ?: 15
+        fun room(icons: Boolean) =
+            with(density) {
+                val extra = 24.dp + (if (icons && tabs.any { it.icon != null }) 38.dp else 0.dp) + (if (tabs.any { it.dot }) 20.dp else 0.dp)
+                (maxWidth / tabs.size - extra).roundToPx()
+            }
+        val (size, icons) =
+            remember(labels, maxWidth) {
+                fun fit(room: Int) =
+                    (22 downTo 15).firstOrNull { sp ->
+                        labels.all { measurer.measure(it, TextStyle(fontSize = sp.sp, fontWeight = FontWeight.Medium), maxLines = 1).size.width <= room }
+                    }
+                fit(room(true))?.let { it to true } ?: ((fit(room(false)) ?: 15) to false)
             }
         Row(Modifier.fillMaxSize()) {
             tabs.forEachIndexed { i, t ->
@@ -148,7 +161,7 @@ internal fun CarTabs(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (t.icon != null) {
+                    if (t.icon != null && icons) {
                         Icon(t.icon, contentDescription = null, tint = fg, modifier = Modifier.size(28.dp))
                         Spacer(Modifier.width(10.dp))
                     }
@@ -199,12 +212,12 @@ internal fun WebRadioScreen(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
     modifier: Modifier,
 ) {
     val ui = rememberWebUi()
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        WebNowPlaying(s, send, onSettings, onInternet, ui, Modifier.weight(1.1f).fillMaxSize())
+        WebNowPlaying(s, send, onSettings, onSource, ui, Modifier.weight(1.1f).fillMaxSize())
         WebPanel(s, ui, Modifier.weight(1f).fillMaxSize())
     }
     WebDialogs(ui)
@@ -216,7 +229,7 @@ private fun WebNowPlaying(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
     ui: WebUi,
     modifier: Modifier,
 ) {
@@ -232,7 +245,7 @@ private fun WebNowPlaying(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            SourceHeader(true, s, onInternet, onSettings)
+            SourceHeader(Source.WEB, s, onSource, onSettings)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // A touch: choose a picture as the station's logo (or go back to the automatic one).
@@ -340,7 +353,7 @@ private fun WebLogo(
 }
 
 @Composable
-private fun WebRoundButton(
+internal fun WebRoundButton(
     icon: ImageVector,
     label: Int,
     onClick: () -> Unit,

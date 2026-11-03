@@ -12,6 +12,7 @@ import org.librehu.fm.Region
 import org.librehu.fm.Source
 import org.librehu.fm.StationLogos
 import org.librehu.fm.WebQuality
+import org.librehu.fm.dab.DabStatus
 import org.librehu.fm.headunit.switchesAntenna
 
 /**
@@ -42,13 +43,23 @@ class BridgeProvider : BridgeKitProvider() {
                 "source",
                 s(R.string.web_source),
                 r.source.name,
-                listOf(Source.FM.name to s(R.string.source_fm), Source.WEB.name to s(R.string.web_radio)),
+                listOf(Source.FM.name to s(R.string.source_fm), Source.WEB.name to s(R.string.web_radio)) +
+                    (if (r.dabStations.isNotEmpty() || r.dabStatus != DabStatus.NO_DONGLE) listOf(Source.DAB.name to s(R.string.dab_radio)) else emptyList()),
             ) { v ->
-                if (v == Source.FM.name) {
-                    send(c, FmService.ACTION_PLAY_FM)
-                } else {
-                    send(c, FmService.ACTION_PLAY_WEB)
+                when (v) {
+                    Source.FM.name -> send(c, FmService.ACTION_PLAY_FM)
+                    Source.DAB.name -> send(c, FmService.ACTION_PLAY_DAB)
+                    else -> send(c, FmService.ACTION_PLAY_WEB)
                 }
+            }
+            if (r.dabStations.isNotEmpty()) {
+                choice(
+                    "dab_station",
+                    s(R.string.dab_radio),
+                    r.dab?.key.orEmpty(),
+                    r.dabStations.map { it.key to it.name },
+                ) { key -> send(c, FmService.ACTION_PLAY_DAB) { putExtra(FmService.EXTRA_STATION, key) } }
+                button("dab_scan", s(R.string.dab_scan), confirm = true) { send(c, FmService.ACTION_DAB_SCAN) }
             }
             if (r.webStations.isNotEmpty()) {
                 choice(

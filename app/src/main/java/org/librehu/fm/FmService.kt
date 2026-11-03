@@ -9,6 +9,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -22,6 +23,10 @@ import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
+import io.github.jvspier.dabplay.core.Reception
+import io.github.jvspier.dabplay.data.ServiceKey
+import io.github.jvspier.dabplay.data.Snapshot
+import io.github.jvspier.dabplay.engine.EngineState
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -47,6 +52,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.librehu.fm.dab.DabRadio
+import org.librehu.fm.dab.DabScan
+import org.librehu.fm.dab.DabStatus
+import org.librehu.fm.dab.dabLine
+import org.librehu.fm.dab.serviceKey
 import org.librehu.fm.headunit.HeadUnitBridge
 import org.librehu.fm.web.CatalogStore
 import org.librehu.fm.web.WebCatalog
@@ -66,6 +76,11 @@ class FmService : Service() {
     private lateinit var store: RadioStore
     private lateinit var logos: StationLogos
     private lateinit var bridge: HeadUnitBridge
+    private lateinit var dab: DabRadio
+
+    /** The DAB engine played at its last report: a stop afterwards (another player took the sound) ends the wish. */
+    private var dabWasPlaying = false
+    private var lastDabSong = ""
     private lateinit var session: MediaSession
     private lateinit var audioManager: AudioManager
     private lateinit var settings: StateFlow<Settings>
@@ -107,6 +122,8 @@ class FmService : Service() {
         chip.execute { applyRegion(settings.value.band) }
         bridge = HeadUnitBridge.create(this)
         bridge.setAntennaPower(settings.value.antennaPower)
+        dab = DabRadio.get(this)
+        dab.announcements = settings.value.trafficAnnouncements
         val webStations = store.webStations
         _state.update {
             it.copy(
@@ -236,6 +253,22 @@ class FmService : Service() {
                 .drop(1)
                 .collect { chip.execute { if (state.value.poweredOn || standby) applyReception() } }
         }
+        // DAB+ dongle: the engine's state and the stations found into the radio state; its pictures decoded aside.
+        scope.launch {
+            combine(dab.engine.state, dab.store.state) { e, st -> e to st }.collect { (e, st) -> onDabState(e, st) }
+        }
+        scope.launch {
+            dab.engine.state
+                .map { it.slide }
+                .distinctUntilChanged()
+                .collectLatest { bytes ->
+                    val picture = bytes?.let { b -> withContext(Dispatchers.Default) { runCatching { BitmapFactory.decodeByteArray(b, 0, b.size) }.getOrNull() } }
+                    _state.update { it.copy(dabSlide = picture) }
+                }
+        }
+        scope.launch { settings.map { it.trafficAnnouncements }.distinctUntilChanged().collect { dab.announcements = it } }
+        // A dongle plugged in before the radio started: connected now (Android asks once for the USB access).
+        dab.connect()
         // Antenna amplifier setting applied at once (chip thread, in order with the power up / down).
         scope.launch {
             settings
@@ -307,6 +340,19 @@ class FmService : Service() {
                 playFm()
             }
 
+            ACTION_PLAY_DAB -> {
+                playDab(intent.getStringExtra(EXTRA_STATION))
+            }
+
+            ACTION_DAB_SCAN -> {
+                dab.connect()
+                dab.engine.scan()
+            }
+
+            ACTION_DAB_FAVOURITE -> {
+                (intent.getStringExtra(EXTRA_STATION) ?: state.value.dab?.key)?.let(::serviceKey)?.let { dab.store.toggleFavourite(it) }
+            }
+
             ACTION_NEXT -> {
                 next(true)
             }
@@ -333,8 +379,8 @@ class FmService : Service() {
 
             ACTION_TUNE -> {
                 tune(intent.getIntExtra(EXTRA_FREQUENCY, state.value.frequency))
-                // An FM station chosen while an internet station plays: the radio goes back to FM.
-                if (state.value.source == Source.WEB && state.value.webWanted) playFm()
+                // An FM station chosen while an internet or DAB station plays: the radio goes back to FM.
+                if (state.value.source != Source.FM && state.value.playing) playFm()
             }
 
             ACTION_SCAN -> {
@@ -376,19 +422,104 @@ class FmService : Service() {
     private fun play() {
         val s = state.value
         val st = s.web
-        if (s.source == Source.WEB && st != null) playWeb(st) else playFm()
+        when {
+            s.source == Source.WEB && st != null -> playWeb(st)
+            s.source == Source.DAB -> playDab(s.dab?.key)
+            else -> playFm()
+        }
     }
 
     private fun pause() {
-        if (state.value.source == Source.WEB) web.stop() else powerOff()
+        when (state.value.source) {
+            Source.WEB -> web.stop()
+            Source.DAB -> pauseDab()
+            Source.FM -> powerOff()
+        }
     }
 
-    /** FM again: the internet stream stopped, then the chip powered. */
+    /** FM again: the internet stream or the DAB station stopped, then the chip powered. */
     private fun playFm() {
         // Source first: the stream's stop must not take the service out of the foreground that FM now needs.
         setSource(Source.FM)
         if (web.current.wanted) web.stop()
+        if (dab.wanted || state.value.dabWanted) pauseDab()
         powerOn()
+    }
+
+    /**
+     * A DAB station ([key], else the last one played, else the first found): the FM chip and the internet stream stop,
+     * then the dongle plays it. Without a dongle yet, it plays as soon as one is ready (car start, plugged in later).
+     */
+    private fun playDab(key: String?) {
+        val store = dab.store.state.value
+        val k = key?.let(::serviceKey) ?: store.lastPlayed ?: store.stations.firstOrNull()?.key
+        setSource(Source.DAB)
+        if (web.current.wanted) web.stop()
+        dab.wanted = true
+        _state.update { it.copy(dabWanted = true, error = "") }
+        chip.execute {
+            if (state.value.poweredOn || standby) powerDownChip()
+            scope.launch {
+                startForegroundCompat(state.value)
+                if (k != null) {
+                    // Remembered at once: without a dongle yet, this is the station the engine resumes once it is ready.
+                    if (!dab.engine.state.value.dongle) dab.store.played(k)
+                    dab.engine.play(k)
+                }
+                if (!dab.engine.state.value.dongle) dab.connect()
+            }
+        }
+    }
+
+    private fun pauseDab() {
+        dab.wanted = false
+        dab.engine.pause()
+        _state.update { it.copy(dabWanted = false, dabPlaying = false) }
+    }
+
+    /** What the DAB engine and its station list report (main thread). */
+    private fun onDabState(
+        e: EngineState,
+        st: Snapshot,
+    ) {
+        val playing = e.playing || e.tuning
+        // Sound stopped while the dongle stays: paused here or by another player (focus lost); no resume later.
+        if (dabWasPlaying && !playing && e.dongle && e.scan == null) dab.wanted = false
+        dabWasPlaying = playing
+        val status =
+            when {
+                e.unsupportedDongle -> DabStatus.UNSUPPORTED
+                e.notResponding -> DabStatus.NOT_RESPONDING
+                !e.dongle -> DabStatus.NO_DONGLE
+                e.scan != null -> DabStatus.SCANNING
+                e.problem != null -> DabStatus.UNPLAYABLE
+                e.tuning -> DabStatus.TUNING
+                e.playing && e.reception == Reception.LOST -> DabStatus.NO_SIGNAL
+                e.playing && e.reception == Reception.WEAK -> DabStatus.WEAK
+                e.playing -> DabStatus.PLAYING
+                else -> DabStatus.READY
+            }
+        val np = e.nowPlaying
+        val station = e.current ?: st.lastPlayed?.let(st::station)
+        if (np != null && np.isSong && np.display != lastDabSong) {
+            lastDabSong = np.display
+            TitleHistory.add(this, HeardTitle(System.currentTimeMillis(), 0, station?.label.orEmpty().trim(), np.artist.orEmpty(), np.title.orEmpty()))
+        }
+        _state.update {
+            it.copy(
+                dabStatus = status,
+                dabStations = st.stations.map(DabRadio::station),
+                dabFavourites = st.favourites.map { k -> k.toString() },
+                dab = station?.let(DabRadio::station) ?: it.dab,
+                // Waiting for a dongle (or for it to come back) still counts as playing: the station starts once it is there.
+                dabWanted = playing || (dab.wanted && !e.dongle),
+                dabPlaying = e.playing && !e.tuning && e.reception != Reception.LOST,
+                dabText = np?.display.orEmpty(),
+                dabBars = e.signalBars,
+                dabScan = e.scan?.let { p -> DabScan(p.channel, p.index, p.total, p.services) },
+            )
+        }
+        if (!state.value.dabWanted && state.value.source == Source.DAB && !standby) stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     /**
@@ -400,6 +531,7 @@ class FmService : Service() {
         fromFm: Int = 0,
     ) {
         setSource(Source.WEB)
+        if (dab.wanted || state.value.dabWanted) pauseDab()
         store.webCurrent = st.id
         _state.update {
             it.copy(web = st, webWanted = true, webTitle = if (it.web?.id == st.id) it.webTitle else "", error = "", webFromFm = fromFm)
@@ -875,6 +1007,16 @@ class FmService : Service() {
             nextWeb(forward)
             return
         }
+        if (s.source == Source.DAB) {
+            // Next / previous favourite (all the stations without favourites), as in DABplay+.
+            if (!s.dabWanted || s.dabStations.isEmpty()) {
+                playDab(s.dab?.key)
+            } else {
+                dab.wanted = true
+                dab.engine.skip(if (forward) 1 else -1)
+            }
+            return
+        }
         if (!s.poweredOn) {
             powerOn()
             return
@@ -1141,11 +1283,21 @@ class FmService : Service() {
 
     /** Station name for the session and the notification, with a fallback per source. */
     private fun shownName(s: RadioState): String =
-        s.shownTitle.ifBlank { if (s.source == Source.WEB) getString(R.string.web_radio) else "FM ${Band.format(s.frequency)}" }
+        s.shownTitle.ifBlank {
+            when (s.source) {
+                Source.WEB -> getString(R.string.web_radio)
+                Source.DAB -> getString(R.string.dab_radio)
+                Source.FM -> "FM ${Band.format(s.frequency)}"
+            }
+        }
 
     private fun shownLine(s: RadioState): String =
         s.shownNowPlaying.ifBlank {
-            if (s.source == Source.WEB) webLine(s) else "FM ${Band.format(s.frequency)} MHz"
+            when (s.source) {
+                Source.WEB -> webLine(s)
+                Source.DAB -> dabLine(this, s)
+                Source.FM -> "FM ${Band.format(s.frequency)} MHz"
+            }
         }
 
     /** Internet station without a song title: its state (connection, reconnection) or the stream's audio. */
@@ -1281,6 +1433,9 @@ class FmService : Service() {
 
         /** Back to FM (the internet stream stops). */
         const val ACTION_PLAY_FM = "org.librehu.fm.PLAY_FM"
+        const val ACTION_PLAY_DAB = "org.librehu.fm.PLAY_DAB"
+        const val ACTION_DAB_SCAN = "org.librehu.fm.DAB_SCAN"
+        const val ACTION_DAB_FAVOURITE = "org.librehu.fm.DAB_FAVOURITE"
         const val EXTRA_STATION = "station"
         const val EXTRA_STATION_JSON = "station_json"
         const val EXTRA_FROM_FM = "from_fm"
@@ -1329,6 +1484,14 @@ class FmService : Service() {
         }
 
         /** Plays a station that may not be saved (catalogue, offer of an FM station's stream from [fromFm]). */
+        /** Plays the DAB station [key] (null: the last one played). */
+        fun playDab(
+            context: Context,
+            key: String?,
+        ) {
+            context.startForegroundService(Intent(context, FmService::class.java).setAction(ACTION_PLAY_DAB).putExtra(EXTRA_STATION, key))
+        }
+
         fun playWebStation(
             context: Context,
             st: WebStation,

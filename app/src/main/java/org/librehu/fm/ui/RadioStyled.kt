@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.outlined.CellTower
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Pause
@@ -76,6 +77,7 @@ import org.librehu.fm.Band
 import org.librehu.fm.FmService
 import org.librehu.fm.R
 import org.librehu.fm.RadioState
+import org.librehu.fm.Source
 
 /*
  * The radio in LibreHU Launcher's two car styles. Factory (Modularer Infotainment-Baukasten): the frequency between
@@ -111,7 +113,7 @@ internal fun FactoryRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
 ) {
     var view by rememberSaveable { mutableStateOf(FactoryView.PRESETS) }
     FactoryScreen(
@@ -129,9 +131,9 @@ internal fun FactoryRadio(
                     stringResource(if (s.poweredOn) R.string.pause else R.string.play),
                     if (s.poweredOn) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
                 ) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
-                // The original's band key: here the internet stations.
-                SoftKey(stringResource(R.string.source_web), Icons.Outlined.Public) { onInternet(true) },
-                null,
+                // The original's band key: here the internet stations, and DAB+ once a dongle was plugged in.
+                SoftKey(stringResource(R.string.source_web), Icons.Outlined.Public) { onSource(Source.WEB) },
+                if (s.dabAvailable) SoftKey(stringResource(R.string.source_dab), Icons.Outlined.CellTower) { onSource(Source.DAB) } else null,
                 null,
                 SoftKey(stringResource(R.string.car_setup), Icons.Outlined.Settings, onClick = onSettings),
             ),
@@ -395,7 +397,7 @@ internal fun AmbientRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
 ) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     val context = LocalContext.current
@@ -403,8 +405,9 @@ internal fun AmbientRadio(
     AmbientScreen(
         title = "FM",
         keys =
-            listOf(
-                AmbientKey(stringResource(R.string.source_web)) { onInternet(true) },
+            listOfNotNull(
+                AmbientKey(stringResource(R.string.source_web)) { onSource(Source.WEB) },
+                if (s.dabAvailable) AmbientKey(stringResource(R.string.source_dab)) { onSource(Source.DAB) } else null,
                 AmbientKey(stringResource(if (s.poweredOn) R.string.pause else R.string.play)) { send(if (s.poweredOn) FmService.ACTION_PAUSE else FmService.ACTION_PLAY_FM, null) },
             ),
         options =

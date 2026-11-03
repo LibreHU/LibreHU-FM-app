@@ -253,4 +253,21 @@
     <string name="web_region_other">Other regions (%d)</string>
     <string name="web_genre_other">Other genres (%d)</string>
     <string name="web_country_other">Other countries (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+ radio</string>
+    <string name="dab_no_dongle">Plug in a DAB+ USB dongle</string>
+    <string name="dab_no_dongle_hint">Supported dongles: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. The DAB aerial goes on the dongle\'s SMA socket.</string>
+    <string name="dab_unsupported">This USB device is not a supported DAB+ dongle</string>
+    <string name="dab_not_responding">The DAB+ dongle does not answer: reconnecting…</string>
+    <string name="dab_scanning">Looking for stations: channel %1$s (%2$d/%3$d), %4$d found</string>
+    <string name="dab_scan">Scan for stations</string>
+    <string name="dab_tuning">Tuning…</string>
+    <string name="dab_no_signal">No signal: looking for the station…</string>
+    <string name="dab_weak">Weak signal</string>
+    <string name="dab_unplayable">This station cannot be played</string>
+    <string name="dab_no_stations">No DAB+ station yet: scan the band (⟳)</string>
+    <string name="dab_scan_short">Scan</string>
+    <string name="dab_favourite_short">Favourite</string>
+    <string name="dab_favourite_add">Add to the favourites</string>
+    <string name="dab_favourite_remove">Remove from the favourites</string>
 </resources>

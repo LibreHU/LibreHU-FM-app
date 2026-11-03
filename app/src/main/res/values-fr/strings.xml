@@ -253,4 +253,21 @@
     <string name="web_region_other">Autres régions (%d)</string>
     <string name="web_genre_other">Autres genres (%d)</string>
     <string name="web_country_other">Autres pays (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Radio DAB+</string>
+    <string name="dab_no_dongle">Branchez une clé DAB+ USB</string>
+    <string name="dab_no_dongle_hint">Clés reconnues : C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. L\'antenne DAB se branche sur la prise SMA de la clé.</string>
+    <string name="dab_unsupported">Ce périphérique USB n\'est pas une clé DAB+ reconnue</string>
+    <string name="dab_not_responding">La clé DAB+ ne répond pas : reconnexion…</string>
+    <string name="dab_scanning">Recherche des stations : canal %1$s (%2$d/%3$d), %4$d trouvées</string>
+    <string name="dab_scan">Rechercher les stations</string>
+    <string name="dab_tuning">Réglage…</string>
+    <string name="dab_no_signal">Pas de signal : recherche de la station…</string>
+    <string name="dab_weak">Signal faible</string>
+    <string name="dab_unplayable">Cette station ne peut pas être jouée</string>
+    <string name="dab_no_stations">Aucune station DAB+ : lancez une recherche (⟳)</string>
+    <string name="dab_scan_short">Recherche</string>
+    <string name="dab_favourite_short">Favori</string>
+    <string name="dab_favourite_add">Ajouter aux favoris</string>
+    <string name="dab_favourite_remove">Retirer des favoris</string>
 </resources>

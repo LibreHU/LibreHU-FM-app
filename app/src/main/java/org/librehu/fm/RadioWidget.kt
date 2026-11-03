@@ -100,10 +100,14 @@ class RadioWidget : AppWidgetProvider() {
                 setInt(R.id.widget_next, "setColorFilter", text)
                 setInt(R.id.widget_toggle_disc, "setColorFilter", accent)
                 setInt(R.id.widget_toggle, "setColorFilter", onAccent)
-                // Internet station: no frequency, the source is named instead.
+                // Internet or DAB station: no frequency, the source is named instead.
                 setTextViewText(
                     R.id.widget_frequency,
-                    if (s.source == Source.WEB) context.getString(R.string.source_web) else Band.format(s.frequency),
+                    when (s.source) {
+                        Source.WEB -> context.getString(R.string.source_web)
+                        Source.DAB -> context.getString(R.string.source_dab)
+                        Source.FM -> Band.format(s.frequency)
+                    },
                 )
                 setTextViewText(R.id.widget_title, s.shownTitle.ifBlank { context.getString(R.string.app_name) })
                 setTextViewText(
@@ -111,6 +115,7 @@ class RadioWidget : AppWidgetProvider() {
                     when {
                         s.shownNowPlaying.isNotBlank() -> s.shownNowPlaying
                         s.source == Source.WEB && s.webWanted -> context.getString(R.string.web_radio)
+                        s.source == Source.DAB && s.dabWanted -> org.librehu.fm.dab.dabLine(context, s)
                         s.poweredOn -> "FM ${Band.format(s.frequency)} MHz"
                         else -> context.getString(R.string.off)
                     },
