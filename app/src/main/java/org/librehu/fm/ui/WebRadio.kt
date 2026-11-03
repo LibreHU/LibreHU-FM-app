@@ -206,6 +206,12 @@ internal fun CarIconButton(
 /** Touch target size in a car (Google, Design for Driving, Sizing: 76 x 76 dp at least). */
 internal val TOUCH = 76.dp
 
+/** Space under the source switch, before the logo and the station name (the two must not look stuck together). */
+internal val HEADER_GAP = 32.dp
+
+/** Space under the tabs of a panel, before its tiles. */
+internal val PANEL_GAP = 20.dp
+
 /** The modern look's internet radio: now-playing card on the left, saved stations or the catalogue on the right. */
 @Composable
 internal fun WebRadioScreen(
@@ -246,7 +252,7 @@ private fun WebNowPlaying(
     ) {
         Column {
             SourceHeader(Source.WEB, s, onSource, onSettings)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(HEADER_GAP))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // A touch: choose a picture as the station's logo (or go back to the automatic one).
                 WebLogo(if (active) s.webLogo else null, current?.name.orEmpty()) { if (current != null) ui.logoFor = current }
@@ -403,7 +409,7 @@ private fun WebPanel(
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(PANEL_GAP))
         if (catalogTab) {
             WebCatalogView(s)
         } else if (s.webStations.isEmpty()) {

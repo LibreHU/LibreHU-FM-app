@@ -196,9 +196,9 @@ private fun DabNowPlaying(
     ) {
         Column {
             SourceHeader(Source.DAB, s, onSource, onSettings)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(HEADER_GAP))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                DabPicture(if (active) s.dabSlide else null, 88.dp, rounded = true)
+                DabPicture(if (active) s.dabSlide else null, 112.dp, rounded = true)
                 Spacer(Modifier.width(20.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -255,7 +255,10 @@ private fun DabNowPlaying(
     }
 }
 
-/** The picture sent with the sound (slideshow) when there is one, else the tower. */
+/**
+ * The picture sent with the sound (slideshow) when there is one, else the tower: the same box as the FM and internet
+ * logos in the modern look ([rounded]: 112 dp, 24 dp corners, 28 dp around the icon), framed in LHU-Link.
+ */
 @Composable
 private fun DabPicture(
     picture: android.graphics.Bitmap?,
@@ -265,16 +268,17 @@ private fun DabPicture(
     Box(
         Modifier
             .size(size)
-            .clip(if (rounded) RoundedCornerShape(20.dp) else RoundedCornerShape(0.dp))
+            .clip(if (rounded) RoundedCornerShape(24.dp) else RoundedCornerShape(0.dp))
             .background(if (rounded) CarColors.SurfaceHigh else Color.Transparent)
-            .then(if (rounded) Modifier else Modifier.border(BorderStroke(1.dp, CarColors.Accent))),
+            .then(if (rounded) Modifier else Modifier.border(BorderStroke(1.dp, CarColors.Accent)))
+            .padding(if (picture != null) 8.dp else if (rounded) 28.dp else 1.dp),
         contentAlignment = Alignment.Center,
     ) {
         if (picture != null) {
             val image = remember(picture) { picture.asImageBitmap() }
             Image(image, null, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize())
         } else if (rounded) {
-            Icon(Icons.Default.CellTower, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.size(size * 0.5f))
+            Icon(Icons.Default.CellTower, contentDescription = null, tint = CarColors.Accent, modifier = Modifier.fillMaxSize())
         } else {
             MetalIcon(Icons.Default.CellTower, size * 0.6f)
         }
@@ -323,7 +327,7 @@ private fun DabPanel(
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(PANEL_GAP))
         val list = if (tab == 0) s.dabOrdered.filter { it.key in s.dabFavourites } else s.dabStations
         when {
             s.dabStatus == DabStatus.SCANNING || (s.dabStations.isEmpty() && s.dabStatus != DabStatus.READY) ->
