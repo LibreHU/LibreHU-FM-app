@@ -47,6 +47,8 @@
     <string name="set_force_mono_unsupported">Refusé par le pilote FM : sa couche de compatibilité 32 bits ne transmettait pas cette commande avant le noyau LibreHU r146 (zips kernel-stable / conn-modules-stable, ou module KernelSU de connectivité).</string>
     <string name="set_local_search">Recherche : stations fortes seulement (locales)</string>
     <string name="set_local_search_hint">Recherche et balayage s\'arrêtent seulement sur les stations locales (environ 25 dBµV), pas sur les lointaines (DX)</string>
+    <string name="set_antenna_power">Ampli d\'antenne</string>
+    <string name="set_antenna_power_hint">Alimentation de l\'antenne (MCU 43) pendant que la radio FM joue, pour une antenne active ou un ampli d\'antenne. Coupé : antenne passive</string>
     <string name="set_history">Titres entendus</string>
     <string name="set_history_hint">Artiste et titre balisés par les stations (RT+), avec l\'heure.</string>
     <string name="set_history_empty">Aucun pour l\'instant : la station doit envoyer du RT+.</string>
