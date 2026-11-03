@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.CellTower
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.FileOpen
@@ -94,7 +95,7 @@ internal fun FactoryWebRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
 ) {
     val context = LocalContext.current
     val ui = rememberWebUi()
@@ -104,7 +105,7 @@ internal fun FactoryWebRadio(
         back = false,
         keys =
             listOf(
-                SoftKey(stringResource(R.string.source_fm), Icons.Outlined.Radio) { onInternet(false) },
+                SoftKey(stringResource(R.string.source_fm), Icons.Outlined.Radio) { onSource(Source.FM) },
                 SoftKey(stringResource(R.string.web_catalog), Icons.Outlined.Public, catalog) { catalog = !catalog },
                 SoftKey(
                     stringResource(if (s.webActive) R.string.pause else R.string.play),
@@ -112,7 +113,7 @@ internal fun FactoryWebRadio(
                 ) { webToggle(context, s, send) },
                 SoftKey(stringResource(R.string.web_add_short), Icons.Outlined.Add) { ui.adding = true },
                 SoftKey(stringResource(R.string.web_import_short), Icons.Outlined.FileOpen) { ui.import() },
-                null,
+                if (s.dabAvailable) SoftKey(stringResource(R.string.source_dab), Icons.Outlined.CellTower) { onSource(Source.DAB) } else null,
                 SoftKey(stringResource(R.string.car_setup), Icons.Outlined.Settings, onClick = onSettings),
             ),
     ) {
@@ -290,7 +291,7 @@ internal fun AmbientWebRadio(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
 ) {
     val context = LocalContext.current
     val ui = rememberWebUi()
@@ -299,8 +300,9 @@ internal fun AmbientWebRadio(
     AmbientScreen(
         title = stringResource(R.string.web_radio),
         keys =
-            listOf(
-                AmbientKey(stringResource(R.string.source_fm)) { onInternet(false) },
+            listOfNotNull(
+                AmbientKey(stringResource(R.string.source_fm)) { onSource(Source.FM) },
+                if (s.dabAvailable) AmbientKey(stringResource(R.string.source_dab)) { onSource(Source.DAB) } else null,
                 AmbientKey(stringResource(if (s.webActive) R.string.pause else R.string.play), enabled = current != null) { webToggle(context, s, send) },
             ),
         options =

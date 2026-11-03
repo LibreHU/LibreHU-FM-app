@@ -103,6 +103,10 @@ dependencies {
     // Internet radio: streams (MP3, AAC, Opus, FLAC, HLS) and their song titles (ICY).
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.hls)
+    // DAB+ USB dongles: engine, USB transport and audio output from DABplay+ (dab/).
+    implementation(project(":engine"))
+    implementation(project(":usb-android"))
+    implementation(project(":audio"))
     testImplementation(libs.junit)
     testImplementation(libs.json)
 }

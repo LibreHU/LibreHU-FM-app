@@ -87,28 +87,32 @@ fun RadioScreen(
     onSettings: () -> Unit,
 ) {
     val s by FmService.state.collectAsStateWithLifecycle()
-    // FM or internet stations on screen (the source played changes only when something is played).
-    var internet by rememberSaveable { mutableStateOf(s.source == Source.WEB) }
+    // FM, DAB or internet stations on screen (the source played changes only when something is played).
+    var shown by rememberSaveable { mutableStateOf(s.source) }
+    val go: (Source) -> Unit = { shown = it }
     // LibreHU Launcher's car styles: the launcher asks the app for them (see RetroLook).
     if (RetroLook.factory) {
-        return if (internet) FactoryWebRadio(s, send, onSettings) { internet = it } else FactoryRadio(s, send, onSettings) { internet = it }
+        return when (shown) {
+            Source.WEB -> FactoryWebRadio(s, send, onSettings, go)
+            Source.DAB -> FactoryDabRadio(s, send, onSettings, go)
+            Source.FM -> FactoryRadio(s, send, onSettings, go)
+        }
     }
     if (RetroLook.ambient) {
-        return if (internet) AmbientWebRadio(s, send, onSettings) { internet = it } else AmbientRadio(s, send, onSettings) { internet = it }
+        return when (shown) {
+            Source.WEB -> AmbientWebRadio(s, send, onSettings, go)
+            Source.DAB -> AmbientDabRadio(s, send, onSettings, go)
+            Source.FM -> AmbientRadio(s, send, onSettings, go)
+        }
     }
-    if (internet) {
-        return WebRadioScreen(
-            s,
-            send,
-            onSettings,
-            { internet = it },
-            Modifier
-                .fillMaxSize()
-                .background(CarColors.Background)
-                .safeDrawingPadding()
-                .padding(16.dp),
-        )
-    }
+    val screen =
+        Modifier
+            .fillMaxSize()
+            .background(CarColors.Background)
+            .safeDrawingPadding()
+            .padding(16.dp)
+    if (shown == Source.WEB) return WebRadioScreen(s, send, onSettings, go, screen)
+    if (shown == Source.DAB) return DabRadioScreen(s, send, onSettings, go, screen)
     Row(
         modifier =
             Modifier
@@ -118,7 +122,7 @@ fun RadioScreen(
                 .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        NowPlaying(s, send, onSettings, { internet = it }, Modifier.weight(1.1f).fillMaxHeight())
+        NowPlaying(s, send, onSettings, go, Modifier.weight(1.1f).fillMaxHeight())
         StationPanel(s, send, Modifier.weight(1f).fillMaxHeight())
     }
 }
@@ -128,7 +132,7 @@ private fun NowPlaying(
     s: RadioState,
     send: (String, Int?) -> Unit,
     onSettings: () -> Unit,
-    onInternet: (Boolean) -> Unit,
+    onSource: (Source) -> Unit,
     modifier: Modifier,
 ) {
     Column(
@@ -140,7 +144,7 @@ private fun NowPlaying(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            SourceHeader(false, s, onInternet, onSettings)
+            SourceHeader(Source.FM, s, onSource, onSettings)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StationLogo(s)
