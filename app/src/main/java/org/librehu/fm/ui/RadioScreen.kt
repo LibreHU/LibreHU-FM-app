@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -32,7 +33,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Star
@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -141,17 +140,8 @@ private fun NowPlaying(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                SourceTabs(false, onInternet, Modifier.weight(1f))
-                IconButton(onClick = onSettings, modifier = Modifier.size(48.dp)) {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = stringResource(R.string.settings),
-                        tint = CarColors.TextDim,
-                        modifier = Modifier.size(28.dp),
-                    )
-                }
-            }
+            SourceHeader(false, s, onInternet, onSettings)
+            Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StationLogo(s)
                 Spacer(Modifier.width(20.dp))
@@ -395,30 +385,24 @@ private fun StationPanel(
                 .background(CarColors.Surface)
                 .padding(16.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Tab(stringResource(R.string.favorites), tab == 0) { tab = 0 }
-            Spacer(Modifier.width(8.dp))
-            Tab(stringResource(R.string.stations), tab == 1) { tab = 1 }
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = { send(FmService.ACTION_TOGGLE_PRESET, null) }, modifier = Modifier.size(56.dp)) {
-                Icon(
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            CarTabs(
+                listOf(CarTab(stringResource(R.string.favorites)), CarTab(stringResource(R.string.stations))),
+                tab,
+                Modifier.weight(1f, fill = false).widthIn(max = 440.dp),
+            ) { tab = it }
+            Row {
+                CarIconButton(
                     if (s.isPreset) Icons.Default.Star else Icons.Default.StarBorder,
-                    contentDescription = stringResource(R.string.toggle_favorite),
+                    stringResource(R.string.toggle_favorite),
                     tint = if (s.isPreset) CarColors.Accent else CarColors.Text,
-                    modifier = Modifier.size(32.dp),
-                )
-            }
-            IconButton(
-                onClick = { send(if (s.scanning) FmService.ACTION_STOP_SCAN else FmService.ACTION_SCAN, null) },
-                enabled = s.poweredOn,
-                modifier = Modifier.size(56.dp),
-            ) {
-                Icon(
+                ) { send(FmService.ACTION_TOGGLE_PRESET, null) }
+                CarIconButton(
                     if (s.scanning) Icons.Default.Stop else Icons.Default.Refresh,
-                    contentDescription = stringResource(R.string.scan),
+                    stringResource(R.string.scan),
                     tint = if (s.poweredOn) CarColors.Text else CarColors.TextDim,
-                    modifier = Modifier.size(32.dp),
-                )
+                    enabled = s.poweredOn,
+                ) { send(if (s.scanning) FmService.ACTION_STOP_SCAN else FmService.ACTION_SCAN, null) }
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -472,26 +456,6 @@ private fun StationTile(
 }
 
 @Composable
-private fun Tab(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    Text(
-        label,
-        color = if (selected) CarColors.OnAccent else CarColors.Text,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Medium,
-        modifier =
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(if (selected) CarColors.Accent else CarColors.SurfaceHigh)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-    )
-}
-
-@Composable
 private fun RoundButton(
     icon: ImageVector,
     label: Int,
@@ -500,7 +464,7 @@ private fun RoundButton(
     Box(
         modifier =
             Modifier
-                .size(72.dp)
+                .size(TOUCH)
                 .clip(CircleShape)
                 .background(CarColors.SurfaceHigh)
                 .clickable(onClick = onClick),

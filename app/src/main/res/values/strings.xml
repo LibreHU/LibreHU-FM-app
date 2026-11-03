@@ -222,6 +222,8 @@
     <string name="web_region_none">National / no region</string>
     <string name="web_genre">Genre</string>
     <string name="web_genre_all">All genres</string>
+    <string name="web_region_any">All</string>
+    <string name="web_genre_any">All</string>
     <string name="web_search">Search a station</string>
     <string name="web_catalog_refresh">Download the list again</string>
     <string name="web_catalog_loading">Downloading the station list (Radio Browser)…</string>

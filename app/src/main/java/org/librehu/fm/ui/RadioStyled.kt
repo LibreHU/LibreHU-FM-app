@@ -481,7 +481,7 @@ private fun AmbientFrequencies(
                     }
                     Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(s.title.ifBlank { " " }, color = KitLight, fontSize = 24.sp, fontWeight = FontWeight.Light, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(Band.format(s.frequency), color = KitLight, fontSize = 50.sp, fontWeight = FontWeight.Light)
+                        Text(Band.format(s.frequency), color = KitLight, fontSize = 50.sp, lineHeight = 54.sp, fontWeight = FontWeight.Light)
                         val status = statusLine(s)
                         if (status.isNotEmpty()) {
                             Text(
@@ -494,24 +494,23 @@ private fun AmbientFrequencies(
                                 textAlign = TextAlign.Center,
                             )
                         }
+                        // The station is also on the internet and the internet works: a small lit key offers its stream,
+                        // under the text (never over it on a short screen).
+                        val offer = s.webOffer
+                        if (offer != null) {
+                            val context = LocalContext.current
+                            Spacer(Modifier.height(4.dp))
+                            AmbientGridKey(Modifier.height(36.dp), onClick = { FmService.playWebStation(context, offer, s.frequency) }) {
+                                Row(Modifier.padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Outlined.Public, null, tint = KitLight, modifier = Modifier.size(20.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(offerText(offer), color = KitLight, fontSize = 16.sp, fontWeight = FontWeight.Light, maxLines = 1)
+                                }
+                            }
+                        }
                     }
                 }
                 AmbientSideKey(Icons.Outlined.SkipNext) { send(FmService.ACTION_SEEK_UP, null) }
-            }
-            // The station is also on the internet and the internet works: a small lit key offers its stream.
-            val offer = s.webOffer
-            if (offer != null) {
-                val context = LocalContext.current
-                AmbientGridKey(
-                    Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp).height(40.dp),
-                    onClick = { FmService.playWebStation(context, offer, s.frequency) },
-                ) {
-                    Row(Modifier.padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.Public, null, tint = KitLight, modifier = Modifier.size(20.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text(offerText(offer), color = KitLight, fontSize = 16.sp, fontWeight = FontWeight.Light, maxLines = 1)
-                    }
-                }
             }
         }
     }
