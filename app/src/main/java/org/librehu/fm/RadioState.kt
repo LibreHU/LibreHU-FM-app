@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import org.json.JSONArray
 import org.json.JSONObject
+import org.librehu.fm.dab.DabScan
+import org.librehu.fm.dab.DabStation
+import org.librehu.fm.dab.DabStatus
 import org.librehu.fm.web.WebStation
 import java.util.Locale
 
@@ -13,8 +16,8 @@ data class Station(
     val name: String = "",
 )
 
-/** What the radio plays: the FM chip, or an internet stream. */
-enum class Source { FM, WEB }
+/** What the radio plays: the FM chip, an internet stream, or a DAB+ USB dongle. */
+enum class Source { FM, WEB, DAB }
 
 data class RadioState(
     val available: Boolean = true,
@@ -73,17 +76,57 @@ data class RadioState(
     val fmWeb: WebStation? = null,
     /** FM frequency the internet station was switched to from (offer of [fmWeb]), 0 otherwise: "back to FM". */
     val webFromFm: Int = 0,
+    /** DAB+: what the dongle part does, the stations found by the scans, the favourites (keys). */
+    val dabStatus: DabStatus = DabStatus.NO_DONGLE,
+    val dabStations: List<DabStation> = emptyList(),
+    val dabFavourites: List<String> = emptyList(),
+    /** DAB station played (or played last). */
+    val dab: DabStation? = null,
+    /** DAB: the user wants it to play (it may be tuning or looking for the signal), and sound is coming out. */
+    val dabWanted: Boolean = false,
+    val dabPlaying: Boolean = false,
+    /** Text sent with the sound (DLS): "Artist – Title" for songs, else the station's text. */
+    val dabText: String = "",
+    /** Picture sent with the sound (slideshow: cover, station logo…). */
+    val dabSlide: Bitmap? = null,
+    /** Signal of the ensemble, 0..4 bars. */
+    val dabBars: Int = 0,
+    val dabScan: DabScan? = null,
 ) {
     /** Sound coming out: the FM chip or the internet stream. */
-    val playing: Boolean get() = if (source == Source.WEB) webWanted else poweredOn
+    val playing: Boolean
+        get() =
+            when (source) {
+                Source.WEB -> webWanted
+                Source.DAB -> dabWanted
+                Source.FM -> poweredOn
+            }
 
     /** Station name for the media card, the notification and the widget, whatever the source. */
-    val shownTitle: String get() = if (source == Source.WEB) web?.name.orEmpty() else title
+    val shownTitle: String
+        get() =
+            when (source) {
+                Source.WEB -> web?.name.orEmpty()
+                Source.DAB -> dab?.name.orEmpty()
+                Source.FM -> title
+            }
 
     /** Second line, whatever the source: the stream's title for an internet station. */
-    val shownNowPlaying: String get() = if (source == Source.WEB) webTitle else nowPlaying
+    val shownNowPlaying: String
+        get() =
+            when (source) {
+                Source.WEB -> webTitle
+                Source.DAB -> dabText
+                Source.FM -> nowPlaying
+            }
 
-    val shownLogo: Bitmap? get() = if (source == Source.WEB) webLogo else logo
+    val shownLogo: Bitmap?
+        get() =
+            when (source) {
+                Source.WEB -> webLogo
+                Source.DAB -> dabSlide
+                Source.FM -> logo
+            }
 
     val isPreset: Boolean get() = presets.any { it.frequency == frequency }
 
@@ -212,8 +255,13 @@ class RadioStore(
 
     /** Source played last, and the internet station played last (its id). */
     var source: Source
-        get() = if (prefs.getString("source", "fm") == "web") Source.WEB else Source.FM
-        set(value) = prefs.edit().putString("source", if (value == Source.WEB) "web" else "fm").apply()
+        get() =
+            when (prefs.getString("source", "fm")) {
+                "web" -> Source.WEB
+                "dab" -> Source.DAB
+                else -> Source.FM
+            }
+        set(value) = prefs.edit().putString("source", value.name.lowercase(Locale.ROOT)).apply()
 
     var webCurrent: String
         get() = prefs.getString("web_current", "").orEmpty()

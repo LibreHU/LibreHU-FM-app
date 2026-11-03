@@ -24,7 +24,13 @@ media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 # org.json for the JVM tests (Android's copy is a stub there).
 json = { group = "org.json", name = "json", version.ref = "json" }
+# DAB engine (dab/, from DABplay+): the aliases its build files use.
+orgjson = { group = "org.json", name = "json", version.ref = "json" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -45,6 +45,11 @@
         android:name="org.librehu.permission.BRIDGE"
         android:protectionLevel="signature" />
 
+    <!-- DAB+ USB dongles (USB host): optional, the radio works without. -->
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+
     <!-- usesCleartextTraffic: many radio streams (SHOUTcast, Icecast) are plain http, refused otherwise since API 28. -->
     <application
         android:allowBackup="false"
@@ -58,6 +63,22 @@
             android:name="org.librehu.themed_icon"
             android:resource="@drawable/ic_launcher_mono" />
 
+
+        <!-- A DAB+ dongle plugged in: connected to the DAB engine, nothing comes to the front. -->
+        <activity
+            android:name=".dab.DabUsbActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/dab_dongles" />
+        </activity>
 
         <activity
             android:name=".MainActivity"

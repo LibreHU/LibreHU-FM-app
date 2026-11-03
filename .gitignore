@@ -5,6 +5,7 @@
 /.idea
 /build
 /app/build
+/dab/*/build
 .externalNativeBuild
 .cxx
 *.jks

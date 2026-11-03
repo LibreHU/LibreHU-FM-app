@@ -173,6 +173,37 @@ liste française de Radio Browser du 02/11/2026 (refaites le 03/11/2026) ; pas e
   la « HD Radio » américaine (numérique sur la bande FM) demande une puce de démodulation que l'UJC201 n'a pas : seule
   la qualité des flux internet est concernée ici.
 
+## Radio DAB+ (clé USB)
+
+Onglet **DAB+** (entre FM et Internet) dès qu'une clé DAB+ USB a été branchée ; touche **DAB+** dans les styles
+Modularer Infotainment-Baukasten et LHU-Link. Moteur : [DABplay+](https://github.com/jvspier/dabplayplus) de jvspier
+(licence MIT, Kotlin pur, sans code natif), repris dans [`dab/`](dab/README.md) : la clé envoie le multiplex brut,
+l'autoradio décode (FIC, super-trames DAB+ en AAC par `MediaCodec`, MP2 pour le DAB).
+
+| Clé | USB | État |
+|---|---|---|
+| wRadio **C100 / DTR-100** (XTRONS USBDAB01, Joying, Pumpkin Y0251, Dasaita…) | `16c0:05dc` | testée sur autoradio par l'auteur de DABplay+ ; pas encore sur l'UJC201 |
+| **Si4684** (Eonon A503, XFA-DAB220) | `1a86:5537` | non testée |
+| **Siano SMS2160** (Rhine800, Denver TDMB) | `187f:0800`, `0700`, `0802` | non testée |
+| Siano SMS2270 « Rio », RTL-SDR, clés vues comme une clé USB de stockage (AP8224, Dension) | — | non prises en charge |
+
+- **Brancher** : Android demande l'accès à la clé (cocher « utiliser par défaut » : plus de question aux démarrages
+  suivants). La première fois, recherche automatique de la bande III (canaux 5A à 13F) ; ⟳ la relance. L'antenne DAB
+  se branche sur la prise SMA de la clé.
+- **Écouter** : favoris (étoile) puis toutes les stations, ⏮ ⏭ et touches du volant d'une station à l'autre (favoris
+  d'abord), texte de la station (DLS ; les « Artiste – Titre » vont dans l'historique des titres), image du diaporama,
+  barres de signal, multiplex et débit ; **suivi de la station** sur un autre multiplex quand le signal se perd,
+  reprise après une coupure de la clé (démarrage du moteur), **annonces trafic** avec le réglage TA de la radio.
+- Même session média que la FM et internet : carte du lanceur, widget, notification, page radio de l'appli
+  téléphone (source DAB+, station, recherche).
+- Limites : rendu vérifié avec Paparazzi (captures ci-dessous, données d'exemple) mais **pas encore essayé sur
+  l'autoradio** (aucune clé ici) ; le DAB+ ne couvre pas encore toute la France.
+
+| | |
+|---|---|
+| ![DAB+](docs/screenshots/dab.png)<br>DAB+ | ![DAB+ sans clé](docs/screenshots/dab-no-dongle.png)<br>DAB+ sans clé |
+| ![Style Modularer Infotainment-Baukasten : DAB+](docs/screenshots/style-mib-dab.png)<br>Style Modularer Infotainment-Baukasten : DAB+ | ![Style LHU-Link : DAB+](docs/screenshots/style-lhu-link-dab.png)<br>Style LHU-Link : DAB+ |
+
 ## Captures d'écran
 
 | | |
