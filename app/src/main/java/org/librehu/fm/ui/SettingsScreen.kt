@@ -64,6 +64,7 @@ import org.librehu.fm.Settings
 import org.librehu.fm.StationLogos
 import org.librehu.fm.TitleHistory
 import org.librehu.fm.WebQuality
+import org.librehu.fm.headunit.switchesAntenna
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -79,6 +80,7 @@ fun SettingsScreen(
     val s by RadioSettings.get(context).collectAsStateWithLifecycle()
     val radio by FmService.state.collectAsStateWithLifecycle()
     val update: ((Settings) -> Settings) -> Unit = { RadioSettings.update(context, it) }
+    val antenna = remember { switchesAntenna(context) }
     StyledPage(stringResource(R.string.settings)) {
         Column(
             modifier =
@@ -183,6 +185,11 @@ fun SettingsScreen(
                     if (radio.monoUnsupported) Hint(stringResource(R.string.set_force_mono_unsupported))
                     SwitchRow(stringResource(R.string.set_local_search), s.localSearch, stringResource(R.string.set_local_search_hint)) { on ->
                         update { it.copy(localSearch = on) }
+                    }
+                    if (antenna) {
+                        SwitchRow(stringResource(R.string.set_antenna_power), s.antennaPower, stringResource(R.string.set_antenna_power_hint)) { on ->
+                            update { it.copy(antennaPower = on) }
+                        }
                     }
                 }
 

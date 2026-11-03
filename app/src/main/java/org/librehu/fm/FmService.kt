@@ -106,6 +106,7 @@ class FmService : Service() {
         // Band plan before any power-up (queued first on the chip thread).
         chip.execute { applyRegion(settings.value.band) }
         bridge = HeadUnitBridge.create(this)
+        bridge.setAntennaPower(settings.value.antennaPower)
         val webStations = store.webStations
         _state.update {
             it.copy(
@@ -234,6 +235,14 @@ class FmService : Service() {
                 .distinctUntilChanged()
                 .drop(1)
                 .collect { chip.execute { if (state.value.poweredOn || standby) applyReception() } }
+        }
+        // Antenna amplifier setting applied at once (chip thread, in order with the power up / down).
+        scope.launch {
+            settings
+                .map { it.antennaPower }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { on -> chip.execute { bridge.setAntennaPower(on) } }
         }
         // Traffic announcements turned off during the standby: the chip goes off.
         scope.launch {
