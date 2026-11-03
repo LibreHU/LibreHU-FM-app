@@ -31,6 +31,8 @@ data class Settings(
     val forceMono: Boolean = false,
     /** Seek and scan stop on strong stations only (local), not on distant ones (DX). */
     val localSearch: Boolean = false,
+    /** Antenna amplifier powered (MCU 0x43) while the FM chip is on; shown when the head unit switches it. */
+    val antennaPower: Boolean = true,
     /** Traffic announcements (TA) of the station: louder while the radio plays, played over another source. */
     val trafficAnnouncements: Boolean = false,
     /** Head unit clock set from the RDS clock time when it is more than a minute off. */
@@ -102,6 +104,7 @@ object RadioSettings {
             .putString("region", s.region?.name.orEmpty())
             .putBoolean("force_mono", s.forceMono)
             .putBoolean("local_search", s.localSearch)
+            .putBoolean("antenna_power", s.antennaPower)
             .putBoolean("traffic_announcements", s.trafficAnnouncements)
             .putBoolean("rds_clock", s.rdsClock)
             .putString("audio_mode", s.audioMode.name)
@@ -135,6 +138,7 @@ object RadioSettings {
             region = runCatching { Region.valueOf(p.getString("region", null).orEmpty()) }.getOrNull(),
             forceMono = p.getBoolean("force_mono", d.forceMono),
             localSearch = p.getBoolean("local_search", d.localSearch),
+            antennaPower = p.getBoolean("antenna_power", d.antennaPower),
             trafficAnnouncements = p.getBoolean("traffic_announcements", d.trafficAnnouncements),
             rdsClock = p.getBoolean("rds_clock", d.rdsClock),
             audioMode = runCatching { AudioMode.valueOf(p.getString("audio_mode", null) ?: "") }.getOrDefault(d.audioMode),

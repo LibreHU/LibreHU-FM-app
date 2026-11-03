@@ -12,6 +12,7 @@ import org.librehu.fm.Region
 import org.librehu.fm.Source
 import org.librehu.fm.StationLogos
 import org.librehu.fm.WebQuality
+import org.librehu.fm.headunit.switchesAntenna
 
 /**
  * The radio for LibreHU's phone app (through LibreHU-service's bridge, [BridgeKitProvider]): the radio itself (on /
@@ -109,6 +110,11 @@ class BridgeProvider : BridgeKitProvider() {
             switch("force_mono", s(R.string.set_force_mono), st.forceMono, s(R.string.set_force_mono_hint)) { v -> update { it.copy(forceMono = v) } }
             switch("local_search", s(R.string.set_local_search), st.localSearch, s(R.string.set_local_search_hint)) { v ->
                 update { it.copy(localSearch = v) }
+            }
+            if (switchesAntenna(c)) {
+                switch("antenna_power", s(R.string.set_antenna_power), st.antennaPower, s(R.string.set_antenna_power_hint)) { v ->
+                    update { it.copy(antennaPower = v) }
+                }
             }
             section(s(R.string.set_audio))
             pick("audio_mode", s(R.string.set_audio), st.audioMode, s(R.string.set_audio_hint), label = {

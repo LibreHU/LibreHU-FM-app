@@ -60,7 +60,10 @@ pour le lanceur
   stations fortes seulement** (« Local », seuil d'environ 25 dBµV au lieu de -4 dBµV, le réglage MediaTek, « DX »).
   Le mono forcé demande le noyau LibreHU **r146** ou plus récent, avec ses modules : la couche de compatibilité
   32 bits du pilote FM ne transmettait pas `FM_IOCTL_SETMONOSTERO` (ni `FM_IOCTL_RESTORE_SEARCH`, la remise en état
-  après un balayage) ; l'appli le signale si le pilote refuse.
+  après un balayage) ; l'appli le signale si le pilote refuse. **Ampli d'antenne** (option, activé par défaut) :
+  l'antenne est alimentée (GPIO 110 + commande MCU `43`) pendant que la puce FM est allumée ; à couper avec une
+  antenne passive. Réglage affiché seulement dans l'édition `librehu-service` (LibreHU-service, API 2) : avec Jancar
+  ivi-services, c'est ivi-services qui décide à l'ouverture de la radio.
 - **Annonces trafic (TA, option)** : pendant une annonce de la station (TP et TA), volume plein si la radio joue
   (baissée par une autre appli) ; si vous écoutez autre chose, la radio reste allumée sans son (« veille », notification
   avec une touche Arrêter), prend la main pendant l'annonce (l'autre appli se met en pause) puis la rend. 10 minutes au
@@ -180,7 +183,7 @@ Captures sur l'émulateur Android 11 (1280×720, 160 dpi comme l'autoradio), san
 |---|---|
 | `main` | aucune (Android générique) |
 | `ivi` | Jancar **ivi-services** : `IRadio.open/close` (source radio active, alimentation d'antenne) |
-| `librehu-service` | [LibreHU-service](https://github.com/LibreHU/LibreHU-service) : alimentation d'antenne |
+| `librehu-service` | [LibreHU-service](https://github.com/LibreHU/LibreHU-service) : alimentation d'antenne (ampli d'antenne, réglable) |
 
 ## Installation (obligatoirement en app privilégiée)
 

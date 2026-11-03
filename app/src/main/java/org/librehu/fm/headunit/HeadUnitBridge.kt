@@ -14,6 +14,9 @@ interface HeadUnitBridge {
     /** Radio powered down. */
     fun onRadioOff() {}
 
+    /** Antenna amplifier setting: the antenna is powered with the radio only when [allowed]. Applied at once. */
+    fun setAntennaPower(allowed: Boolean) {}
+
     fun release() {}
 
     /** Shown in the settings / about line. */
@@ -35,3 +38,6 @@ interface HeadUnitBridge {
 object NoHeadUnit : HeadUnitBridge {
     override val name = "Android"
 }
+
+/** True when this edition switches the antenna amplifier power itself: the setting is shown. */
+fun switchesAntenna(context: Context): Boolean = false
