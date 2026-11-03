@@ -18,12 +18,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -41,12 +44,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.util.Locale
@@ -110,12 +115,12 @@ internal fun WebDialogs(ui: WebUi) {
             title = { Text(st.name) },
             text = { Text(stringResource(R.string.web_remove_confirm)) },
             confirmButton = {
-                TextButton(onClick = {
+                DialogKey(stringResource(R.string.web_remove)) {
                     FmService.removeWebStation(context, st.id)
                     ui.removing = null
-                }) { Text(stringResource(R.string.web_remove)) }
+                }
             },
-            dismissButton = { TextButton(onClick = { ui.removing = null }) { Text(stringResource(android.R.string.cancel)) } },
+            dismissButton = { DialogKey(stringResource(android.R.string.cancel)) { ui.removing = null } },
         )
     }
     ui.logoFor?.let { st ->
@@ -125,24 +130,34 @@ internal fun WebDialogs(ui: WebUi) {
             title = { Text(stringResource(R.string.web_logo_title, st.name)) },
             text = { Text(stringResource(R.string.logo_hint)) },
             confirmButton = {
-                TextButton(onClick = {
+                DialogKey(stringResource(R.string.logo_pick)) {
                     logoTarget = st.id
                     ui.logoFor = null
                     pick.launch("image/*")
-                }) { Text(stringResource(R.string.logo_pick)) }
+                }
             },
             dismissButton = {
                 if (manual) {
-                    TextButton(onClick = {
+                    DialogKey(stringResource(R.string.logo_auto)) {
                         ui.logoFor = null
                         WebLogos.clearManual(context, st.id)
-                    }) { Text(stringResource(R.string.logo_auto)) }
+                    }
                 } else {
-                    TextButton(onClick = { ui.logoFor = null }) { Text(stringResource(android.R.string.cancel)) }
+                    DialogKey(stringResource(android.R.string.cancel)) { ui.logoFor = null }
                 }
             },
         )
     }
+}
+
+/** Key of a dialog at the car touch size ([TOUCH] high). */
+@Composable
+private fun DialogKey(
+    label: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    TextButton(onClick = onClick, enabled = enabled, modifier = Modifier.heightIn(min = TOUCH)) { Text(label, fontSize = 18.sp) }
 }
 
 /** The internet station is the source and the user wants it to play (it may be connecting). */
@@ -214,13 +229,13 @@ private fun AddWebStationDialog(onDismiss: () -> Unit) {
             }
         },
         confirmButton = {
-            TextButton(enabled = valid, onClick = {
+            DialogKey(stringResource(R.string.web_add_confirm), enabled = valid) {
                 val u = url.trim()
                 FmService.addWebStations(context, listOf(WebStation(name = name.trim().ifBlank { Playlists.nameFromUrl(u) }, url = u)))
                 onDismiss()
-            }) { Text(stringResource(R.string.web_add_confirm)) }
+            }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } },
+        dismissButton = { DialogKey(stringResource(android.R.string.cancel), onClick = onDismiss) },
     )
 }
 
@@ -247,7 +262,7 @@ internal fun WebField(
                 focusedTextColor = if (carStyled) KitLight else CarColors.Text,
                 unfocusedTextColor = if (carStyled) KitLight else CarColors.Text,
                 focusedBorderColor = CarColors.Accent,
-                unfocusedBorderColor = if (carStyled) KitDim else CarColors.SurfaceHigh,
+                unfocusedBorderColor = if (carStyled) KitDim else CarColors.TextDim,
                 focusedLabelColor = CarColors.Accent,
                 unfocusedLabelColor = if (carStyled) KitDim else CarColors.TextDim,
                 focusedPlaceholderColor = if (carStyled) KitDim else CarColors.TextDim,
@@ -550,11 +565,19 @@ private fun GridTile(
                     chosen -> CarColors.OnAccent
                     else -> CarColors.Text
                 }
-            Text(t.label, color = fg, fontSize = 18.sp, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            // Long names on two lines, smaller if needed; a line may end after a hyphen ("Provence-Alpes-" / "Côte d'Azur")
+            // but never inside a word.
+            BasicText(
+                t.label.replace("-", "-\u200B"),
+                style = TextStyle(color = fg, textAlign = TextAlign.Center, lineHeight = 1.15.em),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                autoSize = TextAutoSize.StepBased(minFontSize = 12.sp, maxFontSize = 18.sp),
+            )
             if (t.count > 0) Text(t.count.toString(), color = fg.copy(alpha = 0.7f), fontSize = 13.sp)
         }
     }
-    val m = modifier.height(72.dp)
+    val m = modifier.height(76.dp)
     when {
         RetroLook.factory ->
             FramedKey(m.then(if (chosen) Modifier.border(BorderStroke(1.5.dp, CarColors.Accent)) else Modifier), onClick = onClick) { content() }
