@@ -4,7 +4,7 @@ package org.librehu.fm
  * Text of the RDS: programme service name (PS), radiotext (RT) and the RT+ tags cut out of the radiotext.
  *
  * Character set of EN 50067:1998 annex E (IEC 62106): the bytes above 0x7F are letters with accents and symbols
- * (0x82 = é, 0x8B = Ç, 0xA9 = €…); the table below follows the annex as reproduced by redsea (Oona Räisänen, ISC
+ * (0x82 = é, 0x8B = Ç, 0xA9 = €…); the table below follows the annex as reproduced by redsea (Oona Räisänen, MIT
  * licence). 0x20–0x7E stay ASCII, as the encoders send them (the annex has ¤ ― ‖ ¯ instead of $ ^ ` ~). The native
  * library used to turn every byte above 0x7E into a space ("Vous  coutez").
  */
