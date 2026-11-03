@@ -11,7 +11,8 @@ import org.librehu.service.ILibreHuService
 
 /**
  * LibreHU-service integration (https://github.com/LibreHU/LibreHU-service): asks for the radio antenna power while
- * the radio plays (API 2 `setRadioAntenna`). The service keeps it off while the ignition is off.
+ * the radio plays (API 2 `setRadioAntenna`), unless the antenna amplifier setting is off. The service keeps it off
+ * while the ignition is off.
  */
 class LibreHuBridge(
     private val context: Context,
@@ -20,7 +21,11 @@ class LibreHuBridge(
 
     @Volatile
     private var service: ILibreHuService? = null
-    private var antenna = false
+    @Volatile
+    private var radioOn = false
+
+    @Volatile
+    private var allowed = true
     private var bound = false
 
     private val connection =
@@ -49,12 +54,17 @@ class LibreHuBridge(
     }
 
     override fun onRadioOn() {
-        antenna = true
+        radioOn = true
         apply()
     }
 
     override fun onRadioOff() {
-        antenna = false
+        radioOn = false
+        apply()
+    }
+
+    override fun setAntennaPower(allowed: Boolean) {
+        this.allowed = allowed
         apply()
     }
 
@@ -71,7 +81,7 @@ class LibreHuBridge(
     private fun apply() {
         val s = service ?: return
         try {
-            if (s.apiVersion >= 2) s.setRadioAntenna(antenna) else Log.w(TAG, "LibreHU-service API < 2: no antenna control")
+            if (s.apiVersion >= 2) s.setRadioAntenna(radioOn && allowed) else Log.w(TAG, "LibreHU-service API < 2: no antenna control")
         } catch (e: RemoteException) {
             Log.w(TAG, "setRadioAntenna: ${e.message}")
         }

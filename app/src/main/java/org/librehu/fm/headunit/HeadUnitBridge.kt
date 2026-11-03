@@ -52,4 +52,10 @@ object NoHeadUnit : HeadUnitBridge {
 }
 
 /** True when this edition switches the antenna amplifier power itself: the setting is shown. */
-fun switchesAntenna(context: Context): Boolean = false
+fun switchesAntenna(context: Context): Boolean =
+    try {
+        context.packageManager.getPackageInfo("org.librehu.service", 0)
+        true
+    } catch (_: Exception) {
+        false
+    }
