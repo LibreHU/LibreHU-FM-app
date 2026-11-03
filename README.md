@@ -62,8 +62,10 @@ pour le lanceur
   32 bits du pilote FM ne transmettait pas `FM_IOCTL_SETMONOSTERO` (ni `FM_IOCTL_RESTORE_SEARCH`, la remise en état
   après un balayage) ; l'appli le signale si le pilote refuse. **Ampli d'antenne** (option, activé par défaut) :
   l'antenne est alimentée (GPIO 110 + commande MCU `43`) pendant que la puce FM est allumée ; à couper avec une
-  antenne passive. Réglage affiché seulement dans l'édition `librehu-service` (LibreHU-service, API 2) : avec Jancar
-  ivi-services, c'est ivi-services qui décide à l'ouverture de la radio.
+  antenne passive. D'après l'essai de **Reo Au In** (ampli coupé par LibreHU-service et la commande MCU `43`), la
+  réception FM est meilleure sans l'ampli sur son autoradio : à couper aussi si la réception est saturée ou bruitée.
+  Réglage affiché seulement dans l'édition `librehu-service` (LibreHU-service, API 2) : avec Jancar ivi-services,
+  c'est ivi-services qui décide à l'ouverture de la radio.
 - **Annonces trafic (TA, option)** : pendant une annonce de la station (TP et TA), volume plein si la radio joue
   (baissée par une autre appli) ; si vous écoutez autre chose, la radio reste allumée sans son (« veille », notification
   avec une touche Arrêter), prend la main pendant l'annonce (l'autre appli se met en pause) puis la rend. 10 minutes au
