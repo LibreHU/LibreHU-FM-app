@@ -81,6 +81,7 @@ fun SettingsScreen(
     val radio by FmService.state.collectAsStateWithLifecycle()
     val update: ((Settings) -> Settings) -> Unit = { RadioSettings.update(context, it) }
     val antenna = remember { switchesAntenna(context) }
+    var info by remember { mutableStateOf(false) }
     StyledPage(stringResource(R.string.settings)) {
         Column(
             modifier =
@@ -215,9 +216,14 @@ fun SettingsScreen(
                     Hint(stringResource(R.string.set_log_hint))
                     Actions { Pill(stringResource(R.string.set_log_export), onExportLog) }
                 }
+
+                Section(stringResource(R.string.info_title)) {
+                    Actions { Pill(stringResource(R.string.info_title)) { info = true } }
+                }
             }
         }
     }
+    if (info) InfoDialog { info = false }
 }
 
 /** Songs heard (RT+ / eRT+), newest first: time, station, artist – title. */
