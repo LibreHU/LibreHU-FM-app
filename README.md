@@ -346,6 +346,19 @@ chaque texte des layouts `widget*.xml` par `tools/segment_widgets.py` (à relanc
 widget). Les fonds rétro sont des couleurs unies (Android 9 ne teinte pas un fond de widget ; la case arrondie du
 launcher les découpe).
 
+## Licence
+
+Copyright (C) 2026 les contributeurs de LibreHU.
+
+Le code de ce dépôt est sous **GNU AGPL v3 ou ultérieure** (`AGPL-3.0-or-later`, fichier [`LICENSE`](LICENSE)), avec les
+[termes additionnels](LICENSE-ADDITIONAL-TERMS.md) de son article 7 : garder la mention « Basé sur LibreHU –
+https://github.com/LibreHU » et marquer une version modifiée comme telle. Qui distribue une version modifiée, ou la
+fait utiliser à distance, doit en donner le code source complet sous la même licence.
+Les correctifs RDS de Reo Au In sont publiés sous la même licence, avec son accord (06/11/2026).
+
+Code, API, données, bibliothèques, polices et sons d'autres projets : section [Crédits](#crédits)
+ci-dessous ; ils gardent leur licence.
+
 ## Crédits
 
 **Code repris** (licences dans les fichiers, `dab/` et `third_party/`) :
