@@ -353,6 +353,8 @@ https://github.com/LibreHU » et marquer une version modifiée comme telle. Qui 
 fait utiliser à distance, doit en donner le code source complet sous la même licence.
 Les correctifs RDS de Reo Au In sont publiés sous la même licence, avec son accord (06/11/2026).
 
+L'appli affiche ces mentions dans le bouton **Infos** des réglages : version, « Basé sur LibreHU », licence et termes additionnels, adresse du code source, contact, projets repris et texte de leurs licences.
+
 Code, API, données, bibliothèques, polices et sons d'autres projets : section [Crédits](#crédits)
 ci-dessous ; ils gardent leur licence.
 
