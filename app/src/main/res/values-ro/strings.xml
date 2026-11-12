@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Romanian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">Radio FM</string>
+    <string name="notif_channel">Redare radio</string>
+    <string name="widget_description">Postul curent, cu anterior, redare și următor</string>
+    <string name="play">Redă</string>
+    <string name="pause">Pauză</string>
+    <string name="next">Postul următor</string>
+    <string name="previous">Postul anterior</string>
+    <string name="seek_up">Caută în sus</string>
+    <string name="seek_down">Caută în jos</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Scanează banda</string>
+    <string name="scanning">Se scanează…</string>
+    <string name="favorites">Favorite</string>
+    <string name="stations">Posturi</string>
+    <string name="toggle_favorite">Adaugă / elimină favorit</string>
+    <string name="no_favorites">Încă niciun favorit: acordă un post și atinge steaua.</string>
+    <string name="no_stations">Pornește radioul și scanează banda pentru a lista posturile.</string>
+    <string name="off">Radio oprit</string>
+    <string name="error_power_up">Cipul FM nu a pornit (/dev/fm). Vezi notele de instalare.</string>
+    <string name="error_driver">Biblioteca driverului FM nu e disponibilă pe acest aparat.</string>
+    <string name="error_focus">Focus audio refuzat (altă sursă, un apel?).</string>
+    <string name="error_open">Nu se poate deschide /dev/fm: instalează aplicația ca aplicație privilegiată (vezi README).</string>
+    <string name="settings">Setări</string>
+    <string name="back">Înapoi</string>
+    <string name="apply">Aplică</string>
+    <string name="cancel">Anulează</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Date trimise de posturi odată cu sunetul și decodate de cipul FM: numele postului, radiotext, tipul programului, informații de trafic.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotext (melodie, emisiune…)</string>
+    <string name="set_pty">Tipul programului (știri, pop…)</string>
+    <string name="set_af">Frecvențe alternative (AF)</string>
+    <string name="set_af_hint">Trece pe altă frecvență a aceluiași post când semnalul slăbește</string>
+    <string name="set_preset_names">Denumește favoritele cu numele RDS</string>
+    <string name="set_rt_plus">Artist și titlu (RT+)</string>
+    <string name="set_rt_plus_hint">Afișate în locul radiotextului, aici, pe widget, în notificare și pe cardul media al lansatorului, când postul le marchează</string>
+    <string name="set_ta">Anunțuri de trafic (TA)</string>
+    <string name="set_ta_hint">În timpul unui anunț al postului: volum maxim cât timp cântă radioul; peste cealaltă sursă (care se pune pe pauză) când asculți altceva, cu radioul pornit în fundal. Nu cu ivi-services de la Jancar.</string>
+    <string name="set_rds_clock">Potrivește ceasul după RDS</string>
+    <string name="set_rds_clock_hint">Când ceasul unității multimedia diferă cu mai mult de un minut de ora postului (fără GPS sau ora rețelei). Unele posturi trimit o oră greșită.</string>
+    <string name="set_reception">Recepție</string>
+    <string name="set_force_mono">Mono forțat</string>
+    <string name="set_force_mono_hint">Mai puțin fâșâit la posturile slabe, fără stereo</string>
+    <string name="set_force_mono_unsupported">Refuzat de driverul FM: stratul său de compatibilitate pe 32 de biți nu transmitea această comandă înainte de kernelul LibreHU r146 (zip-urile kernel-stable / conn-modules-stable sau modulul de conectivitate KernelSU).</string>
+    <string name="set_local_search">Căutare: doar posturi puternice (locale)</string>
+    <string name="set_local_search_hint">Căutarea și scanarea se opresc doar pe posturi locale (circa 25 dBµV), nu pe cele îndepărtate (DX)</string>
+    <string name="set_antenna_power">Amplificator de antenă</string>
+    <string name="set_antenna_power_hint">Alimentarea antenei (MCU 43) cât timp cântă radioul FM, pentru o antenă activă sau un amplificator de antenă. Oprit: antenă pasivă, sau o recepție FM mai curată fără amplificator</string>
+    <string name="set_history">Melodii ascultate</string>
+    <string name="set_history_hint">Artist și titlu marcate de posturi (RT+), cu ora.</string>
+    <string name="set_history_empty">Încă niciuna: postul trebuie să trimită RT+.</string>
+    <string name="set_history_clear">Șterge istoricul</string>
+    <string name="ta_announcing">Anunț de trafic</string>
+    <string name="ta_standby">Anunțuri de trafic în așteptare</string>
+    <string name="ta_stop">Oprește</string>
+    <string name="alarm_on_air">ALERTĂ în emisie (tip de program 31)</string>
+    <string name="alarm_title">Alertă: %1$s</string>
+    <string name="alarm_text">Postul difuzează un mesaj de alarmă sau de urgență.</string>
+    <string name="notif_alerts">Alerte radio</string>
+    <string name="set_region">Bandă și regiune</string>
+    <string name="set_region_hint">Limitele benzii FM, pasul de acord, de-accentuarea sunetului și numele tipurilor de program folosite în regiune. Radioul repornește pentru a aplica o schimbare.</string>
+    <string name="set_region_auto">Automat (%1$s: %2$s)</string>
+    <string name="set_region_europe">Europa, Africa, Asia</string>
+    <string name="set_region_americas">America, Coreea de Sud</string>
+    <string name="set_region_brazil">Brazilia (bandă extinsă)</string>
+    <string name="set_region_japan">Japonia</string>
+    <string name="set_region_current">Folosit: %1$s–%2$s MHz, pas %3$d kHz, de-accentuare %4$d µs%5$s</string>
+    <string name="set_audio">Calea audio</string>
+    <string name="set_audio_hint">Automat: legătură hardware tuner FM → difuzoare, ca aplicația radio originală; altfel copie a sunetului tunerului. Se aplică la următoarea pornire a radioului.</string>
+    <string name="set_audio_auto">Automat</string>
+    <string name="set_audio_patch">Legătură hardware</string>
+    <string name="set_audio_render">Copie (render)</string>
+    <string name="set_audio_current">Folosit: %1$s</string>
+    <string name="set_logos">Siglele posturilor</string>
+    <string name="set_logos_hint">Sigle din Radio Browser, o bază de date comunitară și deschisă de posturi radio, găsite după numele RDS al postului.</string>
+    <string name="set_logos_enable">Afișează siglele</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Doar biblioteca descărcată, niciodată rețeaua</string>
+    <string name="set_server">Server</string>
+    <string name="set_server_auto">Automat</string>
+    <string name="set_server_list">Listează serverele</string>
+    <string name="set_server_loading">Se încarcă…</string>
+    <string name="set_server_list_failed">Lista serverelor nu e disponibilă (fără rețea?).</string>
+    <string name="set_server_custom">Alt server (URL-ul API Radio Browser)</string>
+    <string name="set_server_current">Adresa folosită: %1$s</string>
+    <string name="set_country">Țara posturilor</string>
+    <string name="set_country_auto">Aparat (%1$s)</string>
+    <string name="set_country_other">Altă țară (cod ISO)</string>
+    <string name="set_library">Bibliotecă offline</string>
+    <string name="set_library_empty">Nicio siglă descărcată.</string>
+    <string name="set_library_info">Sigle: %1$d (%2$s), %3$s, actualizată %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d posturi</string>
+    <string name="set_library_listing">Se listează posturile…</string>
+    <string name="set_library_all">Toate</string>
+    <string name="set_library_top">Cele mai populare %1$d</string>
+    <string name="set_library_hint">Descarcă siglele posturilor din %1$s de pe serverul ales, pentru a le folosi fără Internet.</string>
+    <string name="set_library_failed">Descărcare eșuată (rețea sau server).</string>
+    <string name="set_library_download">Descarcă</string>
+    <string name="set_library_delete">Șterge biblioteca</string>
+    <string name="set_logos_clear_cache">Caută din nou siglele</string>
+    <string-array name="pty_names">
+        <item>Niciunul</item>
+        <item>Știri</item>
+        <item>Actualitate</item>
+        <item>Informații</item>
+        <item>Sport</item>
+        <item>Educație</item>
+        <item>Teatru</item>
+        <item>Cultură</item>
+        <item>Știință</item>
+        <item>Diverse</item>
+        <item>Muzică pop</item>
+        <item>Muzică rock</item>
+        <item>Muzică ușoară</item>
+        <item>Clasică ușoară</item>
+        <item>Clasică</item>
+        <item>Altă muzică</item>
+        <item>Meteo</item>
+        <item>Finanțe</item>
+        <item>Copii</item>
+        <item>Societate</item>
+        <item>Religie</item>
+        <item>Emisiuni cu ascultătorii</item>
+        <item>Călătorii</item>
+        <item>Timp liber</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Muzică națională</item>
+        <item>Muzică de altădată</item>
+        <item>Folk</item>
+        <item>Documentar</item>
+        <item>Test de alarmă</item>
+        <item>Alarmă</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Niciunul</item>
+        <item>Știri</item>
+        <item>Informații</item>
+        <item>Sport</item>
+        <item>Talk-show</item>
+        <item>Rock</item>
+        <item>Rock clasic</item>
+        <item>Hituri pentru adulți</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Muzică de altădată</item>
+        <item>Muzică lină</item>
+        <item>Nostalgie</item>
+        <item>Jazz</item>
+        <item>Clasică</item>
+        <item>Rhythm and blues</item>
+        <item>Rhythm and blues lin</item>
+        <item>Limbi străine</item>
+        <item>Muzică religioasă</item>
+        <item>Emisiuni religioase</item>
+        <item>Personalități</item>
+        <item>Radio public</item>
+        <item>Universitar</item>
+        <item>Emisiuni în spaniolă</item>
+        <item>Muzică în spaniolă</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Meteo</item>
+        <item>Test de urgență</item>
+        <item>Urgență</item>
+    </string-array>
+    <string name="logo_title">Siglă pentru %1$s MHz</string>
+    <string name="logo_hint">Găsită după numele RDS în Radio Browser sau în biblioteca descărcată. Poți alege în schimb o imagine pentru această frecvență.</string>
+    <string name="logo_pick">Alege o imagine…</string>
+    <string name="logo_auto">Siglă automată</string>
+    <string name="set_log">Jurnal</string>
+    <string name="set_log_hint">Pentru o problemă FM: starea radioului, /dev/fm, liniile FM și audio din jurnalul sistemului și mesajele FM ale kernelului, într-un fișier text de partajat. Jurnalul complet al sistemului necesită root (altfel doar liniile acestei aplicații).</string>
+    <string name="set_log_export">Exportă jurnalul</string>
+    <string name="set_log_done">Jurnal salvat</string>
+    <string name="set_log_failed">Jurnalul nu a fost salvat</string>
+    <string name="car_setup">Setări</string>
+    <string name="fm_manual">Manual</string>
+    <string name="fm_station_list">Lista posturilor</string>
+    <string name="fm_update_list">Actualizează lista posturilor</string>
+    <string name="fm_stop_search">Oprește căutarea</string>
+    <string name="fm_searching">Se caută posturi… %1$s MHz</string>
+    <string name="fm_frequencies">Frecvențe</string>
+    <string name="fm_presets">Memorii</string>
+    <string name="fm_store_preset">Memorează postul</string>
+    <string name="fm_remove_preset">Elimină din memorii</string>
+    <string name="fm_no_presets">Încă nicio memorie: Opțiuni → Memorează postul.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Radio pe Internet</string>
+    <string name="web_connecting">Se conectează…</string>
+    <string name="web_reconnecting">Conexiune pierdută, reconectare…</string>
+    <string name="web_none">Niciun post pe Internet</string>
+    <string name="web_empty_hint">Adaugă un post cu + (adresa fluxului, link M3U sau PLS) sau importă un fișier M3U / PLS.</string>
+    <string name="web_stations">Posturi pe Internet</string>
+    <string name="web_add">Adaugă un post</string>
+    <string name="web_import">Importă un fișier M3U / PLS</string>
+    <string name="web_no_stations">Încă niciun post pe Internet: + adaugă unul după adresă, butonul de fișier importă o listă M3U sau PLS.</string>
+    <string name="web_remove">Elimină</string>
+    <string name="web_remove_confirm">Elimini acest post din listă?</string>
+    <string name="web_add_hint">Adresa fluxului sau adresa unei liste M3U / PLS (linkul „ascultă” al postului).</string>
+    <string name="web_address">Adresă</string>
+    <string name="web_name">Nume</string>
+    <string name="web_name_hint">Opțional: altfel gazda din adresă</string>
+    <string name="web_add_confirm">Adaugă</string>
+    <string name="web_import_none">Niciun post găsit în acest fișier (M3U sau PLS cu adrese http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d post adăugat</item>
+        <item quantity="few">%d posturi adăugate</item>
+        <item quantity="other">%d de posturi adăugate</item>
+    </plurals>
+    <string name="web_catalog">Catalog</string>
+    <string name="web_region">Regiune</string>
+    <string name="web_region_all">Toate regiunile</string>
+    <string name="web_region_none">Național / fără regiune</string>
+    <string name="web_genre">Gen</string>
+    <string name="web_genre_all">Toate genurile</string>
+    <string name="web_region_any">Toate</string>
+    <string name="web_genre_any">Toate</string>
+    <string name="web_search">Caută un post</string>
+    <string name="web_catalog_refresh">Descarcă din nou lista</string>
+    <string name="web_catalog_loading">Se descarcă lista posturilor (Radio Browser)…</string>
+    <string name="web_catalog_failed">Lista nu e disponibilă: fără Internet sau server Radio Browser inaccesibil (Setări → Sigle → server).</string>
+    <string name="web_catalog_count">Posturi: %1$d · %2$s · Radio Browser (listă comunitară)</string>
+    <string name="web_streams">Fluxuri: %d</string>
+    <string name="web_save">Salvează</string>
+    <string name="web_back_to_fm">Înapoi la FM %s</string>
+    <string name="web_offer">Și pe Internet: ascultă fluxul</string>
+    <string name="web_offer_audio">Și pe Internet (%s): ascultă fluxul</string>
+    <string name="set_web">Radio pe Internet</string>
+    <string name="set_web_best">Cel mai bun sunet</string>
+    <string name="set_web_eco">Mai puține date</string>
+    <string name="set_web_quality_hint">Când un post are mai multe fluxuri: cel mai bun sunet (FLAC, apoi AAC / MP3 cu bitrate maxim) sau cele mai puține date (bitrate minim, cel puțin 48 kbit/s). 128 kbit/s consumă cam 58 MB pe oră, 320 kbit/s cam 144 MB.</string>
+    <string name="set_web_suggest">Propune fluxul de Internet al postului FM</string>
+    <string name="set_web_suggest_hint">Când postul ascultat pe FM e și pe Internet și Internetul merge, ecranul FM propune trecerea pe fluxul lui (o atingere). Numele RDS și țara sunt trimise la Radio Browser ca să-l găsească.</string>
+    <string name="web_add_short">Adaugă</string>
+    <string name="web_import_short">Importă</string>
+    <string name="web_logo">Siglă</string>
+    <string name="web_logo_title">Sigla pentru %s</string>
+    <string name="web_playing">Se redă</string>
+    <string name="web_catalog_update">Actualizează</string>
+    <string name="web_catalog_loading_short">Se descarcă…</string>
+    <string name="web_source">Sursă</string>
+    <string name="web_country">Țară</string>
+    <string name="web_back">Înapoi</string>
+    <string name="web_region_other">Alte regiuni (%d)</string>
+    <string name="web_genre_other">Alte genuri (%d)</string>
+    <string name="web_country_other">Alte țări (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Radio DAB+</string>
+    <string name="dab_no_dongle">Conectează un receptor USB DAB+</string>
+    <string name="dab_no_dongle_hint">Receptoare compatibile: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. Antena DAB se conectează la mufa SMA a receptorului.</string>
+    <string name="dab_unsupported">Acest dispozitiv USB nu e un receptor DAB+ compatibil</string>
+    <string name="dab_not_responding">Receptorul DAB+ nu răspunde: reconectare…</string>
+    <string name="dab_scanning">Se caută posturi: canalul %1$s (%2$d/%3$d), găsite: %4$d</string>
+    <string name="dab_scan">Caută posturi</string>
+    <string name="dab_tuning">Se acordă…</string>
+    <string name="dab_no_signal">Fără semnal: se caută postul…</string>
+    <string name="dab_weak">Semnal slab</string>
+    <string name="dab_unplayable">Acest post nu poate fi redat</string>
+    <string name="dab_no_stations">Încă niciun post DAB+: scanează banda (⟳)</string>
+    <string name="dab_scan_short">Scanează</string>
+    <string name="dab_favourite_short">Favorit</string>
+    <string name="dab_favourite_add">Adaugă la favorite</string>
+    <string name="dab_favourite_remove">Elimină din favorite</string>
+    <string name="info_title">Informații</string>
+    <string name="info_version">Versiunea %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 contribuitorii LibreHU.</string>
+    <string name="info_licence">Software liber: îl poți distribui și modifica în condițiile GNU Affero General Public License, versiunea 3 sau (la alegerea ta) orice versiune ulterioară, cu termenii suplimentari din secțiunea 7: păstrează mențiunea „Based on LibreHU” și marchează o versiune modificată ca atare. Cine distribuie o versiune modificată sau o lasă folosită de la distanță trebuie să ofere codul sursă complet sub aceeași licență. Fără garanție, în măsura permisă de lege (secțiunile 15 și 16).</string>
+    <string name="info_source">Cod sursă: %1$s</string>
+    <string name="info_contact">Contact: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Termeni suplimentari</string>
+    <string name="info_others">Cod, resurse și date din alte proiecte</string>
+    <string name="info_others_hint">Atinge unul pentru a-i citi licența.</string>
+    <string name="info_close">Închide</string>
+</resources>

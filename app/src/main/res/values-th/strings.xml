@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thai translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">วิทยุ FM</string>
+    <string name="notif_channel">การเล่นวิทยุ</string>
+    <string name="widget_description">สถานีปัจจุบัน พร้อมปุ่มก่อนหน้า เล่น และถัดไป</string>
+    <string name="play">เล่น</string>
+    <string name="pause">หยุดชั่วคราว</string>
+    <string name="next">สถานีถัดไป</string>
+    <string name="previous">สถานีก่อนหน้า</string>
+    <string name="seek_up">ค้นหาขึ้น</string>
+    <string name="seek_down">ค้นหาลง</string>
+    <string name="step_up">+0.1 MHz</string>
+    <string name="step_down">−0.1 MHz</string>
+    <string name="scan">สแกนย่านความถี่</string>
+    <string name="scanning">กำลังสแกน…</string>
+    <string name="favorites">รายการโปรด</string>
+    <string name="stations">สถานี</string>
+    <string name="toggle_favorite">เพิ่ม / นำออกจากรายการโปรด</string>
+    <string name="no_favorites">ยังไม่มีรายการโปรด: จูนสถานีแล้วแตะดาว</string>
+    <string name="no_stations">เปิดวิทยุแล้วสแกนย่านความถี่เพื่อแสดงรายการสถานี</string>
+    <string name="off">ปิดวิทยุอยู่</string>
+    <string name="error_power_up">ชิป FM ไม่เริ่มทำงาน (/dev/fm) ดูหมายเหตุการติดตั้ง</string>
+    <string name="error_driver">ไม่มีไลบรารีไดรเวอร์ FM บนเครื่องนี้</string>
+    <string name="error_focus">ถูกปฏิเสธโฟกัสเสียง (แหล่งเสียงอื่น หรือมีสายเรียก?)</string>
+    <string name="error_open">เปิด /dev/fm ไม่ได้: ติดตั้งแอปเป็นแอปที่มีสิทธิ์พิเศษ (ดู README)</string>
+    <string name="settings">การตั้งค่า</string>
+    <string name="back">ย้อนกลับ</string>
+    <string name="apply">ใช้</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">ข้อมูลที่สถานีส่งมาพร้อมเสียงและชิป FM ถอดรหัส: ชื่อสถานี ข้อความวิทยุ ประเภทรายการ ข้อมูลจราจร</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">ข้อความวิทยุ (เพลง รายการ…)</string>
+    <string name="set_pty">ประเภทรายการ (ข่าว ป๊อป…)</string>
+    <string name="set_af">ความถี่ทางเลือก (AF)</string>
+    <string name="set_af_hint">สลับไปความถี่อื่นของสถานีเดียวกันเมื่อสัญญาณอ่อนลง</string>
+    <string name="set_preset_names">ตั้งชื่อรายการโปรดตามชื่อ RDS</string>
+    <string name="set_rt_plus">ศิลปินและชื่อเพลง (RT+)</string>
+    <string name="set_rt_plus_hint">แสดงแทนข้อความวิทยุที่นี่ บนวิดเจ็ต ในการแจ้งเตือน และบนการ์ดสื่อของลอนเชอร์ เมื่อสถานีระบุแท็กไว้</string>
+    <string name="set_ta">ประกาศจราจร (TA)</string>
+    <string name="set_ta_hint">ระหว่างที่สถานีประกาศ: ระดับเสียงสูงสุดขณะเล่นวิทยุ; เล่นทับแหล่งเสียงอื่น (ซึ่งจะหยุดชั่วคราว) เมื่อคุณฟังอย่างอื่นอยู่โดยเปิดวิทยุไว้เบื้องหลัง ใช้ไม่ได้กับ ivi-services ของ Jancar</string>
+    <string name="set_rds_clock">ตั้งนาฬิกาจาก RDS</string>
+    <string name="set_rds_clock_hint">เมื่อนาฬิกาของจอติดรถยนต์ต่างจากเวลาของสถานีเกินหนึ่งนาที (ไม่มี GPS หรือเวลาเครือข่าย) บางสถานีส่งเวลาผิด</string>
+    <string name="set_reception">การรับสัญญาณ</string>
+    <string name="set_force_mono">บังคับโมโน</string>
+    <string name="set_force_mono_hint">เสียงซ่าน้อยลงสำหรับสถานีที่สัญญาณอ่อน แต่ไม่มีสเตอริโอ</string>
+    <string name="set_force_mono_unsupported">ไดรเวอร์ FM ปฏิเสธ: ชั้นความเข้ากันได้ 32 บิตของไดรเวอร์ไม่ส่งต่อคำสั่งนี้ก่อนเคอร์เนล LibreHU r146 (zip kernel-stable / conn-modules-stable หรือโมดูลการเชื่อมต่อ KernelSU)</string>
+    <string name="set_local_search">ค้นหา: เฉพาะสถานีสัญญาณแรง (ท้องถิ่น)</string>
+    <string name="set_local_search_hint">การค้นหาและสแกนหยุดเฉพาะที่สถานีท้องถิ่น (ประมาณ 25 dBµV) ไม่หยุดที่สถานีระยะไกล (DX)</string>
+    <string name="set_antenna_power">แอมป์เสาอากาศ</string>
+    <string name="set_antenna_power_hint">จ่ายไฟให้เสาอากาศ (MCU 43) ขณะเล่นวิทยุ FM สำหรับเสาอากาศแบบแอ็กทีฟหรือแอมป์เสาอากาศ ปิด: เสาอากาศแบบพาสซีฟ หรือรับ FM ได้สะอาดขึ้นเมื่อไม่มีแอมป์</string>
+    <string name="set_history">เพลงที่ฟังแล้ว</string>
+    <string name="set_history_hint">ศิลปินและชื่อเพลงที่สถานีระบุแท็กไว้ (RT+) พร้อมเวลา</string>
+    <string name="set_history_empty">ยังไม่มี: สถานีต้องส่ง RT+</string>
+    <string name="set_history_clear">ล้างประวัติ</string>
+    <string name="ta_announcing">ประกาศจราจร</string>
+    <string name="ta_standby">รอประกาศจราจร</string>
+    <string name="ta_stop">หยุด</string>
+    <string name="alarm_on_air">กำลังออกอากาศการเตือนภัย (ประเภทรายการ 31)</string>
+    <string name="alarm_title">การเตือนภัย: %1$s</string>
+    <string name="alarm_text">สถานีกำลังออกอากาศข้อความเตือนภัยหรือข้อความฉุกเฉิน</string>
+    <string name="notif_alerts">การเตือนภัยทางวิทยุ</string>
+    <string name="set_region">ย่านความถี่และภูมิภาค</string>
+    <string name="set_region_hint">ขอบเขตย่าน FM ระยะการจูน การลดเน้นเสียง (de-emphasis) และชื่อประเภทรายการที่ใช้ในภูมิภาค วิทยุจะรีสตาร์ทเพื่อใช้การเปลี่ยนแปลง</string>
+    <string name="set_region_auto">อัตโนมัติ (%1$s: %2$s)</string>
+    <string name="set_region_europe">ยุโรป แอฟริกา เอเชีย</string>
+    <string name="set_region_americas">อเมริกา เกาหลีใต้</string>
+    <string name="set_region_brazil">บราซิล (ย่านขยาย)</string>
+    <string name="set_region_japan">ญี่ปุ่น</string>
+    <string name="set_region_current">ใช้อยู่: %1$s–%2$s MHz ระยะ %3$d kHz ลดเน้นเสียง %4$d µs%5$s</string>
+    <string name="set_audio">เส้นทางเสียง</string>
+    <string name="set_audio_hint">อัตโนมัติ: เชื่อมฮาร์ดแวร์ตัวรับ FM → ลำโพง เหมือนแอปวิทยุเดิม ถ้าไม่ได้จะคัดลอกเสียงของตัวรับ มีผลเมื่อเริ่มวิทยุครั้งถัดไป</string>
+    <string name="set_audio_auto">อัตโนมัติ</string>
+    <string name="set_audio_patch">เชื่อมฮาร์ดแวร์</string>
+    <string name="set_audio_render">คัดลอก (render)</string>
+    <string name="set_audio_current">ใช้อยู่: %1$s</string>
+    <string name="set_logos">โลโก้สถานี</string>
+    <string name="set_logos_hint">โลโก้จาก Radio Browser ฐานข้อมูลสถานีวิทยุแบบเปิดที่ชุมชนดูแล ค้นหาตามชื่อ RDS ของสถานี</string>
+    <string name="set_logos_enable">แสดงโลโก้</string>
+    <string name="set_logos_offline">ออฟไลน์</string>
+    <string name="set_logos_offline_hint">ใช้เฉพาะคลังที่ดาวน์โหลดไว้ ไม่ใช้เครือข่ายเลย</string>
+    <string name="set_server">เซิร์ฟเวอร์</string>
+    <string name="set_server_auto">อัตโนมัติ</string>
+    <string name="set_server_list">แสดงรายการเซิร์ฟเวอร์</string>
+    <string name="set_server_loading">กำลังโหลด…</string>
+    <string name="set_server_list_failed">ไม่ได้รายการเซิร์ฟเวอร์ (ไม่มีเครือข่าย?)</string>
+    <string name="set_server_custom">เซิร์ฟเวอร์อื่น (URL ของ API Radio Browser)</string>
+    <string name="set_server_current">ที่อยู่ที่ใช้: %1$s</string>
+    <string name="set_country">ประเทศของสถานี</string>
+    <string name="set_country_auto">อุปกรณ์ (%1$s)</string>
+    <string name="set_country_other">ประเทศอื่น (รหัส ISO)</string>
+    <string name="set_library">คลังออฟไลน์</string>
+    <string name="set_library_empty">ยังไม่ได้ดาวน์โหลดโลโก้</string>
+    <string name="set_library_info">โลโก้ %1$d รายการ (%2$s), %3$s, อัปเดต %4$s</string>
+    <string name="set_library_progress">สถานี %1$d / %2$d</string>
+    <string name="set_library_listing">กำลังแสดงรายการสถานี…</string>
+    <string name="set_library_all">ทั้งหมด</string>
+    <string name="set_library_top">ยอดนิยม %1$d อันดับแรก</string>
+    <string name="set_library_hint">ดาวน์โหลดโลโก้ของสถานีใน %1$s จากเซิร์ฟเวอร์ที่เลือก เพื่อใช้โดยไม่ต้องมีอินเทอร์เน็ต</string>
+    <string name="set_library_failed">ดาวน์โหลดล้มเหลว (เครือข่ายหรือเซิร์ฟเวอร์)</string>
+    <string name="set_library_download">ดาวน์โหลด</string>
+    <string name="set_library_delete">ลบคลัง</string>
+    <string name="set_logos_clear_cache">ค้นหาโลโก้ใหม่</string>
+    <string-array name="pty_names">
+        <item>ไม่มี</item>
+        <item>ข่าว</item>
+        <item>เหตุการณ์ปัจจุบัน</item>
+        <item>ข้อมูล</item>
+        <item>กีฬา</item>
+        <item>การศึกษา</item>
+        <item>ละคร</item>
+        <item>วัฒนธรรม</item>
+        <item>วิทยาศาสตร์</item>
+        <item>หลากหลาย</item>
+        <item>เพลงป๊อป</item>
+        <item>เพลงร็อก</item>
+        <item>เพลงฟังสบาย</item>
+        <item>คลาสสิกเบา</item>
+        <item>คลาสสิก</item>
+        <item>เพลงอื่น ๆ</item>
+        <item>สภาพอากาศ</item>
+        <item>การเงิน</item>
+        <item>เด็ก</item>
+        <item>สังคม</item>
+        <item>ศาสนา</item>
+        <item>โทรเข้ารายการ</item>
+        <item>ท่องเที่ยว</item>
+        <item>สันทนาการ</item>
+        <item>แจ๊ส</item>
+        <item>คันทรี</item>
+        <item>เพลงในประเทศ</item>
+        <item>เพลงเก่า</item>
+        <item>โฟล์ก</item>
+        <item>สารคดี</item>
+        <item>ทดสอบการเตือนภัย</item>
+        <item>เตือนภัย</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>ไม่มี</item>
+        <item>ข่าว</item>
+        <item>ข้อมูล</item>
+        <item>กีฬา</item>
+        <item>รายการพูดคุย</item>
+        <item>ร็อก</item>
+        <item>คลาสสิกร็อก</item>
+        <item>เพลงฮิตสำหรับผู้ใหญ่</item>
+        <item>ซอฟต์ร็อก</item>
+        <item>ท็อป 40</item>
+        <item>คันทรี</item>
+        <item>เพลงเก่า</item>
+        <item>เพลงนุ่มนวล</item>
+        <item>ย้อนวันวาน</item>
+        <item>แจ๊ส</item>
+        <item>คลาสสิก</item>
+        <item>ริทึมแอนด์บลูส์</item>
+        <item>ริทึมแอนด์บลูส์นุ่ม ๆ</item>
+        <item>ภาษา</item>
+        <item>เพลงศาสนา</item>
+        <item>รายการพูดคุยศาสนา</item>
+        <item>บุคคล</item>
+        <item>สาธารณะ</item>
+        <item>มหาวิทยาลัย</item>
+        <item>รายการพูดภาษาสเปน</item>
+        <item>เพลงภาษาสเปน</item>
+        <item>ฮิปฮอป</item>
+        <item></item>
+        <item></item>
+        <item>สภาพอากาศ</item>
+        <item>ทดสอบเหตุฉุกเฉิน</item>
+        <item>เหตุฉุกเฉิน</item>
+    </string-array>
+    <string name="logo_title">โลโก้สำหรับ %1$s MHz</string>
+    <string name="logo_hint">พบจากชื่อ RDS ใน Radio Browser หรือในคลังที่ดาวน์โหลดไว้ คุณเลือกรูปภาพสำหรับความถี่นี้แทนได้</string>
+    <string name="logo_pick">เลือกรูปภาพ…</string>
+    <string name="logo_auto">โลโก้อัตโนมัติ</string>
+    <string name="set_log">ล็อก</string>
+    <string name="set_log_hint">สำหรับปัญหา FM: สถานะวิทยุ /dev/fm บรรทัด FM และเสียงจากล็อกระบบ และข้อความ FM ของเคอร์เนล ในไฟล์ข้อความเดียวเพื่อแชร์ ล็อกระบบทั้งหมดต้องใช้รูท (ไม่เช่นนั้นจะมีเฉพาะบรรทัดของแอปนี้)</string>
+    <string name="set_log_export">ส่งออกล็อก</string>
+    <string name="set_log_done">บันทึกล็อกแล้ว</string>
+    <string name="set_log_failed">บันทึกล็อกไม่สำเร็จ</string>
+    <string name="car_setup">การตั้งค่า</string>
+    <string name="fm_manual">ด้วยตนเอง</string>
+    <string name="fm_station_list">รายการสถานี</string>
+    <string name="fm_update_list">อัปเดตรายการสถานี</string>
+    <string name="fm_stop_search">หยุดค้นหา</string>
+    <string name="fm_searching">กำลังค้นหาสถานีวิทยุ… %1$s MHz</string>
+    <string name="fm_frequencies">ความถี่</string>
+    <string name="fm_presets">สถานีที่บันทึกไว้</string>
+    <string name="fm_store_preset">บันทึกสถานี</string>
+    <string name="fm_remove_preset">นำออกจากสถานีที่บันทึกไว้</string>
+    <string name="fm_no_presets">ยังไม่มีสถานีที่บันทึกไว้: ตัวเลือก → บันทึกสถานี</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">อินเทอร์เน็ต</string>
+    <string name="web_radio">วิทยุอินเทอร์เน็ต</string>
+    <string name="web_connecting">กำลังเชื่อมต่อ…</string>
+    <string name="web_reconnecting">การเชื่อมต่อขาดหาย กำลังเชื่อมต่อใหม่…</string>
+    <string name="web_none">ไม่มีสถานีอินเทอร์เน็ต</string>
+    <string name="web_empty_hint">เพิ่มสถานีด้วยปุ่ม + (ที่อยู่สตรีม ลิงก์ M3U หรือ PLS) หรือนำเข้าไฟล์ M3U / PLS</string>
+    <string name="web_stations">สถานีอินเทอร์เน็ต</string>
+    <string name="web_add">เพิ่มสถานี</string>
+    <string name="web_import">นำเข้าไฟล์ M3U / PLS</string>
+    <string name="web_no_stations">ยังไม่มีสถานีอินเทอร์เน็ต: ปุ่ม + เพิ่มสถานีจากที่อยู่ ปุ่มไฟล์นำเข้าเพลย์ลิสต์ M3U หรือ PLS</string>
+    <string name="web_remove">นำออก</string>
+    <string name="web_remove_confirm">นำสถานีนี้ออกจากรายการไหม</string>
+    <string name="web_add_hint">ที่อยู่สตรีม หรือที่อยู่ของเพลย์ลิสต์ M3U / PLS (ลิงก์ \"ฟัง\" ของสถานี)</string>
+    <string name="web_address">ที่อยู่</string>
+    <string name="web_name">ชื่อ</string>
+    <string name="web_name_hint">ไม่บังคับ: ถ้าว่างจะใช้ชื่อโฮสต์จากที่อยู่</string>
+    <string name="web_add_confirm">เพิ่ม</string>
+    <string name="web_import_none">ไม่พบสถานีในไฟล์นี้ (M3U หรือ PLS ที่มีที่อยู่ http / https)</string>
+    <plurals name="web_imported">
+        <item quantity="other">เพิ่มแล้ว %d สถานี</item>
+    </plurals>
+    <string name="web_catalog">แค็ตตาล็อก</string>
+    <string name="web_region">ภูมิภาค</string>
+    <string name="web_region_all">ทุกภูมิภาค</string>
+    <string name="web_region_none">ทั่วประเทศ / ไม่มีภูมิภาค</string>
+    <string name="web_genre">แนวเพลง</string>
+    <string name="web_genre_all">ทุกแนว</string>
+    <string name="web_region_any">ทั้งหมด</string>
+    <string name="web_genre_any">ทั้งหมด</string>
+    <string name="web_search">ค้นหาสถานี</string>
+    <string name="web_catalog_refresh">ดาวน์โหลดรายการใหม่</string>
+    <string name="web_catalog_loading">กำลังดาวน์โหลดรายการสถานี (Radio Browser)…</string>
+    <string name="web_catalog_failed">ไม่ได้รายการ: ไม่มีอินเทอร์เน็ตหรือเข้าถึงเซิร์ฟเวอร์ Radio Browser ไม่ได้ (การตั้งค่า → โลโก้ → เซิร์ฟเวอร์)</string>
+    <string name="web_catalog_count">%1$d สถานี · %2$s · Radio Browser (รายการของชุมชน)</string>
+    <string name="web_streams">%d สตรีม</string>
+    <string name="web_save">บันทึก</string>
+    <string name="web_back_to_fm">กลับไปที่ FM %s</string>
+    <string name="web_offer">มีบนอินเทอร์เน็ตด้วย: ฟังสตรีม</string>
+    <string name="web_offer_audio">มีบนอินเทอร์เน็ตด้วย (%s): ฟังสตรีม</string>
+    <string name="set_web">วิทยุอินเทอร์เน็ต</string>
+    <string name="set_web_best">เสียงดีที่สุด</string>
+    <string name="set_web_eco">ใช้ข้อมูลน้อยลง</string>
+    <string name="set_web_quality_hint">เมื่อสถานีมีหลายสตรีม: เสียงดีที่สุด (FLAC แล้วตามด้วย AAC / MP3 บิตเรตสูงสุด) หรือใช้ข้อมูลน้อยที่สุด (บิตเรตต่ำสุด อย่างน้อย 48 kbit/s) 128 kbit/s ใช้ประมาณ 58 MB ต่อชั่วโมง 320 kbit/s ประมาณ 144 MB</string>
+    <string name="set_web_suggest">แนะนำสตรีมอินเทอร์เน็ตของสถานี FM</string>
+    <string name="set_web_suggest_hint">เมื่อสถานีที่ฟังทาง FM มีบนอินเทอร์เน็ตด้วยและอินเทอร์เน็ตใช้งานได้ หน้าจอ FM จะเสนอให้สลับไปที่สตรีมของสถานี (แตะครั้งเดียว) ระบบจะส่งชื่อ RDS และประเทศไปยัง Radio Browser เพื่อค้นหา</string>
+    <string name="web_add_short">เพิ่ม</string>
+    <string name="web_import_short">นำเข้า</string>
+    <string name="web_logo">โลโก้</string>
+    <string name="web_logo_title">โลโก้ของ %s</string>
+    <string name="web_playing">กำลังเล่น</string>
+    <string name="web_catalog_update">อัปเดต</string>
+    <string name="web_catalog_loading_short">กำลังดาวน์โหลด…</string>
+    <string name="web_source">แหล่งที่มา</string>
+    <string name="web_country">ประเทศ</string>
+    <string name="web_back">ย้อนกลับ</string>
+    <string name="web_region_other">ภูมิภาคอื่น (%d)</string>
+    <string name="web_genre_other">แนวอื่น (%d)</string>
+    <string name="web_country_other">ประเทศอื่น (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">วิทยุ DAB+</string>
+    <string name="dab_no_dongle">เสียบดองเกิล USB DAB+</string>
+    <string name="dab_no_dongle_hint">ดองเกิลที่รองรับ: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160 เสาอากาศ DAB เสียบที่ช่อง SMA ของดองเกิล</string>
+    <string name="dab_unsupported">อุปกรณ์ USB นี้ไม่ใช่ดองเกิล DAB+ ที่รองรับ</string>
+    <string name="dab_not_responding">ดองเกิล DAB+ ไม่ตอบสนอง: กำลังเชื่อมต่อใหม่…</string>
+    <string name="dab_scanning">กำลังค้นหาสถานี: ช่อง %1$s (%2$d/%3$d) พบ %4$d</string>
+    <string name="dab_scan">ค้นหาสถานี</string>
+    <string name="dab_tuning">กำลังจูน…</string>
+    <string name="dab_no_signal">ไม่มีสัญญาณ: กำลังค้นหาสถานี…</string>
+    <string name="dab_weak">สัญญาณอ่อน</string>
+    <string name="dab_unplayable">เล่นสถานีนี้ไม่ได้</string>
+    <string name="dab_no_stations">ยังไม่มีสถานี DAB+: สแกนย่านความถี่ (⟳)</string>
+    <string name="dab_scan_short">สแกน</string>
+    <string name="dab_favourite_short">รายการโปรด</string>
+    <string name="dab_favourite_add">เพิ่มในรายการโปรด</string>
+    <string name="dab_favourite_remove">นำออกจากรายการโปรด</string>
+    <string name="info_title">ข้อมูล</string>
+    <string name="info_version">เวอร์ชัน %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 ผู้ร่วมพัฒนา LibreHU</string>
+    <string name="info_licence">ซอฟต์แวร์เสรี: คุณแบ่งปันและแก้ไขได้ภายใต้ GNU Affero General Public License รุ่น 3 หรือ (ตามที่คุณเลือก) รุ่นใดก็ได้ที่ใหม่กว่า พร้อมข้อกำหนดเพิ่มเติมตามมาตรา 7: คงข้อความ “Based on LibreHU” ไว้ และระบุว่ารุ่นที่แก้ไขเป็นรุ่นที่แก้ไขแล้ว ผู้ที่เผยแพร่รุ่นที่แก้ไข หรือให้ผู้อื่นใช้งานจากระยะไกล ต้องให้ซอร์สโค้ดฉบับสมบูรณ์ภายใต้สัญญาอนุญาตเดียวกัน ไม่มีการรับประกันเท่าที่กฎหมายอนุญาต (มาตรา 15 และ 16)</string>
+    <string name="info_source">ซอร์สโค้ด: %1$s</string>
+    <string name="info_contact">ติดต่อ: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">ข้อกำหนดเพิ่มเติม</string>
+    <string name="info_others">โค้ด ทรัพยากร และข้อมูลจากโครงการอื่น</string>
+    <string name="info_others_hint">แตะรายการเพื่ออ่านสัญญาอนุญาต</string>
+    <string name="info_close">ปิด</string>
+</resources>
