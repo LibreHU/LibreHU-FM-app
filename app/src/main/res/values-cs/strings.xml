@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Czech translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM rádio</string>
+    <string name="notif_channel">Přehrávání rádia</string>
+    <string name="widget_description">Aktuální stanice s tlačítky předchozí, přehrát a další</string>
+    <string name="play">Přehrát</string>
+    <string name="pause">Pozastavit</string>
+    <string name="next">Další stanice</string>
+    <string name="previous">Předchozí stanice</string>
+    <string name="seek_up">Hledat nahoru</string>
+    <string name="seek_down">Hledat dolů</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Prohledat pásmo</string>
+    <string name="scanning">Prohledávání…</string>
+    <string name="favorites">Oblíbené</string>
+    <string name="stations">Stanice</string>
+    <string name="toggle_favorite">Přidat / odebrat z oblíbených</string>
+    <string name="no_favorites">Zatím žádné oblíbené: nalaďte stanici a klepněte na hvězdičku.</string>
+    <string name="no_stations">Zapněte rádio a prohledejte pásmo, abyste získali seznam stanic.</string>
+    <string name="off">Rádio vypnuto</string>
+    <string name="error_power_up">FM čip se nespustil (/dev/fm). Viz poznámky k instalaci.</string>
+    <string name="error_driver">Knihovna ovladače FM není v tomto zařízení dostupná.</string>
+    <string name="error_focus">Zvukový fokus odmítnut (jiný zdroj, hovor?).</string>
+    <string name="error_open">Nelze otevřít /dev/fm: nainstalujte aplikaci jako privilegovanou (viz README).</string>
+    <string name="settings">Nastavení</string>
+    <string name="back">Zpět</string>
+    <string name="apply">Použít</string>
+    <string name="cancel">Zrušit</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Data, která stanice vysílají se zvukem a FM čip je dekóduje: název stanice, radiotext, typ programu, dopravní informace.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotext (skladba, pořad…)</string>
+    <string name="set_pty">Typ programu (zprávy, pop…)</string>
+    <string name="set_af">Alternativní frekvence (AF)</string>
+    <string name="set_af_hint">Při slabém signálu přepne na jinou frekvenci téže stanice</string>
+    <string name="set_preset_names">Pojmenovat oblíbené podle RDS</string>
+    <string name="set_rt_plus">Interpret a název (RT+)</string>
+    <string name="set_rt_plus_hint">Zobrazí se místo radiotextu, tady, ve widgetu, v oznámení a na mediální kartě spouštěče, pokud je stanice vysílá</string>
+    <string name="set_ta">Dopravní hlášení (TA)</string>
+    <string name="set_ta_hint">Během hlášení stanice: plná hlasitost, když hraje rádio; přes jiný zdroj (ten se pozastaví), když posloucháte něco jiného, s rádiem běžícím na pozadí. Ne s ivi-services od Jancaru.</string>
+    <string name="set_rds_clock">Nastavit hodiny podle RDS</string>
+    <string name="set_rds_clock_hint">Když se hodiny autorádia liší od času stanice o víc než minutu (bez GPS nebo síťového času). Některé stanice vysílají špatný čas.</string>
+    <string name="set_reception">Příjem</string>
+    <string name="set_force_mono">Vynucené mono</string>
+    <string name="set_force_mono_hint">Méně šumu u slabých stanic, bez sterea</string>
+    <string name="set_force_mono_unsupported">Odmítnuto ovladačem FM: jeho 32bitová vrstva kompatibility tento příkaz nepředávala před jádrem LibreHU r146 (zipy kernel-stable / conn-modules-stable nebo modul konektivity KernelSU).</string>
+    <string name="set_local_search">Hledání: jen silné stanice (místní)</string>
+    <string name="set_local_search_hint">Hledání a prohledávání se zastaví jen na místních stanicích (asi 25 dBµV), ne na vzdálených (DX)</string>
+    <string name="set_antenna_power">Anténní zesilovač</string>
+    <string name="set_antenna_power_hint">Napájení antény (MCU 43), když hraje FM rádio, pro aktivní anténu nebo anténní zesilovač. Vypnuto: pasivní anténa, nebo čistší příjem FM bez zesilovače</string>
+    <string name="set_history">Slyšené skladby</string>
+    <string name="set_history_hint">Interpret a název, které stanice vysílají (RT+), s časem.</string>
+    <string name="set_history_empty">Zatím žádné: stanice musí vysílat RT+.</string>
+    <string name="set_history_clear">Smazat historii</string>
+    <string name="ta_announcing">Dopravní hlášení</string>
+    <string name="ta_standby">Dopravní hlášení v pohotovosti</string>
+    <string name="ta_stop">Zastavit</string>
+    <string name="alarm_on_air">VÝSTRAHA ve vysílání (typ programu 31)</string>
+    <string name="alarm_title">Výstraha: %1$s</string>
+    <string name="alarm_text">Stanice vysílá poplašné nebo nouzové hlášení.</string>
+    <string name="notif_alerts">Výstrahy rádia</string>
+    <string name="set_region">Pásmo a oblast</string>
+    <string name="set_region_hint">Hranice pásma FM, krok ladění, deemfáze zvuku a názvy typů programů používaných v oblasti. Rádio se kvůli změně restartuje.</string>
+    <string name="set_region_auto">Automaticky (%1$s: %2$s)</string>
+    <string name="set_region_europe">Evropa, Afrika, Asie</string>
+    <string name="set_region_americas">Amerika, Jižní Korea</string>
+    <string name="set_region_brazil">Brazílie (rozšířené pásmo)</string>
+    <string name="set_region_japan">Japonsko</string>
+    <string name="set_region_current">Používá se: %1$s–%2$s MHz, krok %3$d kHz, deemfáze %4$d µs%5$s</string>
+    <string name="set_audio">Cesta zvuku</string>
+    <string name="set_audio_hint">Automaticky: hardwarové propojení FM tuner → reproduktory jako původní aplikace rádia, jinak kopie zvuku tuneru. Použije se při příštím spuštění rádia.</string>
+    <string name="set_audio_auto">Automaticky</string>
+    <string name="set_audio_patch">Hardwarové propojení</string>
+    <string name="set_audio_render">Kopie (render)</string>
+    <string name="set_audio_current">Používá se: %1$s</string>
+    <string name="set_logos">Loga stanic</string>
+    <string name="set_logos_hint">Loga z Radio Browser, otevřené komunitní databáze rozhlasových stanic, nalezená podle názvu stanice v RDS.</string>
+    <string name="set_logos_enable">Zobrazovat loga</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Jen stažená knihovna, nikdy síť</string>
+    <string name="set_server">Server</string>
+    <string name="set_server_auto">Automaticky</string>
+    <string name="set_server_list">Vypsat servery</string>
+    <string name="set_server_loading">Načítání…</string>
+    <string name="set_server_list_failed">Seznam serverů není dostupný (bez sítě?).</string>
+    <string name="set_server_custom">Jiný server (URL API Radio Browser)</string>
+    <string name="set_server_current">Použitá adresa: %1$s</string>
+    <string name="set_country">Země stanic</string>
+    <string name="set_country_auto">Zařízení (%1$s)</string>
+    <string name="set_country_other">Jiná země (kód ISO)</string>
+    <string name="set_library">Offline knihovna</string>
+    <string name="set_library_empty">Žádné stažené logo.</string>
+    <string name="set_library_info">Log: %1$d (%2$s), %3$s, aktualizováno %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d stanic</string>
+    <string name="set_library_listing">Načítání seznamu stanic…</string>
+    <string name="set_library_all">Vše</string>
+    <string name="set_library_top">Nejoblíbenějších: %1$d</string>
+    <string name="set_library_hint">Stáhne loga stanic z %1$s ze zvoleného serveru, abyste je mohli používat bez internetu.</string>
+    <string name="set_library_failed">Stahování selhalo (síť nebo server).</string>
+    <string name="set_library_download">Stáhnout</string>
+    <string name="set_library_delete">Smazat knihovnu</string>
+    <string name="set_logos_clear_cache">Znovu vyhledat loga</string>
+    <string-array name="pty_names">
+        <item>Žádný</item>
+        <item>Zprávy</item>
+        <item>Aktuality</item>
+        <item>Informace</item>
+        <item>Sport</item>
+        <item>Vzdělávání</item>
+        <item>Rozhlasová hra</item>
+        <item>Kultura</item>
+        <item>Věda</item>
+        <item>Různé</item>
+        <item>Pop</item>
+        <item>Rock</item>
+        <item>Oddechová hudba</item>
+        <item>Lehká klasika</item>
+        <item>Vážná hudba</item>
+        <item>Jiná hudba</item>
+        <item>Počasí</item>
+        <item>Finance</item>
+        <item>Pro děti</item>
+        <item>Společnost</item>
+        <item>Náboženství</item>
+        <item>Telefonáty posluchačů</item>
+        <item>Cestování</item>
+        <item>Volný čas</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Národní hudba</item>
+        <item>Staré hity</item>
+        <item>Folk</item>
+        <item>Dokument</item>
+        <item>Test poplachu</item>
+        <item>Poplach</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Žádný</item>
+        <item>Zprávy</item>
+        <item>Informace</item>
+        <item>Sport</item>
+        <item>Mluvené slovo</item>
+        <item>Rock</item>
+        <item>Klasický rock</item>
+        <item>Hity pro dospělé</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Staré hity</item>
+        <item>Jemná hudba</item>
+        <item>Nostalgie</item>
+        <item>Jazz</item>
+        <item>Klasika</item>
+        <item>Rhythm and blues</item>
+        <item>Jemný rhythm and blues</item>
+        <item>Jazyky</item>
+        <item>Náboženská hudba</item>
+        <item>Náboženské pořady</item>
+        <item>Osobnosti</item>
+        <item>Veřejnoprávní</item>
+        <item>Univerzitní</item>
+        <item>Mluvené slovo ve španělštině</item>
+        <item>Španělská hudba</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Počasí</item>
+        <item>Test nouzového vysílání</item>
+        <item>Nouzové vysílání</item>
+    </string-array>
+    <string name="logo_title">Logo pro %1$s MHz</string>
+    <string name="logo_hint">Nalezeno podle názvu RDS v Radio Browser nebo ve stažené knihovně. Pro tuto frekvenci můžete místo toho zvolit obrázek.</string>
+    <string name="logo_pick">Vybrat obrázek…</string>
+    <string name="logo_auto">Automatické logo</string>
+    <string name="set_log">Protokol</string>
+    <string name="set_log_hint">Pro problém s FM: stav rádia, /dev/fm, řádky FM a zvuku ze systémového protokolu a zprávy FM z jádra, v jednom textovém souboru ke sdílení. Celý systémový protokol vyžaduje root (jinak jen řádky této aplikace).</string>
+    <string name="set_log_export">Exportovat protokol</string>
+    <string name="set_log_done">Protokol uložen</string>
+    <string name="set_log_failed">Protokol neuložen</string>
+    <string name="car_setup">Nastavení</string>
+    <string name="fm_manual">Ručně</string>
+    <string name="fm_station_list">Seznam stanic</string>
+    <string name="fm_update_list">Aktualizovat seznam stanic</string>
+    <string name="fm_stop_search">Zastavit hledání</string>
+    <string name="fm_searching">Hledání stanic… %1$s MHz</string>
+    <string name="fm_frequencies">Frekvence</string>
+    <string name="fm_presets">Předvolby</string>
+    <string name="fm_store_preset">Uložit stanici</string>
+    <string name="fm_remove_preset">Odebrat z předvoleb</string>
+    <string name="fm_no_presets">Zatím žádné předvolby: Možnosti → Uložit stanici.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Internetové rádio</string>
+    <string name="web_connecting">Připojování…</string>
+    <string name="web_reconnecting">Spojení ztraceno, znovu se připojuji…</string>
+    <string name="web_none">Žádná internetová stanice</string>
+    <string name="web_empty_hint">Přidejte stanici tlačítkem + (adresa streamu, odkaz M3U nebo PLS) nebo importujte soubor M3U / PLS.</string>
+    <string name="web_stations">Internetové stanice</string>
+    <string name="web_add">Přidat stanici</string>
+    <string name="web_import">Importovat soubor M3U / PLS</string>
+    <string name="web_no_stations">Zatím žádná internetová stanice: + ji přidá podle adresy, tlačítko souboru importuje playlist M3U nebo PLS.</string>
+    <string name="web_remove">Odebrat</string>
+    <string name="web_remove_confirm">Odebrat tuto stanici ze seznamu?</string>
+    <string name="web_add_hint">Adresa streamu, nebo adresa playlistu M3U / PLS (odkaz „poslouchat“ stanice).</string>
+    <string name="web_address">Adresa</string>
+    <string name="web_name">Název</string>
+    <string name="web_name_hint">Volitelné: jinak hostitel z adresy</string>
+    <string name="web_add_confirm">Přidat</string>
+    <string name="web_import_none">V tomto souboru nebyla nalezena žádná stanice (M3U nebo PLS s adresami http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="one">Přidána %d stanice</item>
+        <item quantity="few">Přidány %d stanice</item>
+        <item quantity="many">Přidáno %d stanice</item>
+        <item quantity="other">Přidáno %d stanic</item>
+    </plurals>
+    <string name="web_catalog">Katalog</string>
+    <string name="web_region">Oblast</string>
+    <string name="web_region_all">Všechny oblasti</string>
+    <string name="web_region_none">Celostátní / bez oblasti</string>
+    <string name="web_genre">Žánr</string>
+    <string name="web_genre_all">Všechny žánry</string>
+    <string name="web_region_any">Vše</string>
+    <string name="web_genre_any">Vše</string>
+    <string name="web_search">Hledat stanici</string>
+    <string name="web_catalog_refresh">Znovu stáhnout seznam</string>
+    <string name="web_catalog_loading">Stahování seznamu stanic (Radio Browser)…</string>
+    <string name="web_catalog_failed">Seznam není dostupný: bez internetu, nebo server Radio Browser nedostupný (Nastavení → Loga → server).</string>
+    <string name="web_catalog_count">Stanic: %1$d · %2$s · Radio Browser (komunitní seznam)</string>
+    <string name="web_streams">Streamů: %d</string>
+    <string name="web_save">Uložit</string>
+    <string name="web_back_to_fm">Zpět na FM %s</string>
+    <string name="web_offer">Také na internetu: poslouchat jejich stream</string>
+    <string name="web_offer_audio">Také na internetu (%s): poslouchat jejich stream</string>
+    <string name="set_web">Internetové rádio</string>
+    <string name="set_web_best">Nejlepší zvuk</string>
+    <string name="set_web_eco">Méně dat</string>
+    <string name="set_web_quality_hint">Když má stanice víc streamů: nejlepší zvuk (FLAC, pak AAC / MP3 s nejvyšším datovým tokem) nebo nejméně dat (nejnižší tok, aspoň 48 kbit/s). 128 kbit/s spotřebuje asi 58 MB za hodinu, 320 kbit/s asi 144 MB.</string>
+    <string name="set_web_suggest">Nabídnout internetový stream FM stanice</string>
+    <string name="set_web_suggest_hint">Když je stanice z FM i na internetu a internet funguje, obrazovka FM nabídne přepnout na její stream (jedním klepnutím). Název z RDS a země se pošlou do Radio Browser, aby se stanice našla.</string>
+    <string name="web_add_short">Přidat</string>
+    <string name="web_import_short">Importovat</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo stanice %s</string>
+    <string name="web_playing">Hraje</string>
+    <string name="web_catalog_update">Aktualizovat</string>
+    <string name="web_catalog_loading_short">Stahování…</string>
+    <string name="web_source">Zdroj</string>
+    <string name="web_country">Země</string>
+    <string name="web_back">Zpět</string>
+    <string name="web_region_other">Další oblasti (%d)</string>
+    <string name="web_genre_other">Další žánry (%d)</string>
+    <string name="web_country_other">Další země (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Rádio DAB+</string>
+    <string name="dab_no_dongle">Připojte USB přijímač DAB+</string>
+    <string name="dab_no_dongle_hint">Podporované přijímače: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. Anténa DAB se připojuje do konektoru SMA přijímače.</string>
+    <string name="dab_unsupported">Toto zařízení USB není podporovaný přijímač DAB+</string>
+    <string name="dab_not_responding">Přijímač DAB+ neodpovídá: znovu se připojuji…</string>
+    <string name="dab_scanning">Hledání stanic: kanál %1$s (%2$d/%3$d), nalezeno %4$d</string>
+    <string name="dab_scan">Hledat stanice</string>
+    <string name="dab_tuning">Ladění…</string>
+    <string name="dab_no_signal">Žádný signál: hledání stanice…</string>
+    <string name="dab_weak">Slabý signál</string>
+    <string name="dab_unplayable">Tuto stanici nelze přehrát</string>
+    <string name="dab_no_stations">Zatím žádná stanice DAB+: prohledejte pásmo (⟳)</string>
+    <string name="dab_scan_short">Prohledat</string>
+    <string name="dab_favourite_short">Oblíbená</string>
+    <string name="dab_favourite_add">Přidat k oblíbeným</string>
+    <string name="dab_favourite_remove">Odebrat z oblíbených</string>
+    <string name="info_title">Informace</string>
+    <string name="info_version">Verze %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 přispěvatelé LibreHU.</string>
+    <string name="info_licence">Svobodný software: můžete jej sdílet a upravovat podle licence GNU Affero General Public License, verze 3 nebo (dle vaší volby) jakékoli pozdější, s dodatečnými podmínkami jejího oddílu 7: zachovat označení „Based on LibreHU“ a upravenou verzi jako takovou označit. Kdo šíří upravenou verzi nebo ji nechá používat na dálku, musí poskytnout její úplný zdrojový kód pod stejnou licencí. Bez záruky v rozsahu povoleném zákonem (oddíly 15 a 16).</string>
+    <string name="info_source">Zdrojový kód: %1$s</string>
+    <string name="info_contact">Kontakt: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Dodatečné podmínky</string>
+    <string name="info_others">Kód, zdroje a data jiných projektů</string>
+    <string name="info_others_hint">Klepnutím zobrazíte licenci.</string>
+    <string name="info_close">Zavřít</string>
+</resources>

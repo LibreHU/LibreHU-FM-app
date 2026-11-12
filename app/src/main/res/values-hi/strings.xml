@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hindi translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM रेडियो</string>
+    <string name="notif_channel">रेडियो प्लेबैक</string>
+    <string name="widget_description">पिछला, चलाएँ और अगला बटनों के साथ मौजूदा स्टेशन</string>
+    <string name="play">चलाएँ</string>
+    <string name="pause">रोकें</string>
+    <string name="next">अगला स्टेशन</string>
+    <string name="previous">पिछला स्टेशन</string>
+    <string name="seek_up">ऊपर खोजें</string>
+    <string name="seek_down">नीचे खोजें</string>
+    <string name="step_up">+0.1 MHz</string>
+    <string name="step_down">−0.1 MHz</string>
+    <string name="scan">बैंड स्कैन करें</string>
+    <string name="scanning">स्कैन हो रहा है…</string>
+    <string name="favorites">पसंदीदा</string>
+    <string name="stations">स्टेशन</string>
+    <string name="toggle_favorite">पसंदीदा में जोड़ें / हटाएँ</string>
+    <string name="no_favorites">अभी कोई पसंदीदा नहीं: कोई स्टेशन ट्यून करें और तारे पर टैप करें।</string>
+    <string name="no_stations">स्टेशनों की सूची के लिए रेडियो चालू करें और बैंड स्कैन करें।</string>
+    <string name="off">रेडियो बंद है</string>
+    <string name="error_power_up">FM चिप शुरू नहीं हुई (/dev/fm)। इंस्टॉलेशन नोट्स देखें।</string>
+    <string name="error_driver">इस डिवाइस पर FM ड्राइवर लाइब्रेरी उपलब्ध नहीं है।</string>
+    <string name="error_focus">ऑडियो फ़ोकस नहीं मिला (कोई और स्रोत, कोई कॉल?)।</string>
+    <string name="error_open">/dev/fm नहीं खुल सका: ऐप को प्रिविलेज्ड ऐप के रूप में इंस्टॉल करें (README देखें)।</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="back">वापस</string>
+    <string name="apply">लागू करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">स्टेशन आवाज़ के साथ जो डेटा भेजते हैं और FM चिप डिकोड करती है: स्टेशन का नाम, रेडियो टेक्स्ट, कार्यक्रम का प्रकार, ट्रैफ़िक जानकारी।</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">रेडियो टेक्स्ट (गाना, कार्यक्रम…)</string>
+    <string name="set_pty">कार्यक्रम का प्रकार (समाचार, पॉप…)</string>
+    <string name="set_af">वैकल्पिक फ़्रीक्वेंसी (AF)</string>
+    <string name="set_af_hint">सिग्नल कमज़ोर होने पर उसी स्टेशन की दूसरी फ़्रीक्वेंसी पर चला जाता है</string>
+    <string name="set_preset_names">पसंदीदा को RDS नाम से नाम दें</string>
+    <string name="set_rt_plus">कलाकार और शीर्षक (RT+)</string>
+    <string name="set_rt_plus_hint">जब स्टेशन इन्हें टैग करता है, तो रेडियो टेक्स्ट की जगह यहाँ, विजेट पर, सूचना में और लॉन्चर के मीडिया कार्ड पर दिखते हैं</string>
+    <string name="set_ta">ट्रैफ़िक घोषणाएँ (TA)</string>
+    <string name="set_ta_hint">स्टेशन की घोषणा के दौरान: रेडियो चलते समय पूरी आवाज़; अगर आप कुछ और सुन रहे हैं और रेडियो बैकग्राउंड में चालू है, तो दूसरे स्रोत के ऊपर (वह रुक जाता है)। Jancar के ivi-services के साथ नहीं।</string>
+    <string name="set_rds_clock">RDS से घड़ी सेट करें</string>
+    <string name="set_rds_clock_hint">जब हेड यूनिट की घड़ी स्टेशन के समय से एक मिनट से ज़्यादा अलग हो (GPS या नेटवर्क समय के बिना)। कुछ स्टेशन गलत समय भेजते हैं।</string>
+    <string name="set_reception">रिसेप्शन</string>
+    <string name="set_force_mono">ज़बरदस्ती मोनो</string>
+    <string name="set_force_mono_hint">कमज़ोर स्टेशनों पर कम सरसराहट, स्टीरियो के बिना</string>
+    <string name="set_force_mono_unsupported">FM ड्राइवर ने मना किया: LibreHU कर्नेल r146 से पहले उसकी 32-बिट संगतता परत यह कमांड आगे नहीं भेजती थी (kernel-stable / conn-modules-stable zip या KernelSU कनेक्टिविटी मॉड्यूल)।</string>
+    <string name="set_local_search">खोज: सिर्फ़ मज़बूत स्टेशन (स्थानीय)</string>
+    <string name="set_local_search_hint">खोज और स्कैन सिर्फ़ स्थानीय स्टेशनों पर रुकते हैं (लगभग 25 dBµV), दूर के (DX) पर नहीं</string>
+    <string name="set_antenna_power">एंटेना एम्पलीफ़ायर</string>
+    <string name="set_antenna_power_hint">FM रेडियो चलते समय एंटेना को बिजली (MCU 43), एक्टिव एंटेना या एंटेना एम्पलीफ़ायर के लिए। बंद: पैसिव एंटेना, या एम्पलीफ़ायर के बिना साफ़ FM रिसेप्शन</string>
+    <string name="set_history">सुने गए गाने</string>
+    <string name="set_history_hint">स्टेशनों द्वारा टैग किए गए कलाकार और शीर्षक (RT+), समय के साथ।</string>
+    <string name="set_history_empty">अभी कुछ नहीं: स्टेशन को RT+ भेजना होगा।</string>
+    <string name="set_history_clear">इतिहास साफ़ करें</string>
+    <string name="ta_announcing">ट्रैफ़िक घोषणा</string>
+    <string name="ta_standby">ट्रैफ़िक घोषणाएँ स्टैंडबाय पर</string>
+    <string name="ta_stop">रोकें</string>
+    <string name="alarm_on_air">प्रसारण में चेतावनी (कार्यक्रम प्रकार 31)</string>
+    <string name="alarm_title">चेतावनी: %1$s</string>
+    <string name="alarm_text">स्टेशन एक अलार्म या आपातकालीन संदेश प्रसारित कर रहा है।</string>
+    <string name="notif_alerts">रेडियो चेतावनियाँ</string>
+    <string name="set_region">बैंड और क्षेत्र</string>
+    <string name="set_region_hint">FM बैंड की सीमाएँ, ट्यूनिंग स्टेप, आवाज़ का डी-एम्फ़ेसिस और क्षेत्र में इस्तेमाल होने वाले कार्यक्रम प्रकारों के नाम। बदलाव लागू करने के लिए रेडियो फिर से शुरू होता है।</string>
+    <string name="set_region_auto">अपने-आप (%1$s: %2$s)</string>
+    <string name="set_region_europe">यूरोप, अफ़्रीका, एशिया</string>
+    <string name="set_region_americas">अमेरिका महाद्वीप, दक्षिण कोरिया</string>
+    <string name="set_region_brazil">ब्राज़ील (विस्तारित बैंड)</string>
+    <string name="set_region_japan">जापान</string>
+    <string name="set_region_current">इस्तेमाल में: %1$s–%2$s MHz, स्टेप %3$d kHz, डी-एम्फ़ेसिस %4$d µs%5$s</string>
+    <string name="set_audio">ऑडियो पाथ</string>
+    <string name="set_audio_hint">अपने-आप: मूल रेडियो ऐप की तरह हार्डवेयर पैच FM ट्यूनर → स्पीकर, वरना ट्यूनर की आवाज़ की कॉपी। रेडियो के अगली बार शुरू होने पर लागू होता है।</string>
+    <string name="set_audio_auto">अपने-आप</string>
+    <string name="set_audio_patch">हार्डवेयर पैच</string>
+    <string name="set_audio_render">कॉपी (render)</string>
+    <string name="set_audio_current">इस्तेमाल में: %1$s</string>
+    <string name="set_logos">स्टेशन लोगो</string>
+    <string name="set_logos_hint">Radio Browser से लोगो, जो रेडियो स्टेशनों का एक खुला, समुदाय द्वारा चलाया जाने वाला डेटाबेस है, स्टेशन के RDS नाम से खोजे गए।</string>
+    <string name="set_logos_enable">लोगो दिखाएँ</string>
+    <string name="set_logos_offline">ऑफ़लाइन</string>
+    <string name="set_logos_offline_hint">सिर्फ़ डाउनलोड की गई लाइब्रेरी, कभी नेटवर्क नहीं</string>
+    <string name="set_server">सर्वर</string>
+    <string name="set_server_auto">अपने-आप</string>
+    <string name="set_server_list">सर्वरों की सूची</string>
+    <string name="set_server_loading">लोड हो रहा है…</string>
+    <string name="set_server_list_failed">सर्वर सूची उपलब्ध नहीं (नेटवर्क नहीं?)।</string>
+    <string name="set_server_custom">दूसरा सर्वर (Radio Browser API URL)</string>
+    <string name="set_server_current">इस्तेमाल हो रहा पता: %1$s</string>
+    <string name="set_country">स्टेशनों का देश</string>
+    <string name="set_country_auto">डिवाइस (%1$s)</string>
+    <string name="set_country_other">दूसरा देश (ISO कोड)</string>
+    <string name="set_library">ऑफ़लाइन लाइब्रेरी</string>
+    <string name="set_library_empty">कोई लोगो डाउनलोड नहीं हुआ।</string>
+    <string name="set_library_info">%1$d लोगो (%2$s), %3$s, अपडेट %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d स्टेशन</string>
+    <string name="set_library_listing">स्टेशनों की सूची बन रही है…</string>
+    <string name="set_library_all">सभी</string>
+    <string name="set_library_top">सबसे लोकप्रिय %1$d</string>
+    <string name="set_library_hint">चुने गए सर्वर से %1$s के स्टेशनों के लोगो डाउनलोड करता है, ताकि इंटरनेट के बिना इस्तेमाल हो सकें।</string>
+    <string name="set_library_failed">डाउनलोड विफल (नेटवर्क या सर्वर)।</string>
+    <string name="set_library_download">डाउनलोड करें</string>
+    <string name="set_library_delete">लाइब्रेरी हटाएँ</string>
+    <string name="set_logos_clear_cache">लोगो फिर से खोजें</string>
+    <string-array name="pty_names">
+        <item>कोई नहीं</item>
+        <item>समाचार</item>
+        <item>सामयिक विषय</item>
+        <item>जानकारी</item>
+        <item>खेल</item>
+        <item>शिक्षा</item>
+        <item>नाटक</item>
+        <item>संस्कृति</item>
+        <item>विज्ञान</item>
+        <item>विविध</item>
+        <item>पॉप संगीत</item>
+        <item>रॉक संगीत</item>
+        <item>सुगम संगीत</item>
+        <item>हल्का शास्त्रीय</item>
+        <item>शास्त्रीय</item>
+        <item>अन्य संगीत</item>
+        <item>मौसम</item>
+        <item>वित्त</item>
+        <item>बच्चों के लिए</item>
+        <item>सामाजिक विषय</item>
+        <item>धर्म</item>
+        <item>फ़ोन-इन</item>
+        <item>यात्रा</item>
+        <item>अवकाश</item>
+        <item>जैज़</item>
+        <item>कंट्री</item>
+        <item>राष्ट्रीय संगीत</item>
+        <item>पुराने गाने</item>
+        <item>लोक संगीत</item>
+        <item>वृत्तचित्र</item>
+        <item>अलार्म परीक्षण</item>
+        <item>अलार्म</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>कोई नहीं</item>
+        <item>समाचार</item>
+        <item>जानकारी</item>
+        <item>खेल</item>
+        <item>बातचीत</item>
+        <item>रॉक</item>
+        <item>क्लासिक रॉक</item>
+        <item>वयस्क हिट</item>
+        <item>सॉफ़्ट रॉक</item>
+        <item>टॉप 40</item>
+        <item>कंट्री</item>
+        <item>पुराने गाने</item>
+        <item>सॉफ़्ट संगीत</item>
+        <item>पुरानी यादें</item>
+        <item>जैज़</item>
+        <item>शास्त्रीय</item>
+        <item>रिदम एंड ब्लूज़</item>
+        <item>सॉफ़्ट रिदम एंड ब्लूज़</item>
+        <item>भाषा</item>
+        <item>धार्मिक संगीत</item>
+        <item>धार्मिक बातचीत</item>
+        <item>व्यक्तित्व</item>
+        <item>सार्वजनिक</item>
+        <item>कॉलेज</item>
+        <item>स्पेनिश बातचीत</item>
+        <item>स्पेनिश संगीत</item>
+        <item>हिप हॉप</item>
+        <item></item>
+        <item></item>
+        <item>मौसम</item>
+        <item>आपातकालीन परीक्षण</item>
+        <item>आपातकाल</item>
+    </string-array>
+    <string name="logo_title">%1$s MHz के लिए लोगो</string>
+    <string name="logo_hint">Radio Browser में या डाउनलोड की गई लाइब्रेरी में RDS नाम से मिला। इसकी जगह आप इस फ़्रीक्वेंसी के लिए कोई चित्र चुन सकते हैं।</string>
+    <string name="logo_pick">चित्र चुनें…</string>
+    <string name="logo_auto">अपने-आप लोगो</string>
+    <string name="set_log">लॉग</string>
+    <string name="set_log_hint">FM समस्या के लिए: रेडियो की स्थिति, /dev/fm, सिस्टम लॉग की FM और ऑडियो पंक्तियाँ और कर्नेल के FM संदेश, साझा करने के लिए एक टेक्स्ट फ़ाइल में। पूरे सिस्टम लॉग के लिए रूट चाहिए (वरना सिर्फ़ इस ऐप की पंक्तियाँ)।</string>
+    <string name="set_log_export">लॉग निर्यात करें</string>
+    <string name="set_log_done">लॉग सहेजा गया</string>
+    <string name="set_log_failed">लॉग सहेजा नहीं गया</string>
+    <string name="car_setup">सेटिंग्स</string>
+    <string name="fm_manual">मैनुअल</string>
+    <string name="fm_station_list">स्टेशन सूची</string>
+    <string name="fm_update_list">स्टेशन सूची अपडेट करें</string>
+    <string name="fm_stop_search">खोज रोकें</string>
+    <string name="fm_searching">रेडियो स्टेशन खोजे जा रहे हैं… %1$s MHz</string>
+    <string name="fm_frequencies">फ़्रीक्वेंसी</string>
+    <string name="fm_presets">प्रीसेट</string>
+    <string name="fm_store_preset">स्टेशन सहेजें</string>
+    <string name="fm_remove_preset">प्रीसेट से हटाएँ</string>
+    <string name="fm_no_presets">अभी कोई प्रीसेट नहीं: विकल्प → स्टेशन सहेजें।</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">इंटरनेट</string>
+    <string name="web_radio">इंटरनेट रेडियो</string>
+    <string name="web_connecting">कनेक्ट हो रहा है…</string>
+    <string name="web_reconnecting">कनेक्शन टूटा, फिर से कनेक्ट हो रहा है…</string>
+    <string name="web_none">कोई इंटरनेट स्टेशन नहीं</string>
+    <string name="web_empty_hint">+ से स्टेशन जोड़ें (स्ट्रीम पता, M3U या PLS लिंक) या M3U / PLS फ़ाइल इंपोर्ट करें।</string>
+    <string name="web_stations">इंटरनेट स्टेशन</string>
+    <string name="web_add">स्टेशन जोड़ें</string>
+    <string name="web_import">M3U / PLS फ़ाइल इंपोर्ट करें</string>
+    <string name="web_no_stations">अभी कोई इंटरनेट स्टेशन नहीं: + पते से स्टेशन जोड़ता है, फ़ाइल बटन M3U या PLS प्लेलिस्ट इंपोर्ट करता है।</string>
+    <string name="web_remove">हटाएँ</string>
+    <string name="web_remove_confirm">यह स्टेशन सूची से हटाएँ?</string>
+    <string name="web_add_hint">स्ट्रीम का पता या M3U / PLS प्लेलिस्ट का पता (स्टेशन का \"सुनें\" लिंक)।</string>
+    <string name="web_address">पता</string>
+    <string name="web_name">नाम</string>
+    <string name="web_name_hint">वैकल्पिक: वरना पते का होस्ट</string>
+    <string name="web_add_confirm">जोड़ें</string>
+    <string name="web_import_none">इस फ़ाइल में कोई स्टेशन नहीं मिला (http / https पतों वाली M3U या PLS)।</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d स्टेशन जोड़ा गया</item>
+        <item quantity="other">%d स्टेशन जोड़े गए</item>
+    </plurals>
+    <string name="web_catalog">कैटलॉग</string>
+    <string name="web_region">क्षेत्र</string>
+    <string name="web_region_all">सभी क्षेत्र</string>
+    <string name="web_region_none">राष्ट्रीय / बिना क्षेत्र</string>
+    <string name="web_genre">शैली</string>
+    <string name="web_genre_all">सभी शैलियाँ</string>
+    <string name="web_region_any">सभी</string>
+    <string name="web_genre_any">सभी</string>
+    <string name="web_search">स्टेशन खोजें</string>
+    <string name="web_catalog_refresh">सूची फिर से डाउनलोड करें</string>
+    <string name="web_catalog_loading">स्टेशन सूची डाउनलोड हो रही है (Radio Browser)…</string>
+    <string name="web_catalog_failed">सूची उपलब्ध नहीं: इंटरनेट नहीं है या Radio Browser सर्वर तक पहुँच नहीं (सेटिंग्स → लोगो → सर्वर)।</string>
+    <string name="web_catalog_count">%1$d स्टेशन · %2$s · Radio Browser (सामुदायिक सूची)</string>
+    <string name="web_streams">%d स्ट्रीम</string>
+    <string name="web_save">सहेजें</string>
+    <string name="web_back_to_fm">FM %s पर वापस</string>
+    <string name="web_offer">इंटरनेट पर भी: स्ट्रीम सुनें</string>
+    <string name="web_offer_audio">इंटरनेट पर भी (%s): स्ट्रीम सुनें</string>
+    <string name="set_web">इंटरनेट रेडियो</string>
+    <string name="set_web_best">सबसे अच्छी आवाज़</string>
+    <string name="set_web_eco">कम डेटा</string>
+    <string name="set_web_quality_hint">जब किसी स्टेशन की कई स्ट्रीम हों: सबसे अच्छी आवाज़ (FLAC, फिर सबसे ऊँचे बिटरेट वाली AAC / MP3) या सबसे कम डेटा (सबसे कम बिटरेट, कम से कम 48 kbit/s)। 128 kbit/s प्रति घंटे लगभग 58 MB लेता है, 320 kbit/s लगभग 144 MB।</string>
+    <string name="set_web_suggest">FM स्टेशन की इंटरनेट स्ट्रीम सुझाएँ</string>
+    <string name="set_web_suggest_hint">जब FM पर सुना जा रहा स्टेशन इंटरनेट पर भी हो और इंटरनेट चल रहा हो, तो FM स्क्रीन उसकी स्ट्रीम पर जाने का सुझाव देती है (एक टैप)। उसे खोजने के लिए RDS नाम और देश Radio Browser को भेजे जाते हैं।</string>
+    <string name="web_add_short">जोड़ें</string>
+    <string name="web_import_short">इंपोर्ट</string>
+    <string name="web_logo">लोगो</string>
+    <string name="web_logo_title">%s का लोगो</string>
+    <string name="web_playing">चल रहा है</string>
+    <string name="web_catalog_update">अपडेट करें</string>
+    <string name="web_catalog_loading_short">डाउनलोड हो रहा है…</string>
+    <string name="web_source">स्रोत</string>
+    <string name="web_country">देश</string>
+    <string name="web_back">वापस</string>
+    <string name="web_region_other">दूसरे क्षेत्र (%d)</string>
+    <string name="web_genre_other">दूसरी शैलियाँ (%d)</string>
+    <string name="web_country_other">दूसरे देश (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+ रेडियो</string>
+    <string name="dab_no_dongle">DAB+ USB डोंगल लगाएँ</string>
+    <string name="dab_no_dongle_hint">समर्थित डोंगल: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160। DAB एंटेना डोंगल के SMA सॉकेट में लगता है।</string>
+    <string name="dab_unsupported">यह USB डिवाइस समर्थित DAB+ डोंगल नहीं है</string>
+    <string name="dab_not_responding">DAB+ डोंगल जवाब नहीं दे रहा: फिर से कनेक्ट हो रहा है…</string>
+    <string name="dab_scanning">स्टेशन खोजे जा रहे हैं: चैनल %1$s (%2$d/%3$d), %4$d मिले</string>
+    <string name="dab_scan">स्टेशन खोजें</string>
+    <string name="dab_tuning">ट्यून हो रहा है…</string>
+    <string name="dab_no_signal">सिग्नल नहीं: स्टेशन खोजा जा रहा है…</string>
+    <string name="dab_weak">कमज़ोर सिग्नल</string>
+    <string name="dab_unplayable">यह स्टेशन नहीं चल सकता</string>
+    <string name="dab_no_stations">अभी कोई DAB+ स्टेशन नहीं: बैंड स्कैन करें (⟳)</string>
+    <string name="dab_scan_short">स्कैन</string>
+    <string name="dab_favourite_short">पसंदीदा</string>
+    <string name="dab_favourite_add">पसंदीदा में जोड़ें</string>
+    <string name="dab_favourite_remove">पसंदीदा से हटाएँ</string>
+    <string name="info_title">जानकारी</string>
+    <string name="info_version">संस्करण %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 LibreHU के योगदानकर्ता।</string>
+    <string name="info_licence">फ़्री सॉफ़्टवेयर: आप इसे GNU Affero General Public License संस्करण 3 या (अपनी पसंद से) किसी बाद के संस्करण के तहत साझा और संशोधित कर सकते हैं, इसकी धारा 7 की अतिरिक्त शर्तों के साथ: “Based on LibreHU” सूचना बनाए रखें और संशोधित संस्करण को संशोधित के रूप में चिह्नित करें। जो संशोधित संस्करण वितरित करता है या उसे दूर से उपयोग करने देता है, उसे उसी लाइसेंस के तहत पूरा सोर्स कोड देना होगा। कानून द्वारा अनुमत सीमा तक कोई वारंटी नहीं (धारा 15 और 16)।</string>
+    <string name="info_source">सोर्स कोड: %1$s</string>
+    <string name="info_contact">संपर्क: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">अतिरिक्त शर्तें</string>
+    <string name="info_others">दूसरी परियोजनाओं का कोड, संसाधन और डेटा</string>
+    <string name="info_others_hint">लाइसेंस पढ़ने के लिए किसी एक पर टैप करें।</string>
+    <string name="info_close">बंद करें</string>
+</resources>

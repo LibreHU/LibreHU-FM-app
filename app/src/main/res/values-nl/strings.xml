@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dutch translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM-radio</string>
+    <string name="notif_channel">Radio afspelen</string>
+    <string name="widget_description">Huidige zender met vorige, afspelen en volgende</string>
+    <string name="play">Afspelen</string>
+    <string name="pause">Pauze</string>
+    <string name="next">Volgende zender</string>
+    <string name="previous">Vorige zender</string>
+    <string name="seek_up">Omhoog zoeken</string>
+    <string name="seek_down">Omlaag zoeken</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Band scannen</string>
+    <string name="scanning">Scannen…</string>
+    <string name="favorites">Favorieten</string>
+    <string name="stations">Zenders</string>
+    <string name="toggle_favorite">Favoriet toevoegen / verwijderen</string>
+    <string name="no_favorites">Nog geen favorieten: stem af op een zender en tik op de ster.</string>
+    <string name="no_stations">Zet de radio aan en scan de band om de zenders te tonen.</string>
+    <string name="off">Radio uit</string>
+    <string name="error_power_up">De FM-chip is niet gestart (/dev/fm). Zie de installatie-instructies.</string>
+    <string name="error_driver">Bibliotheek van de FM-driver niet beschikbaar op dit apparaat.</string>
+    <string name="error_focus">Audiofocus geweigerd (andere bron, telefoongesprek?).</string>
+    <string name="error_open">Kan /dev/fm niet openen: installeer de app als geprivilegieerde app (zie de README).</string>
+    <string name="settings">Instellingen</string>
+    <string name="back">Terug</string>
+    <string name="apply">Toepassen</string>
+    <string name="cancel">Annuleren</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Gegevens die zenders met het geluid meesturen en die de FM-chip decodeert: zendernaam, radiotekst, programmatype, verkeersinformatie.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotekst (nummer, programma…)</string>
+    <string name="set_pty">Programmatype (nieuws, pop…)</string>
+    <string name="set_af">Alternatieve frequenties (AF)</string>
+    <string name="set_af_hint">Schakelt naar een andere frequentie van dezelfde zender als het signaal zwak wordt</string>
+    <string name="set_preset_names">Favorieten de RDS-naam geven</string>
+    <string name="set_rt_plus">Artiest en titel (RT+)</string>
+    <string name="set_rt_plus_hint">Getoond in plaats van de radiotekst, hier, op de widget, in de melding en op de mediakaart van de launcher, als de zender ze meestuurt</string>
+    <string name="set_ta">Verkeersinformatie (TA)</string>
+    <string name="set_ta_hint">Tijdens een verkeersbericht van de zender: vol volume als de radio speelt; boven de andere bron (die pauzeert) als je iets anders luistert, met de radio aan op de achtergrond. Niet met ivi-services van Jancar.</string>
+    <string name="set_rds_clock">Klok gelijkzetten met RDS</string>
+    <string name="set_rds_clock_hint">Als de klok van de autoradio meer dan een minuut afwijkt van de tijd van de zender (zonder gps- of netwerktijd). Sommige zenders sturen een verkeerde tijd.</string>
+    <string name="set_reception">Ontvangst</string>
+    <string name="set_force_mono">Geforceerd mono</string>
+    <string name="set_force_mono_hint">Minder ruis bij zwakke zenders, zonder stereo</string>
+    <string name="set_force_mono_unsupported">Geweigerd door de FM-driver: zijn 32-bit compatibiliteitslaag gaf deze opdracht niet door vóór LibreHU-kernel r146 (zips kernel-stable / conn-modules-stable, of de KernelSU-connectiviteitsmodule).</string>
+    <string name="set_local_search">Zoeken: alleen sterke zenders (lokaal)</string>
+    <string name="set_local_search_hint">Zoeken en scannen stoppen alleen bij lokale zenders (ongeveer 25 dBµV), niet bij verre (DX)</string>
+    <string name="set_antenna_power">Antenneversterker</string>
+    <string name="set_antenna_power_hint">Antennevoeding (MCU 43) terwijl de FM-radio speelt, voor een actieve antenne of een antenneversterker. Uit: passieve antenne, of een schonere FM-ontvangst zonder versterker</string>
+    <string name="set_history">Gehoorde nummers</string>
+    <string name="set_history_hint">Artiest en titel die de zenders meesturen (RT+), met de tijd.</string>
+    <string name="set_history_empty">Nog geen: de zender moet RT+ sturen.</string>
+    <string name="set_history_clear">Geschiedenis wissen</string>
+    <string name="ta_announcing">Verkeersbericht</string>
+    <string name="ta_standby">Verkeersinformatie stand-by</string>
+    <string name="ta_stop">Stoppen</string>
+    <string name="alarm_on_air">ALARM in de uitzending (programmatype 31)</string>
+    <string name="alarm_title">Alarm: %1$s</string>
+    <string name="alarm_text">De zender zendt een alarm- of noodbericht uit.</string>
+    <string name="notif_alerts">Radiowaarschuwingen</string>
+    <string name="set_region">Band en regio</string>
+    <string name="set_region_hint">Grenzen van de FM-band, afstemstap, de-emfase van het geluid en namen van de programmatypes in de regio. De radio herstart om een wijziging toe te passen.</string>
+    <string name="set_region_auto">Automatisch (%1$s: %2$s)</string>
+    <string name="set_region_europe">Europa, Afrika, Azië</string>
+    <string name="set_region_americas">Amerika, Zuid-Korea</string>
+    <string name="set_region_brazil">Brazilië (uitgebreide band)</string>
+    <string name="set_region_japan">Japan</string>
+    <string name="set_region_current">In gebruik: %1$s–%2$s MHz, stap %3$d kHz, de-emfase %4$d µs%5$s</string>
+    <string name="set_audio">Audiopad</string>
+    <string name="set_audio_hint">Automatisch: hardwarekoppeling FM-tuner → luidsprekers zoals de originele radio-app, anders een kopie van het tunergeluid. Toegepast bij de volgende start van de radio.</string>
+    <string name="set_audio_auto">Automatisch</string>
+    <string name="set_audio_patch">Hardwarekoppeling</string>
+    <string name="set_audio_render">Kopie (render)</string>
+    <string name="set_audio_current">In gebruik: %1$s</string>
+    <string name="set_logos">Zenderlogo\'s</string>
+    <string name="set_logos_hint">Logo\'s uit Radio Browser, een open gemeenschapsdatabase van radiozenders, gevonden via de RDS-naam van de zender.</string>
+    <string name="set_logos_enable">Logo\'s tonen</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Alleen de gedownloade bibliotheek, nooit het netwerk</string>
+    <string name="set_server">Server</string>
+    <string name="set_server_auto">Automatisch</string>
+    <string name="set_server_list">Servers tonen</string>
+    <string name="set_server_loading">Laden…</string>
+    <string name="set_server_list_failed">Serverlijst niet beschikbaar (geen netwerk?).</string>
+    <string name="set_server_custom">Andere server (URL van de Radio Browser-API)</string>
+    <string name="set_server_current">Gebruikt adres: %1$s</string>
+    <string name="set_country">Land van de zenders</string>
+    <string name="set_country_auto">Apparaat (%1$s)</string>
+    <string name="set_country_other">Ander land (ISO-code)</string>
+    <string name="set_library">Offlinebibliotheek</string>
+    <string name="set_library_empty">Geen logo gedownload.</string>
+    <string name="set_library_info">%1$d logo\'s (%2$s), %3$s, bijgewerkt %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d zenders</string>
+    <string name="set_library_listing">Zenders ophalen…</string>
+    <string name="set_library_all">Alle</string>
+    <string name="set_library_top">De %1$d populairste</string>
+    <string name="set_library_hint">Downloadt de logo\'s van de zenders uit %1$s van de gekozen server, om ze zonder internet te gebruiken.</string>
+    <string name="set_library_failed">Download mislukt (netwerk of server).</string>
+    <string name="set_library_download">Downloaden</string>
+    <string name="set_library_delete">Bibliotheek verwijderen</string>
+    <string name="set_logos_clear_cache">Logo\'s opnieuw opzoeken</string>
+    <string-array name="pty_names">
+        <item>Geen</item>
+        <item>Nieuws</item>
+        <item>Actualiteiten</item>
+        <item>Informatie</item>
+        <item>Sport</item>
+        <item>Educatie</item>
+        <item>Hoorspel</item>
+        <item>Cultuur</item>
+        <item>Wetenschap</item>
+        <item>Gevarieerd</item>
+        <item>Popmuziek</item>
+        <item>Rockmuziek</item>
+        <item>Easy listening</item>
+        <item>Licht klassiek</item>
+        <item>Klassiek</item>
+        <item>Andere muziek</item>
+        <item>Weer</item>
+        <item>Financiën</item>
+        <item>Kinderen</item>
+        <item>Maatschappij</item>
+        <item>Religie</item>
+        <item>Inbelprogramma</item>
+        <item>Reizen</item>
+        <item>Vrije tijd</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Nationale muziek</item>
+        <item>Oldies</item>
+        <item>Folk</item>
+        <item>Documentaire</item>
+        <item>Alarmtest</item>
+        <item>Alarm</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Geen</item>
+        <item>Nieuws</item>
+        <item>Informatie</item>
+        <item>Sport</item>
+        <item>Praatprogramma</item>
+        <item>Rock</item>
+        <item>Klassieke rock</item>
+        <item>Hits voor volwassenen</item>
+        <item>Softrock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Oldies</item>
+        <item>Zachte muziek</item>
+        <item>Nostalgie</item>
+        <item>Jazz</item>
+        <item>Klassiek</item>
+        <item>Rhythm-and-blues</item>
+        <item>Zachte rhythm-and-blues</item>
+        <item>Taal</item>
+        <item>Religieuze muziek</item>
+        <item>Religieus praatprogramma</item>
+        <item>Persoonlijkheid</item>
+        <item>Publiek</item>
+        <item>Universiteit</item>
+        <item>Spaanstalig praatprogramma</item>
+        <item>Spaanstalige muziek</item>
+        <item>Hiphop</item>
+        <item></item>
+        <item></item>
+        <item>Weer</item>
+        <item>Noodtest</item>
+        <item>Noodgeval</item>
+    </string-array>
+    <string name="logo_title">Logo voor %1$s MHz</string>
+    <string name="logo_hint">Gevonden via de RDS-naam in Radio Browser of de gedownloade bibliotheek. Je kunt ook een afbeelding kiezen voor deze frequentie.</string>
+    <string name="logo_pick">Afbeelding kiezen…</string>
+    <string name="logo_auto">Automatisch logo</string>
+    <string name="set_log">Logboek</string>
+    <string name="set_log_hint">Voor een FM-probleem: de radiostatus, /dev/fm, de FM- en audioregels van het systeemlogboek en de FM-berichten van de kernel, in één tekstbestand om te delen. Het volledige systeemlogboek vraagt root (anders alleen de regels van deze app).</string>
+    <string name="set_log_export">Logboek exporteren</string>
+    <string name="set_log_done">Logboek opgeslagen</string>
+    <string name="set_log_failed">Logboek niet opgeslagen</string>
+    <string name="car_setup">Instellingen</string>
+    <string name="fm_manual">Handmatig</string>
+    <string name="fm_station_list">Zenderlijst</string>
+    <string name="fm_update_list">Zenderlijst bijwerken</string>
+    <string name="fm_stop_search">Zoeken stoppen</string>
+    <string name="fm_searching">Zenders zoeken… %1$s MHz</string>
+    <string name="fm_frequencies">Frequenties</string>
+    <string name="fm_presets">Voorkeuzes</string>
+    <string name="fm_store_preset">Zender opslaan</string>
+    <string name="fm_remove_preset">Uit de voorkeuzes verwijderen</string>
+    <string name="fm_no_presets">Nog geen voorkeuzes: Opties → Zender opslaan.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Internetradio</string>
+    <string name="web_connecting">Verbinden…</string>
+    <string name="web_reconnecting">Verbinding verbroken, opnieuw verbinden…</string>
+    <string name="web_none">Geen internetzender</string>
+    <string name="web_empty_hint">Voeg een zender toe met + (streamadres, M3U- of PLS-link) of importeer een M3U- / PLS-bestand.</string>
+    <string name="web_stations">Internetzenders</string>
+    <string name="web_add">Zender toevoegen</string>
+    <string name="web_import">M3U- / PLS-bestand importeren</string>
+    <string name="web_no_stations">Nog geen internetzender: + voegt er een toe via het adres, de bestandsknop importeert een M3U- of PLS-afspeellijst.</string>
+    <string name="web_remove">Verwijderen</string>
+    <string name="web_remove_confirm">Deze zender uit de lijst verwijderen?</string>
+    <string name="web_add_hint">Streamadres, of het adres van een M3U- / PLS-afspeellijst (de \'luister\'-link van de zender).</string>
+    <string name="web_address">Adres</string>
+    <string name="web_name">Naam</string>
+    <string name="web_name_hint">Optioneel: anders de host van het adres</string>
+    <string name="web_add_confirm">Toevoegen</string>
+    <string name="web_import_none">Geen zender gevonden in dit bestand (M3U of PLS met http- / https-adressen).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d zender toegevoegd</item>
+        <item quantity="other">%d zenders toegevoegd</item>
+    </plurals>
+    <string name="web_catalog">Catalogus</string>
+    <string name="web_region">Regio</string>
+    <string name="web_region_all">Alle regio\'s</string>
+    <string name="web_region_none">Landelijk / geen regio</string>
+    <string name="web_genre">Genre</string>
+    <string name="web_genre_all">Alle genres</string>
+    <string name="web_region_any">Alle</string>
+    <string name="web_genre_any">Alle</string>
+    <string name="web_search">Zender zoeken</string>
+    <string name="web_catalog_refresh">Lijst opnieuw downloaden</string>
+    <string name="web_catalog_loading">Zenderlijst downloaden (Radio Browser)…</string>
+    <string name="web_catalog_failed">Lijst niet beschikbaar: geen internet, of Radio Browser-server niet bereikbaar (Instellingen → Logo\'s → server).</string>
+    <string name="web_catalog_count">%1$d zenders · %2$s · Radio Browser (gemeenschapslijst)</string>
+    <string name="web_streams">%d streams</string>
+    <string name="web_save">Opslaan</string>
+    <string name="web_back_to_fm">Terug naar FM %s</string>
+    <string name="web_offer">Ook op internet: luister naar de stream</string>
+    <string name="web_offer_audio">Ook op internet (%s): luister naar de stream</string>
+    <string name="set_web">Internetradio</string>
+    <string name="set_web_best">Beste geluid</string>
+    <string name="set_web_eco">Minder data</string>
+    <string name="set_web_quality_hint">Als een zender meerdere streams heeft: het beste geluid (FLAC, dan AAC / MP3 met de hoogste bitrate) of de minste data (laagste bitrate, minstens 48 kbit/s). 128 kbit/s verbruikt ongeveer 58 MB per uur, 320 kbit/s ongeveer 144 MB.</string>
+    <string name="set_web_suggest">Internetstream van de FM-zender aanbieden</string>
+    <string name="set_web_suggest_hint">Als de zender op FM ook op internet staat en internet werkt, biedt het FM-scherm aan om naar de stream te wisselen (één tik). De RDS-naam en het land worden naar Radio Browser gestuurd om de zender te vinden.</string>
+    <string name="web_add_short">Toevoegen</string>
+    <string name="web_import_short">Importeren</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo van %s</string>
+    <string name="web_playing">Speelt</string>
+    <string name="web_catalog_update">Bijwerken</string>
+    <string name="web_catalog_loading_short">Downloaden…</string>
+    <string name="web_source">Bron</string>
+    <string name="web_country">Land</string>
+    <string name="web_back">Terug</string>
+    <string name="web_region_other">Andere regio\'s (%d)</string>
+    <string name="web_genre_other">Andere genres (%d)</string>
+    <string name="web_country_other">Andere landen (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+-radio</string>
+    <string name="dab_no_dongle">Sluit een DAB+-USB-dongle aan</string>
+    <string name="dab_no_dongle_hint">Ondersteunde dongles: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. De DAB-antenne gaat op de SMA-aansluiting van de dongle.</string>
+    <string name="dab_unsupported">Dit USB-apparaat is geen ondersteunde DAB+-dongle</string>
+    <string name="dab_not_responding">De DAB+-dongle reageert niet: opnieuw verbinden…</string>
+    <string name="dab_scanning">Zenders zoeken: kanaal %1$s (%2$d/%3$d), %4$d gevonden</string>
+    <string name="dab_scan">Zenders zoeken</string>
+    <string name="dab_tuning">Afstemmen…</string>
+    <string name="dab_no_signal">Geen signaal: zender zoeken…</string>
+    <string name="dab_weak">Zwak signaal</string>
+    <string name="dab_unplayable">Deze zender kan niet worden afgespeeld</string>
+    <string name="dab_no_stations">Nog geen DAB+-zender: scan de band (⟳)</string>
+    <string name="dab_scan_short">Scannen</string>
+    <string name="dab_favourite_short">Favoriet</string>
+    <string name="dab_favourite_add">Aan favorieten toevoegen</string>
+    <string name="dab_favourite_remove">Uit favorieten verwijderen</string>
+    <string name="info_title">Info</string>
+    <string name="info_version">Versie %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 bijdragers aan LibreHU.</string>
+    <string name="info_licence">Vrije software: je mag hem delen en wijzigen onder de GNU Affero General Public License, versie 3 of (naar keuze) een latere versie, met de aanvullende voorwaarden van artikel 7: de vermelding “Based on LibreHU” behouden en een gewijzigde versie als zodanig aanduiden. Wie een gewijzigde versie verspreidt, of op afstand laat gebruiken, moet de volledige broncode onder dezelfde licentie geven. Geen garantie, voor zover de wet dat toestaat (artikelen 15 en 16).</string>
+    <string name="info_source">Broncode: %1$s</string>
+    <string name="info_contact">Contact: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Aanvullende voorwaarden</string>
+    <string name="info_others">Code, bronnen en gegevens van andere projecten</string>
+    <string name="info_others_hint">Tik er een aan om de licentie te lezen.</string>
+    <string name="info_close">Sluiten</string>
+</resources>

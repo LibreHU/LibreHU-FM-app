@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM Radyo</string>
+    <string name="notif_channel">Radyo çalma</string>
+    <string name="widget_description">Önceki, oynat ve sonraki düğmeleriyle geçerli istasyon</string>
+    <string name="play">Oynat</string>
+    <string name="pause">Duraklat</string>
+    <string name="next">Sonraki istasyon</string>
+    <string name="previous">Önceki istasyon</string>
+    <string name="seek_up">Yukarı ara</string>
+    <string name="seek_down">Aşağı ara</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Bandı tara</string>
+    <string name="scanning">Taranıyor…</string>
+    <string name="favorites">Favoriler</string>
+    <string name="stations">İstasyonlar</string>
+    <string name="toggle_favorite">Favori ekle / kaldır</string>
+    <string name="no_favorites">Henüz favori yok: bir istasyonu ayarlayın ve yıldıza dokunun.</string>
+    <string name="no_stations">İstasyonları listelemek için radyoyu açın ve bandı tarayın.</string>
+    <string name="off">Radyo kapalı</string>
+    <string name="error_power_up">FM çipi başlamadı (/dev/fm). Kurulum notlarına bakın.</string>
+    <string name="error_driver">FM sürücü kitaplığı bu cihazda yok.</string>
+    <string name="error_focus">Ses odağı reddedildi (başka kaynak, telefon görüşmesi?).</string>
+    <string name="error_open">/dev/fm açılamıyor: uygulamayı ayrıcalıklı uygulama olarak kurun (README\'ye bakın).</string>
+    <string name="settings">Ayarlar</string>
+    <string name="back">Geri</string>
+    <string name="apply">Uygula</string>
+    <string name="cancel">İptal</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">İstasyonların sesle birlikte gönderdiği ve FM çipinin çözdüğü veriler: istasyon adı, radyo metni, program türü, trafik bilgisi.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radyo metni (şarkı, program…)</string>
+    <string name="set_pty">Program türü (haber, pop…)</string>
+    <string name="set_af">Alternatif frekanslar (AF)</string>
+    <string name="set_af_hint">Sinyal zayıflayınca aynı istasyonun başka bir frekansına geçer</string>
+    <string name="set_preset_names">Favorileri RDS adıyla adlandır</string>
+    <string name="set_rt_plus">Sanatçı ve başlık (RT+)</string>
+    <string name="set_rt_plus_hint">İstasyon etiketlediğinde radyo metninin yerine burada, widget\'ta, bildirimde ve başlatıcının medya kartında gösterilir</string>
+    <string name="set_ta">Trafik duyuruları (TA)</string>
+    <string name="set_ta_hint">İstasyonun duyurusu sırasında: radyo çalarken tam ses; başka bir şey dinliyorsanız diğer kaynağın üzerinde (o duraklar), radyo arka planda açık kalır. Jancar ivi-services ile olmaz.</string>
+    <string name="set_rds_clock">Saati RDS\'ten ayarla</string>
+    <string name="set_rds_clock_hint">Multimedya ünitesinin saati istasyonun saatinden bir dakikadan fazla saparsa (GPS veya ağ saati olmadan). Bazı istasyonlar yanlış saat gönderir.</string>
+    <string name="set_reception">Alış</string>
+    <string name="set_force_mono">Zorunlu mono</string>
+    <string name="set_force_mono_hint">Zayıf istasyonlarda daha az parazit, stereo olmadan</string>
+    <string name="set_force_mono_unsupported">FM sürücüsü reddetti: 32 bit uyumluluk katmanı bu komutu LibreHU çekirdeği r146\'dan önce iletmiyordu (kernel-stable / conn-modules-stable zip\'leri veya KernelSU bağlantı modülü).</string>
+    <string name="set_local_search">Arama: yalnızca güçlü istasyonlar (yerel)</string>
+    <string name="set_local_search_hint">Arama ve tarama yalnızca yerel istasyonlarda durur (yaklaşık 25 dBµV), uzaktakilerde (DX) durmaz</string>
+    <string name="set_antenna_power">Anten amfisi</string>
+    <string name="set_antenna_power_hint">FM radyo çalarken anten beslemesi (MCU 43), aktif anten ya da anten amfisi için. Kapalı: pasif anten veya amfisiz daha temiz FM alışı</string>
+    <string name="set_history">Dinlenen şarkılar</string>
+    <string name="set_history_hint">İstasyonların etiketlediği sanatçı ve başlık (RT+), saatiyle.</string>
+    <string name="set_history_empty">Henüz yok: istasyonun RT+ göndermesi gerekir.</string>
+    <string name="set_history_clear">Geçmişi temizle</string>
+    <string name="ta_announcing">Trafik duyurusu</string>
+    <string name="ta_standby">Trafik duyuruları beklemede</string>
+    <string name="ta_stop">Durdur</string>
+    <string name="alarm_on_air">Yayında UYARI (program türü 31)</string>
+    <string name="alarm_title">Uyarı: %1$s</string>
+    <string name="alarm_text">İstasyon bir alarm veya acil durum mesajı yayınlıyor.</string>
+    <string name="notif_alerts">Radyo uyarıları</string>
+    <string name="set_region">Bant ve bölge</string>
+    <string name="set_region_hint">FM bandının sınırları, ayar adımı, sesin de-emfazı ve bölgede kullanılan program türü adları. Değişikliği uygulamak için radyo yeniden başlar.</string>
+    <string name="set_region_auto">Otomatik (%1$s: %2$s)</string>
+    <string name="set_region_europe">Avrupa, Afrika, Asya</string>
+    <string name="set_region_americas">Amerika, Güney Kore</string>
+    <string name="set_region_brazil">Brezilya (genişletilmiş bant)</string>
+    <string name="set_region_japan">Japonya</string>
+    <string name="set_region_current">Kullanımda: %1$s–%2$s MHz, adım %3$d kHz, de-emfaz %4$d µs%5$s</string>
+    <string name="set_audio">Ses yolu</string>
+    <string name="set_audio_hint">Otomatik: orijinal radyo uygulaması gibi donanım bağlantısı FM alıcısı → hoparlörler, yoksa alıcı sesinin kopyası. Radyonun bir sonraki açılışında uygulanır.</string>
+    <string name="set_audio_auto">Otomatik</string>
+    <string name="set_audio_patch">Donanım bağlantısı</string>
+    <string name="set_audio_render">Kopya (render)</string>
+    <string name="set_audio_current">Kullanımda: %1$s</string>
+    <string name="set_logos">İstasyon logoları</string>
+    <string name="set_logos_hint">Açık ve topluluk tarafından yürütülen radyo istasyonu veritabanı Radio Browser\'dan, istasyonun RDS adıyla bulunan logolar.</string>
+    <string name="set_logos_enable">Logoları göster</string>
+    <string name="set_logos_offline">Çevrimdışı</string>
+    <string name="set_logos_offline_hint">Yalnızca indirilen kitaplık, asla ağ</string>
+    <string name="set_server">Sunucu</string>
+    <string name="set_server_auto">Otomatik</string>
+    <string name="set_server_list">Sunucuları listele</string>
+    <string name="set_server_loading">Yükleniyor…</string>
+    <string name="set_server_list_failed">Sunucu listesi alınamadı (ağ yok mu?).</string>
+    <string name="set_server_custom">Başka sunucu (Radio Browser API URL\'si)</string>
+    <string name="set_server_current">Kullanılan adres: %1$s</string>
+    <string name="set_country">İstasyonların ülkesi</string>
+    <string name="set_country_auto">Cihaz (%1$s)</string>
+    <string name="set_country_other">Başka ülke (ISO kodu)</string>
+    <string name="set_library">Çevrimdışı kitaplık</string>
+    <string name="set_library_empty">İndirilmiş logo yok.</string>
+    <string name="set_library_info">%1$d logo (%2$s), %3$s, güncelleme %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d istasyon</string>
+    <string name="set_library_listing">İstasyonlar listeleniyor…</string>
+    <string name="set_library_all">Tümü</string>
+    <string name="set_library_top">En popüler %1$d</string>
+    <string name="set_library_hint">%1$s istasyonlarının logolarını seçilen sunucudan indirir, internetsiz kullanmak için.</string>
+    <string name="set_library_failed">İndirme başarısız (ağ veya sunucu).</string>
+    <string name="set_library_download">İndir</string>
+    <string name="set_library_delete">Kitaplığı sil</string>
+    <string name="set_logos_clear_cache">Logoları yeniden ara</string>
+    <string-array name="pty_names">
+        <item>Yok</item>
+        <item>Haberler</item>
+        <item>Güncel olaylar</item>
+        <item>Bilgi</item>
+        <item>Spor</item>
+        <item>Eğitim</item>
+        <item>Radyo tiyatrosu</item>
+        <item>Kültür</item>
+        <item>Bilim</item>
+        <item>Çeşitli</item>
+        <item>Pop müzik</item>
+        <item>Rock müzik</item>
+        <item>Hafif müzik</item>
+        <item>Hafif klasik</item>
+        <item>Klasik</item>
+        <item>Diğer müzik</item>
+        <item>Hava durumu</item>
+        <item>Finans</item>
+        <item>Çocuk</item>
+        <item>Toplum</item>
+        <item>Din</item>
+        <item>Canlı telefon</item>
+        <item>Seyahat</item>
+        <item>Boş zaman</item>
+        <item>Caz</item>
+        <item>Country</item>
+        <item>Ulusal müzik</item>
+        <item>Eski şarkılar</item>
+        <item>Halk müziği</item>
+        <item>Belgesel</item>
+        <item>Alarm testi</item>
+        <item>Alarm</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Yok</item>
+        <item>Haberler</item>
+        <item>Bilgi</item>
+        <item>Spor</item>
+        <item>Sohbet</item>
+        <item>Rock</item>
+        <item>Klasik rock</item>
+        <item>Yetişkin hitleri</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Eski şarkılar</item>
+        <item>Yumuşak müzik</item>
+        <item>Nostalji</item>
+        <item>Caz</item>
+        <item>Klasik</item>
+        <item>Rhythm and blues</item>
+        <item>Yumuşak rhythm and blues</item>
+        <item>Dil</item>
+        <item>Dini müzik</item>
+        <item>Dini sohbet</item>
+        <item>Kişilik</item>
+        <item>Kamu</item>
+        <item>Üniversite</item>
+        <item>İspanyolca sohbet</item>
+        <item>İspanyolca müzik</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Hava durumu</item>
+        <item>Acil durum testi</item>
+        <item>Acil durum</item>
+    </string-array>
+    <string name="logo_title">%1$s MHz için logo</string>
+    <string name="logo_hint">Radio Browser\'da ya da indirilen kitaplıkta RDS adından bulundu. Bunun yerine bu frekans için bir resim seçebilirsiniz.</string>
+    <string name="logo_pick">Resim seç…</string>
+    <string name="logo_auto">Otomatik logo</string>
+    <string name="set_log">Günlük</string>
+    <string name="set_log_hint">Bir FM sorunu için: radyo durumu, /dev/fm, sistem günlüğünün FM ve ses satırları ve çekirdeğin FM mesajları, paylaşılacak tek bir metin dosyasında. Tüm sistem günlüğü root gerektirir (aksi halde yalnızca bu uygulamanın satırları).</string>
+    <string name="set_log_export">Günlüğü dışa aktar</string>
+    <string name="set_log_done">Günlük kaydedildi</string>
+    <string name="set_log_failed">Günlük kaydedilmedi</string>
+    <string name="car_setup">Ayarlar</string>
+    <string name="fm_manual">Manuel</string>
+    <string name="fm_station_list">İstasyon listesi</string>
+    <string name="fm_update_list">İstasyon listesini güncelle</string>
+    <string name="fm_stop_search">Aramayı durdur</string>
+    <string name="fm_searching">Radyo istasyonları aranıyor… %1$s MHz</string>
+    <string name="fm_frequencies">Frekanslar</string>
+    <string name="fm_presets">Kayıtlı istasyonlar</string>
+    <string name="fm_store_preset">İstasyonu kaydet</string>
+    <string name="fm_remove_preset">Kayıtlılardan kaldır</string>
+    <string name="fm_no_presets">Henüz kayıtlı istasyon yok: Seçenekler → İstasyonu kaydet.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">İnternet</string>
+    <string name="web_radio">İnternet radyosu</string>
+    <string name="web_connecting">Bağlanıyor…</string>
+    <string name="web_reconnecting">Bağlantı koptu, yeniden bağlanıyor…</string>
+    <string name="web_none">İnternet istasyonu yok</string>
+    <string name="web_empty_hint">+ ile bir istasyon ekleyin (yayın adresi, M3U veya PLS bağlantısı) ya da bir M3U / PLS dosyası içe aktarın.</string>
+    <string name="web_stations">İnternet istasyonları</string>
+    <string name="web_add">İstasyon ekle</string>
+    <string name="web_import">M3U / PLS dosyası içe aktar</string>
+    <string name="web_no_stations">Henüz internet istasyonu yok: + adresiyle bir istasyon ekler, dosya düğmesi bir M3U veya PLS çalma listesi içe aktarır.</string>
+    <string name="web_remove">Kaldır</string>
+    <string name="web_remove_confirm">Bu istasyon listeden kaldırılsın mı?</string>
+    <string name="web_add_hint">Yayın adresi ya da bir M3U / PLS çalma listesinin adresi (istasyonun \"dinle\" bağlantısı).</string>
+    <string name="web_address">Adres</string>
+    <string name="web_name">Ad</string>
+    <string name="web_name_hint">İsteğe bağlı: yoksa adresin sunucu adı</string>
+    <string name="web_add_confirm">Ekle</string>
+    <string name="web_import_none">Bu dosyada istasyon bulunamadı (http / https adresli M3U veya PLS).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d istasyon eklendi</item>
+        <item quantity="other">%d istasyon eklendi</item>
+    </plurals>
+    <string name="web_catalog">Katalog</string>
+    <string name="web_region">Bölge</string>
+    <string name="web_region_all">Tüm bölgeler</string>
+    <string name="web_region_none">Ulusal / bölgesiz</string>
+    <string name="web_genre">Tür</string>
+    <string name="web_genre_all">Tüm türler</string>
+    <string name="web_region_any">Tümü</string>
+    <string name="web_genre_any">Tümü</string>
+    <string name="web_search">İstasyon ara</string>
+    <string name="web_catalog_refresh">Listeyi yeniden indir</string>
+    <string name="web_catalog_loading">İstasyon listesi indiriliyor (Radio Browser)…</string>
+    <string name="web_catalog_failed">Liste alınamadı: internet yok ya da Radio Browser sunucusuna ulaşılamıyor (Ayarlar → Logolar → sunucu).</string>
+    <string name="web_catalog_count">%1$d istasyon · %2$s · Radio Browser (topluluk listesi)</string>
+    <string name="web_streams">%d yayın</string>
+    <string name="web_save">Kaydet</string>
+    <string name="web_back_to_fm">FM %s\'e dön</string>
+    <string name="web_offer">İnternette de var: yayınını dinle</string>
+    <string name="web_offer_audio">İnternette de var (%s): yayınını dinle</string>
+    <string name="set_web">İnternet radyosu</string>
+    <string name="set_web_best">En iyi ses</string>
+    <string name="set_web_eco">Daha az veri</string>
+    <string name="set_web_quality_hint">Bir istasyonun birkaç yayını varsa: en iyi ses (FLAC, sonra en yüksek bit hızında AAC / MP3) ya da en az veri (en düşük bit hızı, en az 48 kbit/sn). 128 kbit/sn saatte yaklaşık 58 MB, 320 kbit/sn yaklaşık 144 MB kullanır.</string>
+    <string name="set_web_suggest">FM istasyonunun internet yayınını öner</string>
+    <string name="set_web_suggest_hint">FM\'de dinlenen istasyon internette de varsa ve internet çalışıyorsa FM ekranı onun yayınına geçmeyi önerir (tek dokunuş). Bulmak için RDS adı ve ülke Radio Browser\'a gönderilir.</string>
+    <string name="web_add_short">Ekle</string>
+    <string name="web_import_short">İçe aktar</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">%s logosu</string>
+    <string name="web_playing">Çalıyor</string>
+    <string name="web_catalog_update">Güncelle</string>
+    <string name="web_catalog_loading_short">İndiriliyor…</string>
+    <string name="web_source">Kaynak</string>
+    <string name="web_country">Ülke</string>
+    <string name="web_back">Geri</string>
+    <string name="web_region_other">Diğer bölgeler (%d)</string>
+    <string name="web_genre_other">Diğer türler (%d)</string>
+    <string name="web_country_other">Diğer ülkeler (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+ radyo</string>
+    <string name="dab_no_dongle">Bir DAB+ USB alıcısı takın</string>
+    <string name="dab_no_dongle_hint">Desteklenen alıcılar: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. DAB anteni alıcının SMA soketine takılır.</string>
+    <string name="dab_unsupported">Bu USB aygıtı desteklenen bir DAB+ alıcısı değil</string>
+    <string name="dab_not_responding">DAB+ alıcısı yanıt vermiyor: yeniden bağlanıyor…</string>
+    <string name="dab_scanning">İstasyon aranıyor: kanal %1$s (%2$d/%3$d), %4$d bulundu</string>
+    <string name="dab_scan">İstasyon ara</string>
+    <string name="dab_tuning">Ayarlanıyor…</string>
+    <string name="dab_no_signal">Sinyal yok: istasyon aranıyor…</string>
+    <string name="dab_weak">Zayıf sinyal</string>
+    <string name="dab_unplayable">Bu istasyon çalınamıyor</string>
+    <string name="dab_no_stations">Henüz DAB+ istasyonu yok: bandı tarayın (⟳)</string>
+    <string name="dab_scan_short">Tara</string>
+    <string name="dab_favourite_short">Favori</string>
+    <string name="dab_favourite_add">Favorilere ekle</string>
+    <string name="dab_favourite_remove">Favorilerden kaldır</string>
+    <string name="info_title">Bilgi</string>
+    <string name="info_version">Sürüm %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 LibreHU katkıda bulunanları.</string>
+    <string name="info_licence">Özgür yazılım: GNU Affero General Public License sürüm 3 veya (tercihinize göre) daha sonraki bir sürüm kapsamında, 7. bölümdeki ek koşullarla paylaşabilir ve değiştirebilirsiniz: “Based on LibreHU” ibaresini koruyun ve değiştirilmiş sürümü öyle belirtin. Değiştirilmiş bir sürümü dağıtan ya da uzaktan kullandıran, tam kaynak kodunu aynı lisansla vermelidir. Yasanın izin verdiği ölçüde garanti yoktur (bölüm 15 ve 16).</string>
+    <string name="info_source">Kaynak kodu: %1$s</string>
+    <string name="info_contact">İletişim: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Ek koşullar</string>
+    <string name="info_others">Diğer projelerin kodu, kaynakları ve verileri</string>
+    <string name="info_others_hint">Lisansını okumak için birine dokunun.</string>
+    <string name="info_close">Kapat</string>
+</resources>

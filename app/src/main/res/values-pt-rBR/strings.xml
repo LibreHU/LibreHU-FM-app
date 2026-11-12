@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Portuguese (Brazil) translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">Rádio FM</string>
+    <string name="notif_channel">Reprodução de rádio</string>
+    <string name="widget_description">Estação atual com anterior, play e próxima</string>
+    <string name="play">Tocar</string>
+    <string name="pause">Pausar</string>
+    <string name="next">Próxima estação</string>
+    <string name="previous">Estação anterior</string>
+    <string name="seek_up">Buscar para cima</string>
+    <string name="seek_down">Buscar para baixo</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Varrer a faixa</string>
+    <string name="scanning">Varrendo…</string>
+    <string name="favorites">Favoritas</string>
+    <string name="stations">Estações</string>
+    <string name="toggle_favorite">Adicionar / remover favorita</string>
+    <string name="no_favorites">Nenhuma favorita ainda: sintonize uma estação e toque na estrela.</string>
+    <string name="no_stations">Ligue o rádio e varra a faixa para listar as estações.</string>
+    <string name="off">Rádio desligado</string>
+    <string name="error_power_up">O chip FM não iniciou (/dev/fm). Veja as notas de instalação.</string>
+    <string name="error_driver">Biblioteca do driver FM indisponível neste aparelho.</string>
+    <string name="error_focus">Foco de áudio recusado (outra fonte, uma ligação?).</string>
+    <string name="error_open">Não é possível abrir /dev/fm: instale o app como app privilegiado (veja o README).</string>
+    <string name="settings">Configurações</string>
+    <string name="back">Voltar</string>
+    <string name="apply">Aplicar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Dados enviados pelas estações junto com o som e decodificados pelo chip FM: nome da estação, radiotexto, tipo de programa, informações de trânsito.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Radiotexto (música, programa…)</string>
+    <string name="set_pty">Tipo de programa (notícias, pop…)</string>
+    <string name="set_af">Frequências alternativas (AF)</string>
+    <string name="set_af_hint">Muda para outra frequência da mesma estação quando o sinal enfraquece</string>
+    <string name="set_preset_names">Nomear as favoritas com o nome RDS</string>
+    <string name="set_rt_plus">Artista e título (RT+)</string>
+    <string name="set_rt_plus_hint">Exibidos no lugar do radiotexto, aqui, no widget, na notificação e no cartão de mídia do launcher, quando a estação os informa</string>
+    <string name="set_ta">Boletins de trânsito (TA)</string>
+    <string name="set_ta_hint">Durante um boletim da estação: volume máximo enquanto o rádio toca; por cima da outra fonte (que pausa) quando você ouve outra coisa, com o rádio ligado em segundo plano. Não com o ivi-services da Jancar.</string>
+    <string name="set_rds_clock">Acertar o relógio pelo RDS</string>
+    <string name="set_rds_clock_hint">Quando o relógio da central multimídia difere mais de um minuto da hora da estação (sem GPS nem hora da rede). Algumas estações enviam a hora errada.</string>
+    <string name="set_reception">Recepção</string>
+    <string name="set_force_mono">Mono forçado</string>
+    <string name="set_force_mono_hint">Menos chiado em estações fracas, sem o estéreo</string>
+    <string name="set_force_mono_unsupported">Recusado pelo driver FM: a camada de compatibilidade de 32 bits não repassava este comando antes do kernel LibreHU r146 (zips kernel-stable / conn-modules-stable, ou o módulo de conectividade KernelSU).</string>
+    <string name="set_local_search">Busca: só estações fortes (locais)</string>
+    <string name="set_local_search_hint">A busca e a varredura só param em estações locais (cerca de 25 dBµV), não nas distantes (DX)</string>
+    <string name="set_antenna_power">Amplificador de antena</string>
+    <string name="set_antenna_power_hint">Alimentação da antena (MCU 43) enquanto o rádio FM toca, para uma antena ativa ou um amplificador de antena. Desligado: antena passiva, ou uma recepção FM mais limpa sem o amplificador</string>
+    <string name="set_history">Músicas ouvidas</string>
+    <string name="set_history_hint">Artista e título informados pelas estações (RT+), com o horário.</string>
+    <string name="set_history_empty">Nenhuma ainda: a estação precisa enviar RT+.</string>
+    <string name="set_history_clear">Limpar o histórico</string>
+    <string name="ta_announcing">Boletim de trânsito</string>
+    <string name="ta_standby">Boletins de trânsito em espera</string>
+    <string name="ta_stop">Parar</string>
+    <string name="alarm_on_air">ALERTA no ar (tipo de programa 31)</string>
+    <string name="alarm_title">Alerta: %1$s</string>
+    <string name="alarm_text">A estação transmite uma mensagem de alarme ou de emergência.</string>
+    <string name="notif_alerts">Alertas de rádio</string>
+    <string name="set_region">Faixa e região</string>
+    <string name="set_region_hint">Limites da faixa FM, passo de sintonia, deênfase do som e nomes dos tipos de programa usados na região. O rádio reinicia para aplicar uma mudança.</string>
+    <string name="set_region_auto">Automática (%1$s: %2$s)</string>
+    <string name="set_region_europe">Europa, África, Ásia</string>
+    <string name="set_region_americas">Américas, Coreia do Sul</string>
+    <string name="set_region_brazil">Brasil (faixa estendida)</string>
+    <string name="set_region_japan">Japão</string>
+    <string name="set_region_current">Em uso: %1$s–%2$s MHz, passo %3$d kHz, deênfase %4$d µs%5$s</string>
+    <string name="set_audio">Caminho do áudio</string>
+    <string name="set_audio_hint">Automático: conexão de hardware sintonizador FM → alto-falantes como o app de rádio original; senão, cópia do áudio do sintonizador. Aplicado na próxima vez que o rádio iniciar.</string>
+    <string name="set_audio_auto">Automático</string>
+    <string name="set_audio_patch">Conexão de hardware</string>
+    <string name="set_audio_render">Cópia (render)</string>
+    <string name="set_audio_current">Em uso: %1$s</string>
+    <string name="set_logos">Logos das estações</string>
+    <string name="set_logos_hint">Logos do Radio Browser, um banco de dados comunitário e aberto de estações de rádio, encontrados pelo nome RDS da estação.</string>
+    <string name="set_logos_enable">Mostrar os logos</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Só a biblioteca baixada, nunca a rede</string>
+    <string name="set_server">Servidor</string>
+    <string name="set_server_auto">Automático</string>
+    <string name="set_server_list">Listar os servidores</string>
+    <string name="set_server_loading">Carregando…</string>
+    <string name="set_server_list_failed">Lista de servidores indisponível (sem rede?).</string>
+    <string name="set_server_custom">Outro servidor (URL da API do Radio Browser)</string>
+    <string name="set_server_current">Endereço usado: %1$s</string>
+    <string name="set_country">País das estações</string>
+    <string name="set_country_auto">Aparelho (%1$s)</string>
+    <string name="set_country_other">Outro país (código ISO)</string>
+    <string name="set_library">Biblioteca offline</string>
+    <string name="set_library_empty">Nenhum logo baixado.</string>
+    <string name="set_library_info">%1$d logos (%2$s), %3$s, atualizada %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d estações</string>
+    <string name="set_library_listing">Listando as estações…</string>
+    <string name="set_library_all">Todas</string>
+    <string name="set_library_top">As %1$d mais populares</string>
+    <string name="set_library_hint">Baixa os logos das estações de %1$s do servidor escolhido, para usá-los sem internet.</string>
+    <string name="set_library_failed">Falha no download (rede ou servidor).</string>
+    <string name="set_library_download">Baixar</string>
+    <string name="set_library_delete">Excluir a biblioteca</string>
+    <string name="set_logos_clear_cache">Buscar os logos de novo</string>
+    <string-array name="pty_names">
+        <item>Nenhum</item>
+        <item>Notícias</item>
+        <item>Atualidades</item>
+        <item>Informação</item>
+        <item>Esportes</item>
+        <item>Educação</item>
+        <item>Teatro</item>
+        <item>Cultura</item>
+        <item>Ciência</item>
+        <item>Variedades</item>
+        <item>Música pop</item>
+        <item>Música rock</item>
+        <item>Música leve</item>
+        <item>Clássica leve</item>
+        <item>Clássica</item>
+        <item>Outras músicas</item>
+        <item>Meteorologia</item>
+        <item>Economia</item>
+        <item>Infantil</item>
+        <item>Sociedade</item>
+        <item>Religião</item>
+        <item>Participação por telefone</item>
+        <item>Viagens</item>
+        <item>Lazer</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Música nacional</item>
+        <item>Flashback</item>
+        <item>Folk</item>
+        <item>Documentário</item>
+        <item>Teste de alarme</item>
+        <item>Alarme</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Nenhum</item>
+        <item>Notícias</item>
+        <item>Informação</item>
+        <item>Esportes</item>
+        <item>Entrevistas</item>
+        <item>Rock</item>
+        <item>Rock clássico</item>
+        <item>Sucessos adultos</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Flashback</item>
+        <item>Música suave</item>
+        <item>Nostalgia</item>
+        <item>Jazz</item>
+        <item>Clássica</item>
+        <item>Rhythm and blues</item>
+        <item>Rhythm and blues suave</item>
+        <item>Idiomas</item>
+        <item>Música religiosa</item>
+        <item>Programas religiosos</item>
+        <item>Personalidades</item>
+        <item>Rádio pública</item>
+        <item>Universitária</item>
+        <item>Programas em espanhol</item>
+        <item>Música em espanhol</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Meteorologia</item>
+        <item>Teste de emergência</item>
+        <item>Emergência</item>
+    </string-array>
+    <string name="logo_title">Logo para %1$s MHz</string>
+    <string name="logo_hint">Encontrado pelo nome RDS no Radio Browser ou na biblioteca baixada. Você pode escolher uma imagem para esta frequência.</string>
+    <string name="logo_pick">Escolher uma imagem…</string>
+    <string name="logo_auto">Logo automático</string>
+    <string name="set_log">Log</string>
+    <string name="set_log_hint">Para um problema de FM: o estado do rádio, /dev/fm, as linhas de FM e áudio do log do sistema e as mensagens de FM do kernel, em um arquivo de texto para compartilhar. O log completo do sistema precisa de root (senão, só as linhas deste app).</string>
+    <string name="set_log_export">Exportar o log</string>
+    <string name="set_log_done">Log salvo</string>
+    <string name="set_log_failed">Log não salvo</string>
+    <string name="car_setup">Configurações</string>
+    <string name="fm_manual">Manual</string>
+    <string name="fm_station_list">Lista de estações</string>
+    <string name="fm_update_list">Atualizar a lista de estações</string>
+    <string name="fm_stop_search">Parar a busca</string>
+    <string name="fm_searching">Buscando estações… %1$s MHz</string>
+    <string name="fm_frequencies">Frequências</string>
+    <string name="fm_presets">Memórias</string>
+    <string name="fm_store_preset">Memorizar a estação</string>
+    <string name="fm_remove_preset">Remover das memórias</string>
+    <string name="fm_no_presets">Nenhuma memória ainda: Opções → Memorizar a estação.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Rádio pela internet</string>
+    <string name="web_connecting">Conectando…</string>
+    <string name="web_reconnecting">Conexão perdida, reconectando…</string>
+    <string name="web_none">Nenhuma estação de internet</string>
+    <string name="web_empty_hint">Adicione uma estação com + (endereço do stream, link M3U ou PLS) ou importe um arquivo M3U / PLS.</string>
+    <string name="web_stations">Estações de internet</string>
+    <string name="web_add">Adicionar uma estação</string>
+    <string name="web_import">Importar um arquivo M3U / PLS</string>
+    <string name="web_no_stations">Nenhuma estação de internet ainda: + adiciona uma pelo endereço, o botão de arquivo importa uma playlist M3U ou PLS.</string>
+    <string name="web_remove">Remover</string>
+    <string name="web_remove_confirm">Remover esta estação da lista?</string>
+    <string name="web_add_hint">Endereço do stream, ou endereço de uma playlist M3U / PLS (o link \"ouvir\" da estação).</string>
+    <string name="web_address">Endereço</string>
+    <string name="web_name">Nome</string>
+    <string name="web_name_hint">Opcional: senão, o host do endereço</string>
+    <string name="web_add_confirm">Adicionar</string>
+    <string name="web_import_none">Nenhuma estação encontrada neste arquivo (M3U ou PLS com endereços http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="one">%d estação adicionada</item>
+        <item quantity="other">%d estações adicionadas</item>
+    </plurals>
+    <string name="web_catalog">Catálogo</string>
+    <string name="web_region">Região</string>
+    <string name="web_region_all">Todas as regiões</string>
+    <string name="web_region_none">Nacional / sem região</string>
+    <string name="web_genre">Gênero</string>
+    <string name="web_genre_all">Todos os gêneros</string>
+    <string name="web_region_any">Todas</string>
+    <string name="web_genre_any">Todos</string>
+    <string name="web_search">Buscar uma estação</string>
+    <string name="web_catalog_refresh">Baixar a lista de novo</string>
+    <string name="web_catalog_loading">Baixando a lista de estações (Radio Browser)…</string>
+    <string name="web_catalog_failed">Lista indisponível: sem internet, ou servidor do Radio Browser inacessível (Configurações → Logos → servidor).</string>
+    <string name="web_catalog_count">%1$d estações · %2$s · Radio Browser (lista comunitária)</string>
+    <string name="web_streams">%d streams</string>
+    <string name="web_save">Salvar</string>
+    <string name="web_back_to_fm">Voltar para FM %s</string>
+    <string name="web_offer">Também na internet: ouvir o stream</string>
+    <string name="web_offer_audio">Também na internet (%s): ouvir o stream</string>
+    <string name="set_web">Rádio pela internet</string>
+    <string name="set_web_best">Melhor som</string>
+    <string name="set_web_eco">Menos dados</string>
+    <string name="set_web_quality_hint">Quando uma estação tem vários streams: o melhor som (FLAC, depois AAC / MP3 com a maior taxa de bits) ou menos dados (menor taxa, pelo menos 48 kbit/s). 128 kbit/s gastam cerca de 58 MB por hora, 320 kbit/s cerca de 144 MB.</string>
+    <string name="set_web_suggest">Oferecer o stream de internet da estação FM</string>
+    <string name="set_web_suggest_hint">Quando a estação ouvida no FM também está na internet e a internet funciona, a tela de FM oferece trocar para o stream dela (um toque). O nome RDS e o país são enviados ao Radio Browser para encontrá-la.</string>
+    <string name="web_add_short">Adicionar</string>
+    <string name="web_import_short">Importar</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo de %s</string>
+    <string name="web_playing">Tocando</string>
+    <string name="web_catalog_update">Atualizar</string>
+    <string name="web_catalog_loading_short">Baixando…</string>
+    <string name="web_source">Fonte</string>
+    <string name="web_country">País</string>
+    <string name="web_back">Voltar</string>
+    <string name="web_region_other">Outras regiões (%d)</string>
+    <string name="web_genre_other">Outros gêneros (%d)</string>
+    <string name="web_country_other">Outros países (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Rádio DAB+</string>
+    <string name="dab_no_dongle">Conecte um receptor USB DAB+</string>
+    <string name="dab_no_dongle_hint">Receptores compatíveis: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. A antena DAB vai no conector SMA do receptor.</string>
+    <string name="dab_unsupported">Este dispositivo USB não é um receptor DAB+ compatível</string>
+    <string name="dab_not_responding">O receptor DAB+ não responde: reconectando…</string>
+    <string name="dab_scanning">Procurando estações: canal %1$s (%2$d/%3$d), %4$d encontradas</string>
+    <string name="dab_scan">Procurar estações</string>
+    <string name="dab_tuning">Sintonizando…</string>
+    <string name="dab_no_signal">Sem sinal: procurando a estação…</string>
+    <string name="dab_weak">Sinal fraco</string>
+    <string name="dab_unplayable">Esta estação não pode ser reproduzida</string>
+    <string name="dab_no_stations">Nenhuma estação DAB+ ainda: varra a faixa (⟳)</string>
+    <string name="dab_scan_short">Varrer</string>
+    <string name="dab_favourite_short">Favorita</string>
+    <string name="dab_favourite_add">Adicionar às favoritas</string>
+    <string name="dab_favourite_remove">Remover das favoritas</string>
+    <string name="info_title">Informações</string>
+    <string name="info_version">Versão %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 colaboradores do LibreHU.</string>
+    <string name="info_licence">Software livre: você pode compartilhá-lo e modificá-lo nos termos da GNU Affero General Public License, versão 3 ou (a seu critério) qualquer versão posterior, com os termos adicionais da seção 7: manter o aviso “Based on LibreHU” e indicar uma versão modificada como tal. Quem distribuir uma versão modificada, ou permitir seu uso remoto, deve fornecer o código-fonte completo sob a mesma licença. Sem garantia, na medida permitida por lei (seções 15 e 16).</string>
+    <string name="info_source">Código-fonte: %1$s</string>
+    <string name="info_contact">Contato: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Termos adicionais</string>
+    <string name="info_others">Código, recursos e dados de outros projetos</string>
+    <string name="info_others_hint">Toque em um para ler a licença.</string>
+    <string name="info_close">Fechar</string>
+</resources>

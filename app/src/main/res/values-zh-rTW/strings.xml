@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chinese (Traditional) translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM 收音機</string>
+    <string name="notif_channel">收音機播放</string>
+    <string name="widget_description">目前電台，附上一台、播放和下一台按鈕</string>
+    <string name="play">播放</string>
+    <string name="pause">暫停</string>
+    <string name="next">下一個電台</string>
+    <string name="previous">上一個電台</string>
+    <string name="seek_up">向上搜尋</string>
+    <string name="seek_down">向下搜尋</string>
+    <string name="step_up">+0.1 MHz</string>
+    <string name="step_down">−0.1 MHz</string>
+    <string name="scan">掃描頻段</string>
+    <string name="scanning">正在掃描…</string>
+    <string name="favorites">我的最愛</string>
+    <string name="stations">電台</string>
+    <string name="toggle_favorite">加入 / 移除我的最愛</string>
+    <string name="no_favorites">還沒有我的最愛：調到一個電台並輕觸星號。</string>
+    <string name="no_stations">開啟收音機並掃描頻段，即可列出電台。</string>
+    <string name="off">收音機已關閉</string>
+    <string name="error_power_up">FM 晶片無法啟動（/dev/fm）。請參閱安裝說明。</string>
+    <string name="error_driver">這部裝置上沒有 FM 驅動程式庫。</string>
+    <string name="error_focus">音訊焦點遭拒（其他音源或通話中？）。</string>
+    <string name="error_open">無法開啟 /dev/fm：請將應用程式安裝為特權應用程式（見 README）。</string>
+    <string name="settings">設定</string>
+    <string name="back">返回</string>
+    <string name="apply">套用</string>
+    <string name="cancel">取消</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">電台隨聲音一起傳送、由 FM 晶片解碼的資料：電台名稱、廣播文字、節目類型、路況資訊。</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">廣播文字（歌曲、節目…）</string>
+    <string name="set_pty">節目類型（新聞、流行…）</string>
+    <string name="set_af">替代頻率（AF）</string>
+    <string name="set_af_hint">訊號變弱時切換到同一電台的其他頻率</string>
+    <string name="set_preset_names">以 RDS 名稱命名我的最愛</string>
+    <string name="set_rt_plus">演出者和標題（RT+）</string>
+    <string name="set_rt_plus_hint">電台傳送標籤時，取代廣播文字顯示在這裡、小工具、通知和啟動器的媒體卡片上</string>
+    <string name="set_ta">路況廣播（TA）</string>
+    <string name="set_ta_hint">電台播報時：收音機播放中則音量開到最大；如果您在聽別的，則蓋過其他音源（其他音源暫停），收音機在背景保持開啟。不適用於 Jancar ivi-services。</string>
+    <string name="set_rds_clock">依 RDS 校正時鐘</string>
+    <string name="set_rds_clock_hint">當車機時鐘與電台時間相差超過一分鐘時（沒有 GPS 或網路時間）。有些電台傳送的時間有誤。</string>
+    <string name="set_reception">接收</string>
+    <string name="set_force_mono">強制單聲道</string>
+    <string name="set_force_mono_hint">弱訊號電台雜音較少，但沒有立體聲</string>
+    <string name="set_force_mono_unsupported">遭 FM 驅動程式拒絕：在 LibreHU 核心 r146 之前，其 32 位元相容層不會轉送這個指令（kernel-stable / conn-modules-stable zip，或 KernelSU 連線模組）。</string>
+    <string name="set_local_search">搜尋：只找強訊號電台（本地）</string>
+    <string name="set_local_search_hint">搜尋和掃描只停在本地電台（約 25 dBµV），不停在遠距離電台（DX）</string>
+    <string name="set_antenna_power">天線放大器</string>
+    <string name="set_antenna_power_hint">FM 收音機播放時為天線供電（MCU 43），供主動式天線或天線放大器使用。關閉：被動式天線，或不用放大器讓 FM 接收更乾淨</string>
+    <string name="set_history">聽過的歌曲</string>
+    <string name="set_history_hint">電台標示的演出者和標題（RT+），附時間。</string>
+    <string name="set_history_empty">還沒有：電台必須傳送 RT+。</string>
+    <string name="set_history_clear">清除記錄</string>
+    <string name="ta_announcing">路況廣播</string>
+    <string name="ta_standby">路況廣播待命中</string>
+    <string name="ta_stop">停止</string>
+    <string name="alarm_on_air">警報播出中（節目類型 31）</string>
+    <string name="alarm_title">警報：%1$s</string>
+    <string name="alarm_text">電台正在廣播警報或緊急訊息。</string>
+    <string name="notif_alerts">收音機警報</string>
+    <string name="set_region">頻段和地區</string>
+    <string name="set_region_hint">FM 頻段範圍、調諧間隔、聲音去加重和該地區使用的節目類型名稱。收音機會重新啟動以套用變更。</string>
+    <string name="set_region_auto">自動（%1$s：%2$s）</string>
+    <string name="set_region_europe">歐洲、非洲、亞洲</string>
+    <string name="set_region_americas">美洲、南韓</string>
+    <string name="set_region_brazil">巴西（延伸頻段）</string>
+    <string name="set_region_japan">日本</string>
+    <string name="set_region_current">使用中：%1$s–%2$s MHz，間隔 %3$d kHz，去加重 %4$d µs%5$s</string>
+    <string name="set_audio">音訊路徑</string>
+    <string name="set_audio_hint">自動：像原廠收音機應用程式一樣使用硬體通路 FM 調諧器 → 喇叭，否則複製調諧器的聲音。下次啟動收音機時生效。</string>
+    <string name="set_audio_auto">自動</string>
+    <string name="set_audio_patch">硬體通路</string>
+    <string name="set_audio_render">複製（render）</string>
+    <string name="set_audio_current">使用中：%1$s</string>
+    <string name="set_logos">電台標誌</string>
+    <string name="set_logos_hint">來自 Radio Browser（開放的社群電台資料庫）的標誌，依電台的 RDS 名稱尋找。</string>
+    <string name="set_logos_enable">顯示標誌</string>
+    <string name="set_logos_offline">離線</string>
+    <string name="set_logos_offline_hint">只用已下載的圖庫，絕不連網</string>
+    <string name="set_server">伺服器</string>
+    <string name="set_server_auto">自動</string>
+    <string name="set_server_list">列出伺服器</string>
+    <string name="set_server_loading">載入中…</string>
+    <string name="set_server_list_failed">無法取得伺服器清單（沒有網路？）。</string>
+    <string name="set_server_custom">其他伺服器（Radio Browser API 網址）</string>
+    <string name="set_server_current">使用的位址：%1$s</string>
+    <string name="set_country">電台所在國家</string>
+    <string name="set_country_auto">裝置（%1$s）</string>
+    <string name="set_country_other">其他國家（ISO 代碼）</string>
+    <string name="set_library">離線圖庫</string>
+    <string name="set_library_empty">尚未下載任何標誌。</string>
+    <string name="set_library_info">%1$d 個標誌（%2$s），%3$s，更新於 %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d 個電台</string>
+    <string name="set_library_listing">正在列出電台…</string>
+    <string name="set_library_all">全部</string>
+    <string name="set_library_top">最熱門的 %1$d 個</string>
+    <string name="set_library_hint">從所選伺服器下載 %1$s 電台的標誌，以便沒有網路時使用。</string>
+    <string name="set_library_failed">下載失敗（網路或伺服器）。</string>
+    <string name="set_library_download">下載</string>
+    <string name="set_library_delete">刪除圖庫</string>
+    <string name="set_logos_clear_cache">重新尋找標誌</string>
+    <string-array name="pty_names">
+        <item>無</item>
+        <item>新聞</item>
+        <item>時事</item>
+        <item>資訊</item>
+        <item>體育</item>
+        <item>教育</item>
+        <item>廣播劇</item>
+        <item>文化</item>
+        <item>科學</item>
+        <item>綜藝</item>
+        <item>流行音樂</item>
+        <item>搖滾音樂</item>
+        <item>輕音樂</item>
+        <item>輕古典</item>
+        <item>古典</item>
+        <item>其他音樂</item>
+        <item>天氣</item>
+        <item>財經</item>
+        <item>兒童</item>
+        <item>社會</item>
+        <item>宗教</item>
+        <item>聽眾來電</item>
+        <item>旅遊</item>
+        <item>休閒</item>
+        <item>爵士</item>
+        <item>鄉村</item>
+        <item>本國音樂</item>
+        <item>懷舊金曲</item>
+        <item>民謠</item>
+        <item>紀錄節目</item>
+        <item>警報測試</item>
+        <item>警報</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>無</item>
+        <item>新聞</item>
+        <item>資訊</item>
+        <item>體育</item>
+        <item>談話</item>
+        <item>搖滾</item>
+        <item>經典搖滾</item>
+        <item>成人熱門</item>
+        <item>軟搖滾</item>
+        <item>排行榜 40</item>
+        <item>鄉村</item>
+        <item>懷舊金曲</item>
+        <item>抒情音樂</item>
+        <item>懷舊</item>
+        <item>爵士</item>
+        <item>古典</item>
+        <item>節奏藍調</item>
+        <item>輕節奏藍調</item>
+        <item>語言</item>
+        <item>宗教音樂</item>
+        <item>宗教談話</item>
+        <item>名人</item>
+        <item>公共</item>
+        <item>校園</item>
+        <item>西班牙語談話</item>
+        <item>西班牙語音樂</item>
+        <item>嘻哈</item>
+        <item></item>
+        <item></item>
+        <item>天氣</item>
+        <item>緊急廣播測試</item>
+        <item>緊急廣播</item>
+    </string-array>
+    <string name="logo_title">%1$s MHz 的標誌</string>
+    <string name="logo_hint">依 RDS 名稱在 Radio Browser 或已下載的圖庫中找到。您也可以改為這個頻率選擇一張圖片。</string>
+    <string name="logo_pick">選擇圖片…</string>
+    <string name="logo_auto">自動標誌</string>
+    <string name="set_log">記錄</string>
+    <string name="set_log_hint">針對 FM 問題：收音機狀態、/dev/fm、系統記錄中的 FM 和音訊行，以及核心的 FM 訊息，彙整成一個可分享的文字檔。完整系統記錄需要 root（否則只有本應用程式的行）。</string>
+    <string name="set_log_export">匯出記錄</string>
+    <string name="set_log_done">記錄已儲存</string>
+    <string name="set_log_failed">記錄未儲存</string>
+    <string name="car_setup">設定</string>
+    <string name="fm_manual">手動</string>
+    <string name="fm_station_list">電台清單</string>
+    <string name="fm_update_list">更新電台清單</string>
+    <string name="fm_stop_search">停止搜尋</string>
+    <string name="fm_searching">正在搜尋電台… %1$s MHz</string>
+    <string name="fm_frequencies">頻率</string>
+    <string name="fm_presets">預設電台</string>
+    <string name="fm_store_preset">儲存電台</string>
+    <string name="fm_remove_preset">從預設電台移除</string>
+    <string name="fm_no_presets">還沒有預設電台：選項 → 儲存電台。</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">網路</string>
+    <string name="web_radio">網路電台</string>
+    <string name="web_connecting">連線中…</string>
+    <string name="web_reconnecting">連線中斷，正在重新連線…</string>
+    <string name="web_none">沒有網路電台</string>
+    <string name="web_empty_hint">用 + 新增電台（串流網址、M3U 或 PLS 連結），或匯入 M3U / PLS 檔案。</string>
+    <string name="web_stations">網路電台</string>
+    <string name="web_add">新增電台</string>
+    <string name="web_import">匯入 M3U / PLS 檔案</string>
+    <string name="web_no_stations">還沒有網路電台：+ 依網址新增，檔案按鈕匯入 M3U 或 PLS 播放清單。</string>
+    <string name="web_remove">移除</string>
+    <string name="web_remove_confirm">要從清單中移除這個電台嗎？</string>
+    <string name="web_add_hint">串流網址，或 M3U / PLS 播放清單的網址（電台的「收聽」連結）。</string>
+    <string name="web_address">網址</string>
+    <string name="web_name">名稱</string>
+    <string name="web_name_hint">選填：否則使用網址的主機名稱</string>
+    <string name="web_add_confirm">新增</string>
+    <string name="web_import_none">這個檔案中找不到電台（含 http / https 網址的 M3U 或 PLS）。</string>
+    <plurals name="web_imported">
+        <item quantity="other">已新增 %d 個電台</item>
+    </plurals>
+    <string name="web_catalog">目錄</string>
+    <string name="web_region">地區</string>
+    <string name="web_region_all">所有地區</string>
+    <string name="web_region_none">全國 / 無地區</string>
+    <string name="web_genre">類型</string>
+    <string name="web_genre_all">所有類型</string>
+    <string name="web_region_any">全部</string>
+    <string name="web_genre_any">全部</string>
+    <string name="web_search">搜尋電台</string>
+    <string name="web_catalog_refresh">重新下載清單</string>
+    <string name="web_catalog_loading">正在下載電台清單（Radio Browser）…</string>
+    <string name="web_catalog_failed">無法取得清單：沒有網路，或無法連上 Radio Browser 伺服器（設定 → 標誌 → 伺服器）。</string>
+    <string name="web_catalog_count">%1$d 個電台 · %2$s · Radio Browser（社群清單）</string>
+    <string name="web_streams">%d 個串流</string>
+    <string name="web_save">儲存</string>
+    <string name="web_back_to_fm">返回 FM %s</string>
+    <string name="web_offer">網路上也有：收聽串流</string>
+    <string name="web_offer_audio">網路上也有（%s）：收聽串流</string>
+    <string name="set_web">網路電台</string>
+    <string name="set_web_best">最佳音質</string>
+    <string name="set_web_eco">節省數據用量</string>
+    <string name="set_web_quality_hint">電台有多個串流時：最佳音質（FLAC，其次是位元率最高的 AAC / MP3）或最省數據（位元率最低，至少 48 kbit/s）。128 kbit/s 每小時約 58 MB，320 kbit/s 約 144 MB。</string>
+    <string name="set_web_suggest">推薦 FM 電台的網路串流</string>
+    <string name="set_web_suggest_hint">當 FM 收聽的電台在網路上也有且網路可用時，FM 畫面會建議切換到它的串流（輕觸一下）。會將 RDS 名稱和國家傳送給 Radio Browser 以便尋找。</string>
+    <string name="web_add_short">新增</string>
+    <string name="web_import_short">匯入</string>
+    <string name="web_logo">標誌</string>
+    <string name="web_logo_title">%s 的標誌</string>
+    <string name="web_playing">正在播放</string>
+    <string name="web_catalog_update">更新</string>
+    <string name="web_catalog_loading_short">下載中…</string>
+    <string name="web_source">來源</string>
+    <string name="web_country">國家</string>
+    <string name="web_back">返回</string>
+    <string name="web_region_other">其他地區（%d）</string>
+    <string name="web_genre_other">其他類型（%d）</string>
+    <string name="web_country_other">其他國家（%d）</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+ 收音機</string>
+    <string name="dab_no_dongle">請插入 DAB+ USB 接收器</string>
+    <string name="dab_no_dongle_hint">支援的接收器：C100 / DTR-100（XTRONS、Joying、Pumpkin、Dasaita…）、Si4684（Eonon A503）、Siano SMS2160。DAB 天線接在接收器的 SMA 插座上。</string>
+    <string name="dab_unsupported">這個 USB 裝置不是支援的 DAB+ 接收器</string>
+    <string name="dab_not_responding">DAB+ 接收器沒有回應：正在重新連線…</string>
+    <string name="dab_scanning">正在搜尋電台：頻道 %1$s（%2$d/%3$d），已找到 %4$d 個</string>
+    <string name="dab_scan">搜尋電台</string>
+    <string name="dab_tuning">調諧中…</string>
+    <string name="dab_no_signal">沒有訊號：正在尋找電台…</string>
+    <string name="dab_weak">訊號微弱</string>
+    <string name="dab_unplayable">無法播放這個電台</string>
+    <string name="dab_no_stations">還沒有 DAB+ 電台：請掃描頻段（⟳）</string>
+    <string name="dab_scan_short">掃描</string>
+    <string name="dab_favourite_short">我的最愛</string>
+    <string name="dab_favourite_add">加入我的最愛</string>
+    <string name="dab_favourite_remove">從我的最愛移除</string>
+    <string name="info_title">關於</string>
+    <string name="info_version">版本 %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 LibreHU 貢獻者。</string>
+    <string name="info_licence">自由軟體：您可以依據 GNU Affero 通用公共授權第 3 版或（由您選擇）任何更新版本分享和修改它，並遵守其第 7 條的附加條款：保留「Based on LibreHU」聲明，並將修改版標示為修改版。散布修改版或讓他人遠端使用修改版的人，必須以相同授權提供其完整原始碼。在法律允許的範圍內不提供任何擔保（第 15 和 16 條）。</string>
+    <string name="info_source">原始碼：%1$s</string>
+    <string name="info_contact">聯絡方式：librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">附加條款</string>
+    <string name="info_others">其他專案的程式碼、資源和資料</string>
+    <string name="info_others_hint">點按一項查看其授權。</string>
+    <string name="info_close">關閉</string>
+</resources>
