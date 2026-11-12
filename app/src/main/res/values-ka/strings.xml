@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Georgian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM რადიო</string>
+    <string name="notif_channel">რადიოს დაკვრა</string>
+    <string name="widget_description">მიმდინარე სადგური წინა, დაკვრისა და შემდეგის ღილაკებით</string>
+    <string name="play">დაკვრა</string>
+    <string name="pause">პაუზა</string>
+    <string name="next">შემდეგი სადგური</string>
+    <string name="previous">წინა სადგური</string>
+    <string name="seek_up">ძებნა ზემოთ</string>
+    <string name="seek_down">ძებნა ქვემოთ</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">დიაპაზონის სკანირება</string>
+    <string name="scanning">სკანირება…</string>
+    <string name="favorites">რჩეულები</string>
+    <string name="stations">სადგურები</string>
+    <string name="toggle_favorite">რჩეულებში დამატება / წაშლა</string>
+    <string name="no_favorites">რჩეულები ჯერ არ არის: დააყენეთ სადგური და შეეხეთ ვარსკვლავს.</string>
+    <string name="no_stations">ჩართეთ რადიო და დაასკანირეთ დიაპაზონი სადგურების სიის მისაღებად.</string>
+    <string name="off">რადიო გამორთულია</string>
+    <string name="error_power_up">FM ჩიპი არ ჩაირთო (/dev/fm). იხილეთ ინსტალაციის შენიშვნები.</string>
+    <string name="error_driver">FM დრაივერის ბიბლიოთეკა ამ მოწყობილობაზე მიუწვდომელია.</string>
+    <string name="error_focus">აუდიო ფოკუსი უარყოფილია (სხვა წყარო, ზარი?).</string>
+    <string name="error_open">/dev/fm ვერ იხსნება: დააინსტალირეთ აპი როგორც პრივილეგირებული აპი (იხ. README).</string>
+    <string name="settings">პარამეტრები</string>
+    <string name="back">უკან</string>
+    <string name="apply">გამოყენება</string>
+    <string name="cancel">გაუქმება</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">მონაცემები, რომლებსაც სადგურები ხმასთან ერთად გადასცემენ და FM ჩიპი გაშიფრავს: სადგურის სახელი, რადიოტექსტი, პროგრამის ტიპი, საგზაო ინფორმაცია.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">რადიოტექსტი (სიმღერა, გადაცემა…)</string>
+    <string name="set_pty">პროგრამის ტიპი (ახალი ამბები, პოპი…)</string>
+    <string name="set_af">ალტერნატიული სიხშირეები (AF)</string>
+    <string name="set_af_hint">სიგნალის შესუსტებისას იმავე სადგურის სხვა სიხშირეზე გადართავს</string>
+    <string name="set_preset_names">რჩეულებს RDS სახელი დაარქვას</string>
+    <string name="set_rt_plus">შემსრულებელი და სათაური (RT+)</string>
+    <string name="set_rt_plus_hint">რადიოტექსტის ნაცვლად ჩანს აქ, ვიჯეტზე, შეტყობინებაში და ლაუნჩერის მედიაბარათზე, როცა სადგური მათ მონიშნავს</string>
+    <string name="set_ta">საგზაო განცხადებები (TA)</string>
+    <string name="set_ta_hint">სადგურის განცხადებისას: სრული ხმა, როცა რადიო უკრავს; სხვა წყაროზე მაღლა (ის პაუზდება), როცა სხვა რამეს უსმენთ და რადიო ფონურად ჩართულია. არა Jancar-ის ivi-services-თან.</string>
+    <string name="set_rds_clock">საათის დაყენება RDS-ით</string>
+    <string name="set_rds_clock_hint">როცა მაგნიტოლის საათი სადგურის დროს ერთ წუთზე მეტით სცდება (GPS-ის ან ქსელის დროის გარეშე). ზოგი სადგური არასწორ დროს გადასცემს.</string>
+    <string name="set_reception">მიღება</string>
+    <string name="set_force_mono">იძულებითი მონო</string>
+    <string name="set_force_mono_hint">ნაკლები შიშინი სუსტ სადგურებზე, სტერეოს გარეშე</string>
+    <string name="set_force_mono_unsupported">FM დრაივერმა უარყო: მისი 32-ბიტიანი თავსებადობის ფენა ამ ბრძანებას LibreHU-ს r146 ბირთვამდე არ გადასცემდა (kernel-stable / conn-modules-stable zip ან KernelSU კავშირის მოდული).</string>
+    <string name="set_local_search">ძებნა: მხოლოდ ძლიერი სადგურები (ადგილობრივი)</string>
+    <string name="set_local_search_hint">ძებნა და სკანირება ჩერდება მხოლოდ ადგილობრივ სადგურებზე (დაახლ. 25 dBµV), არა შორეულებზე (DX)</string>
+    <string name="set_antenna_power">ანტენის გამაძლიერებელი</string>
+    <string name="set_antenna_power_hint">ანტენის კვება (MCU 43), სანამ FM რადიო უკრავს, აქტიური ანტენისთვის ან ანტენის გამაძლიერებლისთვის. გამორთული: პასიური ანტენა, ან უფრო სუფთა FM მიღება გამაძლიერებლის გარეშე</string>
+    <string name="set_history">მოსმენილი სიმღერები</string>
+    <string name="set_history_hint">სადგურების მიერ მონიშნული შემსრულებელი და სათაური (RT+), დროით.</string>
+    <string name="set_history_empty">ჯერ არაფერი: სადგურმა უნდა გადასცეს RT+.</string>
+    <string name="set_history_clear">ისტორიის გასუფთავება</string>
+    <string name="ta_announcing">საგზაო განცხადება</string>
+    <string name="ta_standby">საგზაო განცხადებები მოლოდინში</string>
+    <string name="ta_stop">შეჩერება</string>
+    <string name="alarm_on_air">განგაში ეთერში (პროგრამის ტიპი 31)</string>
+    <string name="alarm_title">განგაში: %1$s</string>
+    <string name="alarm_text">სადგური გადასცემს განგაშის ან საგანგებო შეტყობინებას.</string>
+    <string name="notif_alerts">რადიოს გაფრთხილებები</string>
+    <string name="set_region">დიაპაზონი და რეგიონი</string>
+    <string name="set_region_hint">FM დიაპაზონის საზღვრები, აწყობის ბიჯი, ხმის დე-ემფაზისი და რეგიონში გამოყენებული პროგრამის ტიპების სახელები. ცვლილების გამოსაყენებლად რადიო გადაიტვირთება.</string>
+    <string name="set_region_auto">ავტომატური (%1$s: %2$s)</string>
+    <string name="set_region_europe">ევროპა, აფრიკა, აზია</string>
+    <string name="set_region_americas">ამერიკა, სამხრეთ კორეა</string>
+    <string name="set_region_brazil">ბრაზილია (გაფართოებული დიაპაზონი)</string>
+    <string name="set_region_japan">იაპონია</string>
+    <string name="set_region_current">გამოიყენება: %1$s–%2$s MHz, ბიჯი %3$d kHz, დე-ემფაზისი %4$d µs%5$s</string>
+    <string name="set_audio">აუდიო გზა</string>
+    <string name="set_audio_hint">ავტომატური: აპარატული კავშირი FM ტიუნერი → დინამიკები, როგორც ორიგინალ რადიო აპში, თორემ ტიუნერის ხმის ასლი. გამოიყენება რადიოს შემდეგ ჩართვაზე.</string>
+    <string name="set_audio_auto">ავტომატური</string>
+    <string name="set_audio_patch">აპარატული კავშირი</string>
+    <string name="set_audio_render">ასლი (render)</string>
+    <string name="set_audio_current">გამოიყენება: %1$s</string>
+    <string name="set_logos">სადგურების ლოგოები</string>
+    <string name="set_logos_hint">ლოგოები Radio Browser-იდან — რადიოსადგურების ღია, საზოგადოების მიერ წარმოებული ბაზიდან — მოძებნილი სადგურის RDS სახელით.</string>
+    <string name="set_logos_enable">ლოგოების ჩვენება</string>
+    <string name="set_logos_offline">ოფლაინ</string>
+    <string name="set_logos_offline_hint">მხოლოდ ჩამოტვირთული ბიბლიოთეკა, ქსელი არასოდეს</string>
+    <string name="set_server">სერვერი</string>
+    <string name="set_server_auto">ავტომატური</string>
+    <string name="set_server_list">სერვერების სია</string>
+    <string name="set_server_loading">იტვირთება…</string>
+    <string name="set_server_list_failed">სერვერების სია მიუწვდომელია (ქსელი არ არის?).</string>
+    <string name="set_server_custom">სხვა სერვერი (Radio Browser API-ის URL)</string>
+    <string name="set_server_current">გამოყენებული მისამართი: %1$s</string>
+    <string name="set_country">სადგურების ქვეყანა</string>
+    <string name="set_country_auto">მოწყობილობა (%1$s)</string>
+    <string name="set_country_other">სხვა ქვეყანა (ISO კოდი)</string>
+    <string name="set_library">ოფლაინ ბიბლიოთეკა</string>
+    <string name="set_library_empty">ლოგოები არ არის ჩამოტვირთული.</string>
+    <string name="set_library_info">%1$d ლოგო (%2$s), %3$s, განახლდა %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d სადგური</string>
+    <string name="set_library_listing">სადგურების სიის მიღება…</string>
+    <string name="set_library_all">ყველა</string>
+    <string name="set_library_top">ყველაზე პოპულარული %1$d</string>
+    <string name="set_library_hint">ჩამოტვირთავს %1$s-ის სადგურების ლოგოებს არჩეული სერვერიდან, ინტერნეტის გარეშე გამოსაყენებლად.</string>
+    <string name="set_library_failed">ჩამოტვირთვა ვერ მოხერხდა (ქსელი ან სერვერი).</string>
+    <string name="set_library_download">ჩამოტვირთვა</string>
+    <string name="set_library_delete">ბიბლიოთეკის წაშლა</string>
+    <string name="set_logos_clear_cache">ლოგოების თავიდან ძებნა</string>
+    <string-array name="pty_names">
+        <item>არცერთი</item>
+        <item>ახალი ამბები</item>
+        <item>მიმდინარე მოვლენები</item>
+        <item>ინფორმაცია</item>
+        <item>სპორტი</item>
+        <item>განათლება</item>
+        <item>დრამა</item>
+        <item>კულტურა</item>
+        <item>მეცნიერება</item>
+        <item>სხვადასხვა</item>
+        <item>პოპ-მუსიკა</item>
+        <item>როკ-მუსიკა</item>
+        <item>მსუბუქი მუსიკა</item>
+        <item>მსუბუქი კლასიკა</item>
+        <item>კლასიკა</item>
+        <item>სხვა მუსიკა</item>
+        <item>ამინდი</item>
+        <item>ფინანსები</item>
+        <item>ბავშვები</item>
+        <item>საზოგადოება</item>
+        <item>რელიგია</item>
+        <item>ზარები ეთერში</item>
+        <item>მოგზაურობა</item>
+        <item>დასვენება</item>
+        <item>ჯაზი</item>
+        <item>ქანთრი</item>
+        <item>ეროვნული მუსიკა</item>
+        <item>ძველი ჰიტები</item>
+        <item>ფოლკი</item>
+        <item>დოკუმენტური</item>
+        <item>განგაშის ტესტი</item>
+        <item>განგაში</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>არცერთი</item>
+        <item>ახალი ამბები</item>
+        <item>ინფორმაცია</item>
+        <item>სპორტი</item>
+        <item>სასაუბრო</item>
+        <item>როკი</item>
+        <item>კლასიკური როკი</item>
+        <item>ჰიტები უფროსებისთვის</item>
+        <item>სოფტ-როკი</item>
+        <item>ტოპ 40</item>
+        <item>ქანთრი</item>
+        <item>ძველი ჰიტები</item>
+        <item>რბილი მუსიკა</item>
+        <item>ნოსტალგია</item>
+        <item>ჯაზი</item>
+        <item>კლასიკა</item>
+        <item>რიტმ-ენდ-ბლუზი</item>
+        <item>რბილი რიტმ-ენდ-ბლუზი</item>
+        <item>ენები</item>
+        <item>რელიგიური მუსიკა</item>
+        <item>რელიგიური საუბრები</item>
+        <item>პიროვნებები</item>
+        <item>საზოგადოებრივი</item>
+        <item>სტუდენტური</item>
+        <item>საუბრები ესპანურად</item>
+        <item>მუსიკა ესპანურად</item>
+        <item>ჰიპ-ჰოპი</item>
+        <item></item>
+        <item></item>
+        <item>ამინდი</item>
+        <item>საგანგებო ტესტი</item>
+        <item>საგანგებო სიტუაცია</item>
+    </string-array>
+    <string name="logo_title">ლოგო %1$s MHz-ისთვის</string>
+    <string name="logo_hint">ნაპოვნია RDS სახელით Radio Browser-ში ან ჩამოტვირთულ ბიბლიოთეკაში. სანაცვლოდ შეგიძლიათ ამ სიხშირისთვის სურათი აირჩიოთ.</string>
+    <string name="logo_pick">სურათის არჩევა…</string>
+    <string name="logo_auto">ავტომატური ლოგო</string>
+    <string name="set_log">ჟურნალი</string>
+    <string name="set_log_hint">FM პრობლემისთვის: რადიოს მდგომარეობა, /dev/fm, სისტემური ჟურნალის FM და აუდიო ხაზები და ბირთვის FM შეტყობინებები, ერთ გასაზიარებელ ტექსტურ ფაილში. სრულ სისტემურ ჟურნალს root სჭირდება (თორემ მხოლოდ ამ აპის ხაზები).</string>
+    <string name="set_log_export">ჟურნალის ექსპორტი</string>
+    <string name="set_log_done">ჟურნალი შენახულია</string>
+    <string name="set_log_failed">ჟურნალი ვერ შეინახა</string>
+    <string name="car_setup">პარამეტრები</string>
+    <string name="fm_manual">ხელით</string>
+    <string name="fm_station_list">სადგურების სია</string>
+    <string name="fm_update_list">სადგურების სიის განახლება</string>
+    <string name="fm_stop_search">ძებნის შეჩერება</string>
+    <string name="fm_searching">რადიოსადგურების ძებნა… %1$s MHz</string>
+    <string name="fm_frequencies">სიხშირეები</string>
+    <string name="fm_presets">შენახული სადგურები</string>
+    <string name="fm_store_preset">სადგურის შენახვა</string>
+    <string name="fm_remove_preset">შენახულებიდან წაშლა</string>
+    <string name="fm_no_presets">შენახული სადგურები ჯერ არ არის: ოფციები → სადგურის შენახვა.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">ინტერნეტი</string>
+    <string name="web_radio">ინტერნეტ-რადიო</string>
+    <string name="web_connecting">დაკავშირება…</string>
+    <string name="web_reconnecting">კავშირი გაწყდა, ხელახლა დაკავშირება…</string>
+    <string name="web_none">ინტერნეტ-სადგური არ არის</string>
+    <string name="web_empty_hint">დაამატეთ სადგური + ღილაკით (ნაკადის მისამართი, M3U ან PLS ბმული) ან შემოიტანეთ M3U / PLS ფაილი.</string>
+    <string name="web_stations">ინტერნეტ-სადგურები</string>
+    <string name="web_add">სადგურის დამატება</string>
+    <string name="web_import">M3U / PLS ფაილის შემოტანა</string>
+    <string name="web_no_stations">ინტერნეტ-სადგურები ჯერ არ არის: + ამატებს სადგურს მისამართით, ფაილის ღილაკი შემოიტანს M3U ან PLS სიას.</string>
+    <string name="web_remove">წაშლა</string>
+    <string name="web_remove_confirm">წაიშალოს ეს სადგური სიიდან?</string>
+    <string name="web_add_hint">ნაკადის მისამართი ან M3U / PLS სიის მისამართი (სადგურის „მოსმენის“ ბმული).</string>
+    <string name="web_address">მისამართი</string>
+    <string name="web_name">სახელი</string>
+    <string name="web_name_hint">არასავალდებულო: თორემ მისამართის ჰოსტი</string>
+    <string name="web_add_confirm">დამატება</string>
+    <string name="web_import_none">ამ ფაილში სადგური ვერ მოიძებნა (M3U ან PLS http / https მისამართებით).</string>
+    <plurals name="web_imported">
+        <item quantity="one">დაემატა %d სადგური</item>
+        <item quantity="other">დაემატა %d სადგური</item>
+    </plurals>
+    <string name="web_catalog">კატალოგი</string>
+    <string name="web_region">რეგიონი</string>
+    <string name="web_region_all">ყველა რეგიონი</string>
+    <string name="web_region_none">ეროვნული / რეგიონის გარეშე</string>
+    <string name="web_genre">ჟანრი</string>
+    <string name="web_genre_all">ყველა ჟანრი</string>
+    <string name="web_region_any">ყველა</string>
+    <string name="web_genre_any">ყველა</string>
+    <string name="web_search">სადგურის ძებნა</string>
+    <string name="web_catalog_refresh">სიის თავიდან ჩამოტვირთვა</string>
+    <string name="web_catalog_loading">სადგურების სიის ჩამოტვირთვა (Radio Browser)…</string>
+    <string name="web_catalog_failed">სია მიუწვდომელია: ინტერნეტი არ არის ან Radio Browser-ის სერვერი მიუწვდომელია (პარამეტრები → ლოგოები → სერვერი).</string>
+    <string name="web_catalog_count">%1$d სადგური · %2$s · Radio Browser (საზოგადოების სია)</string>
+    <string name="web_streams">%d ნაკადი</string>
+    <string name="web_save">შენახვა</string>
+    <string name="web_back_to_fm">FM %s-ზე დაბრუნება</string>
+    <string name="web_offer">ინტერნეტშიც არის: ნაკადის მოსმენა</string>
+    <string name="web_offer_audio">ინტერნეტშიც არის (%s): ნაკადის მოსმენა</string>
+    <string name="set_web">ინტერნეტ-რადიო</string>
+    <string name="set_web_best">საუკეთესო ხმა</string>
+    <string name="set_web_eco">ნაკლები ტრაფიკი</string>
+    <string name="set_web_quality_hint">როცა სადგურს რამდენიმე ნაკადი აქვს: საუკეთესო ხმა (FLAC, შემდეგ ყველაზე მაღალი ბიტრეიტის AAC / MP3) ან ყველაზე ნაკლები ტრაფიკი (ყველაზე დაბალი ბიტრეიტი, მინიმუმ 48 kbit/s). 128 kbit/s საათში დაახლ. 58 MB-ს ხარჯავს, 320 kbit/s — დაახლ. 144 MB-ს.</string>
+    <string name="set_web_suggest">FM სადგურის ინტერნეტ-ნაკადის შეთავაზება</string>
+    <string name="set_web_suggest_hint">როცა FM-ზე მოსმენილი სადგური ინტერნეტშიც არის და ინტერნეტი მუშაობს, FM ეკრანი მის ნაკადზე გადასვლას შემოგთავაზებთ (ერთი შეხება). მის მოსაძებნად RDS სახელი და ქვეყანა Radio Browser-ს ეგზავნება.</string>
+    <string name="web_add_short">დამატება</string>
+    <string name="web_import_short">შემოტანა</string>
+    <string name="web_logo">ლოგო</string>
+    <string name="web_logo_title">%s-ის ლოგო</string>
+    <string name="web_playing">უკრავს</string>
+    <string name="web_catalog_update">განახლება</string>
+    <string name="web_catalog_loading_short">ჩამოტვირთვა…</string>
+    <string name="web_source">წყარო</string>
+    <string name="web_country">ქვეყანა</string>
+    <string name="web_back">უკან</string>
+    <string name="web_region_other">სხვა რეგიონები (%d)</string>
+    <string name="web_genre_other">სხვა ჟანრები (%d)</string>
+    <string name="web_country_other">სხვა ქვეყნები (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">DAB+ რადიო</string>
+    <string name="dab_no_dongle">შეაერთეთ DAB+ USB მიმღები</string>
+    <string name="dab_no_dongle_hint">მხარდაჭერილი მიმღებები: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. DAB ანტენა მიმღების SMA ბუდეს უერთდება.</string>
+    <string name="dab_unsupported">ეს USB მოწყობილობა მხარდაჭერილი DAB+ მიმღები არ არის</string>
+    <string name="dab_not_responding">DAB+ მიმღები არ პასუხობს: ხელახლა დაკავშირება…</string>
+    <string name="dab_scanning">სადგურების ძებნა: არხი %1$s (%2$d/%3$d), ნაპოვნია %4$d</string>
+    <string name="dab_scan">სადგურების ძებნა</string>
+    <string name="dab_tuning">აწყობა…</string>
+    <string name="dab_no_signal">სიგნალი არ არის: სადგურის ძებნა…</string>
+    <string name="dab_weak">სუსტი სიგნალი</string>
+    <string name="dab_unplayable">ამ სადგურის დაკვრა შეუძლებელია</string>
+    <string name="dab_no_stations">DAB+ სადგურები ჯერ არ არის: დაასკანირეთ დიაპაზონი (⟳)</string>
+    <string name="dab_scan_short">სკანირება</string>
+    <string name="dab_favourite_short">რჩეული</string>
+    <string name="dab_favourite_add">რჩეულებში დამატება</string>
+    <string name="dab_favourite_remove">რჩეულებიდან წაშლა</string>
+    <string name="info_title">ინფორმაცია</string>
+    <string name="info_version">ვერსია %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 LibreHU-ის მონაწილეები.</string>
+    <string name="info_licence">თავისუფალი პროგრამა: შეგიძლიათ გააზიაროთ და შეცვალოთ GNU Affero General Public License-ის მე-3 ან (თქვენი არჩევით) ნებისმიერი უფრო ახალი ვერსიით, მისი მე-7 ნაწილის დამატებითი პირობებით: შეინარჩუნეთ წარწერა “Based on LibreHU” და შეცვლილი ვერსია მონიშნეთ შეცვლილად. ვინც შეცვლილ ვერსიას ავრცელებს ან დისტანციურად გამოყენების საშუალებას იძლევა, ვალდებულია მისი სრული საწყისი კოდი იმავე ლიცენზიით მისცეს. გარანტიის გარეშე, კანონით დაშვებულ ფარგლებში (ნაწილები 15 და 16).</string>
+    <string name="info_source">საწყისი კოდი: %1$s</string>
+    <string name="info_contact">კონტაქტი: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">დამატებითი პირობები</string>
+    <string name="info_others">სხვა პროექტების კოდი, რესურსები და მონაცემები</string>
+    <string name="info_others_hint">შეეხეთ ერთ-ერთს მისი ლიცენზიის წასაკითხად.</string>
+    <string name="info_close">დახურვა</string>
+</resources>

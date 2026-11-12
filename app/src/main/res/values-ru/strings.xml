@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">FM-радио</string>
+    <string name="notif_channel">Воспроизведение радио</string>
+    <string name="widget_description">Текущая станция с кнопками «назад», «воспроизведение» и «вперёд»</string>
+    <string name="play">Воспроизвести</string>
+    <string name="pause">Пауза</string>
+    <string name="next">Следующая станция</string>
+    <string name="previous">Предыдущая станция</string>
+    <string name="seek_up">Поиск вверх</string>
+    <string name="seek_down">Поиск вниз</string>
+    <string name="step_up">+0,1 МГц</string>
+    <string name="step_down">−0,1 МГц</string>
+    <string name="scan">Сканировать диапазон</string>
+    <string name="scanning">Сканирование…</string>
+    <string name="favorites">Избранное</string>
+    <string name="stations">Станции</string>
+    <string name="toggle_favorite">Добавить / убрать из избранного</string>
+    <string name="no_favorites">Избранного пока нет: настройтесь на станцию и нажмите звёздочку.</string>
+    <string name="no_stations">Включите радио и просканируйте диапазон, чтобы получить список станций.</string>
+    <string name="off">Радио выключено</string>
+    <string name="error_power_up">FM-чип не запустился (/dev/fm). См. инструкцию по установке.</string>
+    <string name="error_driver">Библиотека драйвера FM недоступна на этом устройстве.</string>
+    <string name="error_focus">Аудиофокус не получен (другой источник, звонок?).</string>
+    <string name="error_open">Не удаётся открыть /dev/fm: установите приложение как привилегированное (см. README).</string>
+    <string name="settings">Настройки</string>
+    <string name="back">Назад</string>
+    <string name="apply">Применить</string>
+    <string name="cancel">Отмена</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Данные, которые станции передают вместе со звуком и декодирует FM-чип: название станции, радиотекст, тип программы, информация о пробках.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Радиотекст (песня, передача…)</string>
+    <string name="set_pty">Тип программы (новости, поп…)</string>
+    <string name="set_af">Альтернативные частоты (AF)</string>
+    <string name="set_af_hint">Переключает на другую частоту той же станции, когда сигнал слабеет</string>
+    <string name="set_preset_names">Называть избранное по имени RDS</string>
+    <string name="set_rt_plus">Исполнитель и название (RT+)</string>
+    <string name="set_rt_plus_hint">Показываются вместо радиотекста — здесь, в виджете, в уведомлении и на медиакарточке лаунчера, когда станция их передаёт</string>
+    <string name="set_ta">Дорожные сообщения (TA)</string>
+    <string name="set_ta_hint">Во время сообщения станции: полная громкость, пока играет радио; поверх другого источника (он ставится на паузу), если вы слушаете что-то другое, а радио остаётся включённым в фоне. Не с ivi-services от Jancar.</string>
+    <string name="set_rds_clock">Устанавливать часы по RDS</string>
+    <string name="set_rds_clock_hint">Когда часы магнитолы расходятся с временем станции больше чем на минуту (без GPS и сетевого времени). Некоторые станции передают неверное время.</string>
+    <string name="set_reception">Приём</string>
+    <string name="set_force_mono">Принудительное моно</string>
+    <string name="set_force_mono_hint">Меньше шума на слабых станциях, без стерео</string>
+    <string name="set_force_mono_unsupported">Отклонено драйвером FM: его 32-битный слой совместимости не передавал эту команду до ядра LibreHU r146 (zip kernel-stable / conn-modules-stable или модуль связи KernelSU).</string>
+    <string name="set_local_search">Поиск: только сильные станции (местные)</string>
+    <string name="set_local_search_hint">Поиск и сканирование останавливаются только на местных станциях (около 25 дБмкВ), не на дальних (DX)</string>
+    <string name="set_antenna_power">Антенный усилитель</string>
+    <string name="set_antenna_power_hint">Питание антенны (MCU 43), пока играет FM-радио, для активной антенны или антенного усилителя. Выкл.: пассивная антенна или более чистый приём FM без усилителя</string>
+    <string name="set_history">Прослушанные песни</string>
+    <string name="set_history_hint">Исполнитель и название от станций (RT+), со временем.</string>
+    <string name="set_history_empty">Пока нет: станция должна передавать RT+.</string>
+    <string name="set_history_clear">Очистить историю</string>
+    <string name="ta_announcing">Дорожное сообщение</string>
+    <string name="ta_standby">Дорожные сообщения в ожидании</string>
+    <string name="ta_stop">Остановить</string>
+    <string name="alarm_on_air">ТРЕВОГА в эфире (тип программы 31)</string>
+    <string name="alarm_title">Тревога: %1$s</string>
+    <string name="alarm_text">Станция передаёт сигнал тревоги или экстренное сообщение.</string>
+    <string name="notif_alerts">Оповещения радио</string>
+    <string name="set_region">Диапазон и регион</string>
+    <string name="set_region_hint">Границы FM-диапазона, шаг настройки, частотная коррекция звука и названия типов программ, принятые в регионе. Для применения изменения радио перезапускается.</string>
+    <string name="set_region_auto">Автоматически (%1$s: %2$s)</string>
+    <string name="set_region_europe">Европа, Африка, Азия</string>
+    <string name="set_region_americas">Америка, Южная Корея</string>
+    <string name="set_region_brazil">Бразилия (расширенный диапазон)</string>
+    <string name="set_region_japan">Япония</string>
+    <string name="set_region_current">Используется: %1$s–%2$s МГц, шаг %3$d кГц, коррекция %4$d мкс%5$s</string>
+    <string name="set_audio">Аудиотракт</string>
+    <string name="set_audio_hint">Автоматически: аппаратный патч FM-тюнер → динамики, как у штатного радио, иначе копия звука тюнера. Применяется при следующем запуске радио.</string>
+    <string name="set_audio_auto">Автоматически</string>
+    <string name="set_audio_patch">Аппаратный патч</string>
+    <string name="set_audio_render">Копия (render)</string>
+    <string name="set_audio_current">Используется: %1$s</string>
+    <string name="set_logos">Логотипы станций</string>
+    <string name="set_logos_hint">Логотипы из Radio Browser — открытой общественной базы радиостанций, найденные по имени станции в RDS.</string>
+    <string name="set_logos_enable">Показывать логотипы</string>
+    <string name="set_logos_offline">Офлайн</string>
+    <string name="set_logos_offline_hint">Только загруженная библиотека, без сети</string>
+    <string name="set_server">Сервер</string>
+    <string name="set_server_auto">Автоматически</string>
+    <string name="set_server_list">Список серверов</string>
+    <string name="set_server_loading">Загрузка…</string>
+    <string name="set_server_list_failed">Список серверов недоступен (нет сети?).</string>
+    <string name="set_server_custom">Другой сервер (URL API Radio Browser)</string>
+    <string name="set_server_current">Используемый адрес: %1$s</string>
+    <string name="set_country">Страна станций</string>
+    <string name="set_country_auto">Устройство (%1$s)</string>
+    <string name="set_country_other">Другая страна (код ISO)</string>
+    <string name="set_library">Офлайн-библиотека</string>
+    <string name="set_library_empty">Логотипы не загружены.</string>
+    <string name="set_library_info">Логотипов: %1$d (%2$s), %3$s, обновлено %4$s</string>
+    <string name="set_library_progress">Станций: %1$d / %2$d</string>
+    <string name="set_library_listing">Получение списка станций…</string>
+    <string name="set_library_all">Все</string>
+    <string name="set_library_top">Самые популярные (%1$d)</string>
+    <string name="set_library_hint">Загружает логотипы станций страны %1$s с выбранного сервера, чтобы использовать их без интернета.</string>
+    <string name="set_library_failed">Ошибка загрузки (сеть или сервер).</string>
+    <string name="set_library_download">Загрузить</string>
+    <string name="set_library_delete">Удалить библиотеку</string>
+    <string name="set_logos_clear_cache">Заново искать логотипы</string>
+    <string-array name="pty_names">
+        <item>Нет</item>
+        <item>Новости</item>
+        <item>Текущие события</item>
+        <item>Информация</item>
+        <item>Спорт</item>
+        <item>Образование</item>
+        <item>Радиоспектакль</item>
+        <item>Культура</item>
+        <item>Наука</item>
+        <item>Разное</item>
+        <item>Поп-музыка</item>
+        <item>Рок-музыка</item>
+        <item>Лёгкая музыка</item>
+        <item>Лёгкая классика</item>
+        <item>Классика</item>
+        <item>Другая музыка</item>
+        <item>Погода</item>
+        <item>Финансы</item>
+        <item>Детям</item>
+        <item>Общество</item>
+        <item>Религия</item>
+        <item>Звонки в эфир</item>
+        <item>Путешествия</item>
+        <item>Досуг</item>
+        <item>Джаз</item>
+        <item>Кантри</item>
+        <item>Национальная музыка</item>
+        <item>Ретро</item>
+        <item>Фолк</item>
+        <item>Документальное</item>
+        <item>Тест тревоги</item>
+        <item>Тревога</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Нет</item>
+        <item>Новости</item>
+        <item>Информация</item>
+        <item>Спорт</item>
+        <item>Разговорное</item>
+        <item>Рок</item>
+        <item>Классический рок</item>
+        <item>Хиты для взрослых</item>
+        <item>Софт-рок</item>
+        <item>Топ-40</item>
+        <item>Кантри</item>
+        <item>Ретро</item>
+        <item>Спокойная музыка</item>
+        <item>Ностальгия</item>
+        <item>Джаз</item>
+        <item>Классика</item>
+        <item>Ритм-н-блюз</item>
+        <item>Мягкий ритм-н-блюз</item>
+        <item>Языки</item>
+        <item>Религиозная музыка</item>
+        <item>Религиозные беседы</item>
+        <item>Личности</item>
+        <item>Общественное</item>
+        <item>Студенческое</item>
+        <item>Беседы на испанском</item>
+        <item>Музыка на испанском</item>
+        <item>Хип-хоп</item>
+        <item></item>
+        <item></item>
+        <item>Погода</item>
+        <item>Тест экстренного вещания</item>
+        <item>Экстренное вещание</item>
+    </string-array>
+    <string name="logo_title">Логотип для %1$s МГц</string>
+    <string name="logo_hint">Найден по имени RDS в Radio Browser или в загруженной библиотеке. Можно выбрать вместо него картинку для этой частоты.</string>
+    <string name="logo_pick">Выбрать картинку…</string>
+    <string name="logo_auto">Автоматический логотип</string>
+    <string name="set_log">Журнал</string>
+    <string name="set_log_hint">Для проблемы с FM: состояние радио, /dev/fm, строки FM и звука из системного журнала и сообщения FM ядра — в одном текстовом файле для отправки. Полный системный журнал требует root (иначе только строки этого приложения).</string>
+    <string name="set_log_export">Экспортировать журнал</string>
+    <string name="set_log_done">Журнал сохранён</string>
+    <string name="set_log_failed">Журнал не сохранён</string>
+    <string name="car_setup">Настройки</string>
+    <string name="fm_manual">Вручную</string>
+    <string name="fm_station_list">Список станций</string>
+    <string name="fm_update_list">Обновить список станций</string>
+    <string name="fm_stop_search">Остановить поиск</string>
+    <string name="fm_searching">Поиск станций… %1$s МГц</string>
+    <string name="fm_frequencies">Частоты</string>
+    <string name="fm_presets">Предустановки</string>
+    <string name="fm_store_preset">Сохранить станцию</string>
+    <string name="fm_remove_preset">Убрать из предустановок</string>
+    <string name="fm_no_presets">Предустановок пока нет: Параметры → Сохранить станцию.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Интернет</string>
+    <string name="web_radio">Интернет-радио</string>
+    <string name="web_connecting">Подключение…</string>
+    <string name="web_reconnecting">Связь потеряна, переподключение…</string>
+    <string name="web_none">Нет интернет-станции</string>
+    <string name="web_empty_hint">Добавьте станцию кнопкой + (адрес потока, ссылка M3U или PLS) или импортируйте файл M3U / PLS.</string>
+    <string name="web_stations">Интернет-станции</string>
+    <string name="web_add">Добавить станцию</string>
+    <string name="web_import">Импортировать файл M3U / PLS</string>
+    <string name="web_no_stations">Интернет-станций пока нет: + добавляет станцию по адресу, кнопка файла импортирует плейлист M3U или PLS.</string>
+    <string name="web_remove">Удалить</string>
+    <string name="web_remove_confirm">Удалить эту станцию из списка?</string>
+    <string name="web_add_hint">Адрес потока или адрес плейлиста M3U / PLS (ссылка «слушать» станции).</string>
+    <string name="web_address">Адрес</string>
+    <string name="web_name">Название</string>
+    <string name="web_name_hint">Необязательно: иначе хост из адреса</string>
+    <string name="web_add_confirm">Добавить</string>
+    <string name="web_import_none">В этом файле станций не найдено (M3U или PLS с адресами http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="one">Добавлена %d станция</item>
+        <item quantity="few">Добавлено %d станции</item>
+        <item quantity="many">Добавлено %d станций</item>
+        <item quantity="other">Добавлено %d станции</item>
+    </plurals>
+    <string name="web_catalog">Каталог</string>
+    <string name="web_region">Регион</string>
+    <string name="web_region_all">Все регионы</string>
+    <string name="web_region_none">Общенациональные / без региона</string>
+    <string name="web_genre">Жанр</string>
+    <string name="web_genre_all">Все жанры</string>
+    <string name="web_region_any">Все</string>
+    <string name="web_genre_any">Все</string>
+    <string name="web_search">Найти станцию</string>
+    <string name="web_catalog_refresh">Загрузить список заново</string>
+    <string name="web_catalog_loading">Загрузка списка станций (Radio Browser)…</string>
+    <string name="web_catalog_failed">Список недоступен: нет интернета или сервер Radio Browser недоступен (Настройки → Логотипы → сервер).</string>
+    <string name="web_catalog_count">Станций: %1$d · %2$s · Radio Browser (общественный список)</string>
+    <string name="web_streams">Потоков: %d</string>
+    <string name="web_save">Сохранить</string>
+    <string name="web_back_to_fm">Назад к FM %s</string>
+    <string name="web_offer">Есть и в интернете: слушать поток</string>
+    <string name="web_offer_audio">Есть и в интернете (%s): слушать поток</string>
+    <string name="set_web">Интернет-радио</string>
+    <string name="set_web_best">Лучший звук</string>
+    <string name="set_web_eco">Меньше трафика</string>
+    <string name="set_web_quality_hint">Если у станции несколько потоков: лучший звук (FLAC, затем AAC / MP3 с наибольшим битрейтом) или меньше трафика (наименьший битрейт, не ниже 48 кбит/с). 128 кбит/с — около 58 МБ в час, 320 кбит/с — около 144 МБ.</string>
+    <string name="set_web_suggest">Предлагать интернет-поток FM-станции</string>
+    <string name="set_web_suggest_hint">Если станция, звучащая в FM, есть и в интернете и интернет работает, экран FM предложит перейти на её поток (одно касание). Имя RDS и страна отправляются в Radio Browser для поиска.</string>
+    <string name="web_add_short">Добавить</string>
+    <string name="web_import_short">Импорт</string>
+    <string name="web_logo">Логотип</string>
+    <string name="web_logo_title">Логотип %s</string>
+    <string name="web_playing">Играет</string>
+    <string name="web_catalog_update">Обновить</string>
+    <string name="web_catalog_loading_short">Загрузка…</string>
+    <string name="web_source">Источник</string>
+    <string name="web_country">Страна</string>
+    <string name="web_back">Назад</string>
+    <string name="web_region_other">Другие регионы (%d)</string>
+    <string name="web_genre_other">Другие жанры (%d)</string>
+    <string name="web_country_other">Другие страны (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Радио DAB+</string>
+    <string name="dab_no_dongle">Подключите USB-приёмник DAB+</string>
+    <string name="dab_no_dongle_hint">Поддерживаемые приёмники: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. Антенна DAB подключается к разъёму SMA приёмника.</string>
+    <string name="dab_unsupported">Это USB-устройство не является поддерживаемым приёмником DAB+</string>
+    <string name="dab_not_responding">Приёмник DAB+ не отвечает: переподключение…</string>
+    <string name="dab_scanning">Поиск станций: канал %1$s (%2$d/%3$d), найдено %4$d</string>
+    <string name="dab_scan">Искать станции</string>
+    <string name="dab_tuning">Настройка…</string>
+    <string name="dab_no_signal">Нет сигнала: поиск станции…</string>
+    <string name="dab_weak">Слабый сигнал</string>
+    <string name="dab_unplayable">Эту станцию нельзя воспроизвести</string>
+    <string name="dab_no_stations">Станций DAB+ пока нет: просканируйте диапазон (⟳)</string>
+    <string name="dab_scan_short">Сканировать</string>
+    <string name="dab_favourite_short">Избранное</string>
+    <string name="dab_favourite_add">Добавить в избранное</string>
+    <string name="dab_favourite_remove">Убрать из избранного</string>
+    <string name="info_title">О приложении</string>
+    <string name="info_version">Версия %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 участники проекта LibreHU.</string>
+    <string name="info_licence">Свободное ПО: его можно распространять и изменять на условиях GNU Affero General Public License версии 3 или (по вашему выбору) любой более поздней, с дополнительными условиями её раздела 7: сохранять пометку “Based on LibreHU” и обозначать изменённую версию как изменённую. Кто распространяет изменённую версию или даёт пользоваться ею удалённо, обязан предоставить её полный исходный код на тех же условиях. Без гарантий в пределах, допускаемых законом (разделы 15 и 16).</string>
+    <string name="info_source">Исходный код: %1$s</string>
+    <string name="info_contact">Контакт: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Дополнительные условия</string>
+    <string name="info_others">Код, ресурсы и данные других проектов</string>
+    <string name="info_others_hint">Нажмите, чтобы прочитать лицензию.</string>
+    <string name="info_close">Закрыть</string>
+</resources>

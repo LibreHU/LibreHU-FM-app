@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vietnamese translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">Radio FM</string>
+    <string name="notif_channel">Phát radio</string>
+    <string name="widget_description">Đài hiện tại, với nút trước, phát và tiếp</string>
+    <string name="play">Phát</string>
+    <string name="pause">Tạm dừng</string>
+    <string name="next">Đài tiếp theo</string>
+    <string name="previous">Đài trước</string>
+    <string name="seek_up">Dò lên</string>
+    <string name="seek_down">Dò xuống</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Quét băng tần</string>
+    <string name="scanning">Đang quét…</string>
+    <string name="favorites">Yêu thích</string>
+    <string name="stations">Đài</string>
+    <string name="toggle_favorite">Thêm / bỏ yêu thích</string>
+    <string name="no_favorites">Chưa có đài yêu thích: dò một đài rồi chạm vào ngôi sao.</string>
+    <string name="no_stations">Bật radio và quét băng tần để liệt kê các đài.</string>
+    <string name="off">Radio đã tắt</string>
+    <string name="error_power_up">Chip FM không khởi động được (/dev/fm). Xem hướng dẫn cài đặt.</string>
+    <string name="error_driver">Thư viện trình điều khiển FM không có trên thiết bị này.</string>
+    <string name="error_focus">Bị từ chối tiêu điểm âm thanh (nguồn khác, đang có cuộc gọi?).</string>
+    <string name="error_open">Không mở được /dev/fm: hãy cài ứng dụng dưới dạng ứng dụng đặc quyền (xem README).</string>
+    <string name="settings">Cài đặt</string>
+    <string name="back">Quay lại</string>
+    <string name="apply">Áp dụng</string>
+    <string name="cancel">Hủy</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Dữ liệu các đài gửi kèm âm thanh và chip FM giải mã: tên đài, văn bản radio, loại chương trình, thông tin giao thông.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Văn bản radio (bài hát, chương trình…)</string>
+    <string name="set_pty">Loại chương trình (tin tức, pop…)</string>
+    <string name="set_af">Tần số thay thế (AF)</string>
+    <string name="set_af_hint">Chuyển sang tần số khác của cùng đài khi tín hiệu yếu đi</string>
+    <string name="set_preset_names">Đặt tên đài yêu thích theo tên RDS</string>
+    <string name="set_rt_plus">Nghệ sĩ và tên bài (RT+)</string>
+    <string name="set_rt_plus_hint">Hiển thị thay cho văn bản radio ở đây, trên tiện ích, trong thông báo và trên thẻ media của trình chạy, khi đài gắn thẻ chúng</string>
+    <string name="set_ta">Thông báo giao thông (TA)</string>
+    <string name="set_ta_hint">Khi đài phát thông báo: âm lượng tối đa nếu đang nghe radio; phát đè lên nguồn khác (nguồn đó tạm dừng) nếu bạn đang nghe thứ khác, khi radio vẫn bật ở chế độ nền. Không dùng được với ivi-services của Jancar.</string>
+    <string name="set_rds_clock">Chỉnh đồng hồ theo RDS</string>
+    <string name="set_rds_clock_hint">Khi đồng hồ của màn hình ô tô lệch hơn một phút so với giờ của đài (không có GPS hay giờ mạng). Một số đài gửi giờ sai.</string>
+    <string name="set_reception">Thu sóng</string>
+    <string name="set_force_mono">Buộc mono</string>
+    <string name="set_force_mono_hint">Ít nhiễu hơn với đài sóng yếu, không có stereo</string>
+    <string name="set_force_mono_unsupported">Trình điều khiển FM từ chối: lớp tương thích 32-bit của nó không chuyển lệnh này trước nhân LibreHU r146 (zip kernel-stable / conn-modules-stable, hoặc mô-đun kết nối KernelSU).</string>
+    <string name="set_local_search">Dò: chỉ đài sóng mạnh (địa phương)</string>
+    <string name="set_local_search_hint">Dò và quét chỉ dừng ở đài địa phương (khoảng 25 dBµV), không dừng ở đài ở xa (DX)</string>
+    <string name="set_antenna_power">Bộ khuếch đại ăng-ten</string>
+    <string name="set_antenna_power_hint">Cấp nguồn ăng-ten (MCU 43) khi radio FM đang phát, cho ăng-ten chủ động hoặc bộ khuếch đại ăng-ten. Tắt: ăng-ten thụ động, hoặc thu FM sạch hơn khi không có bộ khuếch đại</string>
+    <string name="set_history">Bài hát đã nghe</string>
+    <string name="set_history_hint">Nghệ sĩ và tên bài do đài gắn thẻ (RT+), kèm giờ.</string>
+    <string name="set_history_empty">Chưa có: đài cần gửi RT+.</string>
+    <string name="set_history_clear">Xóa lịch sử</string>
+    <string name="ta_announcing">Thông báo giao thông</string>
+    <string name="ta_standby">Chờ thông báo giao thông</string>
+    <string name="ta_stop">Dừng</string>
+    <string name="alarm_on_air">CẢNH BÁO đang phát (loại chương trình 31)</string>
+    <string name="alarm_title">Cảnh báo: %1$s</string>
+    <string name="alarm_text">Đài đang phát tin báo động hoặc tin khẩn cấp.</string>
+    <string name="notif_alerts">Cảnh báo radio</string>
+    <string name="set_region">Băng tần và khu vực</string>
+    <string name="set_region_hint">Giới hạn băng tần FM, bước dò, khử nhấn (de-emphasis) âm thanh và tên loại chương trình dùng trong khu vực. Radio khởi động lại để áp dụng thay đổi.</string>
+    <string name="set_region_auto">Tự động (%1$s: %2$s)</string>
+    <string name="set_region_europe">Châu Âu, châu Phi, châu Á</string>
+    <string name="set_region_americas">Châu Mỹ, Hàn Quốc</string>
+    <string name="set_region_brazil">Brazil (băng tần mở rộng)</string>
+    <string name="set_region_japan">Nhật Bản</string>
+    <string name="set_region_current">Đang dùng: %1$s–%2$s MHz, bước %3$d kHz, khử nhấn %4$d µs%5$s</string>
+    <string name="set_audio">Đường âm thanh</string>
+    <string name="set_audio_hint">Tự động: nối phần cứng bộ thu FM → loa, như ứng dụng radio gốc, nếu không thì sao chép âm thanh của bộ thu. Áp dụng ở lần bật radio tiếp theo.</string>
+    <string name="set_audio_auto">Tự động</string>
+    <string name="set_audio_patch">Nối phần cứng</string>
+    <string name="set_audio_render">Sao chép (render)</string>
+    <string name="set_audio_current">Đang dùng: %1$s</string>
+    <string name="set_logos">Logo đài</string>
+    <string name="set_logos_hint">Logo từ Radio Browser, cơ sở dữ liệu đài radio mở do cộng đồng duy trì, được tìm theo tên RDS của đài.</string>
+    <string name="set_logos_enable">Hiện logo</string>
+    <string name="set_logos_offline">Ngoại tuyến</string>
+    <string name="set_logos_offline_hint">Chỉ dùng thư viện đã tải, không bao giờ dùng mạng</string>
+    <string name="set_server">Máy chủ</string>
+    <string name="set_server_auto">Tự động</string>
+    <string name="set_server_list">Liệt kê máy chủ</string>
+    <string name="set_server_loading">Đang tải…</string>
+    <string name="set_server_list_failed">Không lấy được danh sách máy chủ (không có mạng?).</string>
+    <string name="set_server_custom">Máy chủ khác (URL API Radio Browser)</string>
+    <string name="set_server_current">Địa chỉ đang dùng: %1$s</string>
+    <string name="set_country">Quốc gia của các đài</string>
+    <string name="set_country_auto">Thiết bị (%1$s)</string>
+    <string name="set_country_other">Quốc gia khác (mã ISO)</string>
+    <string name="set_library">Thư viện ngoại tuyến</string>
+    <string name="set_library_empty">Chưa tải logo nào.</string>
+    <string name="set_library_info">%1$d logo (%2$s), %3$s, cập nhật %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d đài</string>
+    <string name="set_library_listing">Đang liệt kê các đài…</string>
+    <string name="set_library_all">Tất cả</string>
+    <string name="set_library_top">%1$d đài phổ biến nhất</string>
+    <string name="set_library_hint">Tải logo các đài của %1$s từ máy chủ đã chọn để dùng khi không có Internet.</string>
+    <string name="set_library_failed">Tải xuống thất bại (mạng hoặc máy chủ).</string>
+    <string name="set_library_download">Tải xuống</string>
+    <string name="set_library_delete">Xóa thư viện</string>
+    <string name="set_logos_clear_cache">Tìm lại logo</string>
+    <string-array name="pty_names">
+        <item>Không có</item>
+        <item>Tin tức</item>
+        <item>Thời sự</item>
+        <item>Thông tin</item>
+        <item>Thể thao</item>
+        <item>Giáo dục</item>
+        <item>Kịch</item>
+        <item>Văn hóa</item>
+        <item>Khoa học</item>
+        <item>Tổng hợp</item>
+        <item>Nhạc pop</item>
+        <item>Nhạc rock</item>
+        <item>Nhạc nhẹ</item>
+        <item>Cổ điển nhẹ</item>
+        <item>Cổ điển</item>
+        <item>Nhạc khác</item>
+        <item>Thời tiết</item>
+        <item>Tài chính</item>
+        <item>Thiếu nhi</item>
+        <item>Xã hội</item>
+        <item>Tôn giáo</item>
+        <item>Thính giả gọi điện</item>
+        <item>Du lịch</item>
+        <item>Giải trí</item>
+        <item>Jazz</item>
+        <item>Nhạc đồng quê</item>
+        <item>Nhạc trong nước</item>
+        <item>Nhạc xưa</item>
+        <item>Nhạc dân gian</item>
+        <item>Tài liệu</item>
+        <item>Thử báo động</item>
+        <item>Báo động</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Không có</item>
+        <item>Tin tức</item>
+        <item>Thông tin</item>
+        <item>Thể thao</item>
+        <item>Trò chuyện</item>
+        <item>Rock</item>
+        <item>Rock cổ điển</item>
+        <item>Hit cho người lớn</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Nhạc đồng quê</item>
+        <item>Nhạc xưa</item>
+        <item>Nhạc êm dịu</item>
+        <item>Hoài niệm</item>
+        <item>Jazz</item>
+        <item>Cổ điển</item>
+        <item>Rhythm and blues</item>
+        <item>Rhythm and blues nhẹ</item>
+        <item>Ngoại ngữ</item>
+        <item>Nhạc tôn giáo</item>
+        <item>Trò chuyện tôn giáo</item>
+        <item>Nhân vật</item>
+        <item>Công cộng</item>
+        <item>Đại học</item>
+        <item>Trò chuyện tiếng Tây Ban Nha</item>
+        <item>Nhạc tiếng Tây Ban Nha</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Thời tiết</item>
+        <item>Thử khẩn cấp</item>
+        <item>Khẩn cấp</item>
+    </string-array>
+    <string name="logo_title">Logo cho %1$s MHz</string>
+    <string name="logo_hint">Tìm theo tên RDS trong Radio Browser hoặc thư viện đã tải. Bạn có thể chọn một hình ảnh cho tần số này thay thế.</string>
+    <string name="logo_pick">Chọn hình ảnh…</string>
+    <string name="logo_auto">Logo tự động</string>
+    <string name="set_log">Nhật ký</string>
+    <string name="set_log_hint">Cho sự cố FM: trạng thái radio, /dev/fm, các dòng FM và âm thanh của nhật ký hệ thống và thông báo FM của nhân, trong một tệp văn bản để chia sẻ. Nhật ký hệ thống đầy đủ cần root (nếu không chỉ có các dòng của ứng dụng này).</string>
+    <string name="set_log_export">Xuất nhật ký</string>
+    <string name="set_log_done">Đã lưu nhật ký</string>
+    <string name="set_log_failed">Chưa lưu được nhật ký</string>
+    <string name="car_setup">Cài đặt</string>
+    <string name="fm_manual">Thủ công</string>
+    <string name="fm_station_list">Danh sách đài</string>
+    <string name="fm_update_list">Cập nhật danh sách đài</string>
+    <string name="fm_stop_search">Dừng tìm</string>
+    <string name="fm_searching">Đang tìm đài radio… %1$s MHz</string>
+    <string name="fm_frequencies">Tần số</string>
+    <string name="fm_presets">Đài đã lưu</string>
+    <string name="fm_store_preset">Lưu đài</string>
+    <string name="fm_remove_preset">Bỏ khỏi đài đã lưu</string>
+    <string name="fm_no_presets">Chưa có đài đã lưu: Tùy chọn → Lưu đài.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Radio Internet</string>
+    <string name="web_connecting">Đang kết nối…</string>
+    <string name="web_reconnecting">Mất kết nối, đang kết nối lại…</string>
+    <string name="web_none">Không có đài Internet</string>
+    <string name="web_empty_hint">Thêm đài bằng nút + (địa chỉ luồng, liên kết M3U hoặc PLS) hoặc nhập tệp M3U / PLS.</string>
+    <string name="web_stations">Đài Internet</string>
+    <string name="web_add">Thêm đài</string>
+    <string name="web_import">Nhập tệp M3U / PLS</string>
+    <string name="web_no_stations">Chưa có đài Internet: + thêm đài theo địa chỉ, nút tệp nhập danh sách phát M3U hoặc PLS.</string>
+    <string name="web_remove">Xóa</string>
+    <string name="web_remove_confirm">Xóa đài này khỏi danh sách?</string>
+    <string name="web_add_hint">Địa chỉ luồng, hoặc địa chỉ danh sách phát M3U / PLS (liên kết \"nghe\" của đài).</string>
+    <string name="web_address">Địa chỉ</string>
+    <string name="web_name">Tên</string>
+    <string name="web_name_hint">Không bắt buộc: nếu trống thì dùng tên máy chủ trong địa chỉ</string>
+    <string name="web_add_confirm">Thêm</string>
+    <string name="web_import_none">Không tìm thấy đài nào trong tệp này (M3U hoặc PLS với địa chỉ http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="other">Đã thêm %d đài</item>
+    </plurals>
+    <string name="web_catalog">Danh mục</string>
+    <string name="web_region">Khu vực</string>
+    <string name="web_region_all">Tất cả khu vực</string>
+    <string name="web_region_none">Toàn quốc / không có khu vực</string>
+    <string name="web_genre">Thể loại</string>
+    <string name="web_genre_all">Tất cả thể loại</string>
+    <string name="web_region_any">Tất cả</string>
+    <string name="web_genre_any">Tất cả</string>
+    <string name="web_search">Tìm đài</string>
+    <string name="web_catalog_refresh">Tải lại danh sách</string>
+    <string name="web_catalog_loading">Đang tải danh sách đài (Radio Browser)…</string>
+    <string name="web_catalog_failed">Không có danh sách: không có Internet hoặc không kết nối được máy chủ Radio Browser (Cài đặt → Logo → máy chủ).</string>
+    <string name="web_catalog_count">%1$d đài · %2$s · Radio Browser (danh sách cộng đồng)</string>
+    <string name="web_streams">%d luồng</string>
+    <string name="web_save">Lưu</string>
+    <string name="web_back_to_fm">Quay lại FM %s</string>
+    <string name="web_offer">Cũng có trên Internet: nghe luồng</string>
+    <string name="web_offer_audio">Cũng có trên Internet (%s): nghe luồng</string>
+    <string name="set_web">Radio Internet</string>
+    <string name="set_web_best">Âm thanh tốt nhất</string>
+    <string name="set_web_eco">Ít dữ liệu hơn</string>
+    <string name="set_web_quality_hint">Khi một đài có nhiều luồng: âm thanh tốt nhất (FLAC, rồi AAC / MP3 bitrate cao nhất) hoặc ít dữ liệu nhất (bitrate thấp nhất, tối thiểu 48 kbit/s). 128 kbit/s dùng khoảng 58 MB mỗi giờ, 320 kbit/s khoảng 144 MB.</string>
+    <string name="set_web_suggest">Đề xuất luồng Internet của đài FM</string>
+    <string name="set_web_suggest_hint">Khi đài đang nghe trên FM cũng có trên Internet và có Internet, màn hình FM đề xuất chuyển sang luồng của đài (một lần chạm). Tên RDS và quốc gia được gửi tới Radio Browser để tìm đài.</string>
+    <string name="web_add_short">Thêm</string>
+    <string name="web_import_short">Nhập</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo của %s</string>
+    <string name="web_playing">Đang phát</string>
+    <string name="web_catalog_update">Cập nhật</string>
+    <string name="web_catalog_loading_short">Đang tải…</string>
+    <string name="web_source">Nguồn</string>
+    <string name="web_country">Quốc gia</string>
+    <string name="web_back">Quay lại</string>
+    <string name="web_region_other">Khu vực khác (%d)</string>
+    <string name="web_genre_other">Thể loại khác (%d)</string>
+    <string name="web_country_other">Quốc gia khác (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Radio DAB+</string>
+    <string name="dab_no_dongle">Hãy cắm đầu thu USB DAB+</string>
+    <string name="dab_no_dongle_hint">Đầu thu được hỗ trợ: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. Ăng-ten DAB cắm vào cổng SMA của đầu thu.</string>
+    <string name="dab_unsupported">Thiết bị USB này không phải đầu thu DAB+ được hỗ trợ</string>
+    <string name="dab_not_responding">Đầu thu DAB+ không phản hồi: đang kết nối lại…</string>
+    <string name="dab_scanning">Đang tìm đài: kênh %1$s (%2$d/%3$d), đã tìm thấy %4$d</string>
+    <string name="dab_scan">Tìm đài</string>
+    <string name="dab_tuning">Đang dò…</string>
+    <string name="dab_no_signal">Không có tín hiệu: đang tìm đài…</string>
+    <string name="dab_weak">Tín hiệu yếu</string>
+    <string name="dab_unplayable">Không phát được đài này</string>
+    <string name="dab_no_stations">Chưa có đài DAB+: hãy quét băng tần (⟳)</string>
+    <string name="dab_scan_short">Quét</string>
+    <string name="dab_favourite_short">Yêu thích</string>
+    <string name="dab_favourite_add">Thêm vào yêu thích</string>
+    <string name="dab_favourite_remove">Bỏ khỏi yêu thích</string>
+    <string name="info_title">Thông tin</string>
+    <string name="info_version">Phiên bản %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 những người đóng góp cho LibreHU.</string>
+    <string name="info_licence">Phần mềm tự do: bạn có thể chia sẻ và sửa đổi theo GNU Affero General Public License phiên bản 3 hoặc (tùy bạn chọn) bất kỳ phiên bản nào mới hơn, kèm các điều khoản bổ sung tại mục 7: giữ dòng “Based on LibreHU” và ghi rõ phiên bản đã sửa đổi. Ai phân phối phiên bản sửa đổi, hoặc cho người khác dùng từ xa, phải cung cấp toàn bộ mã nguồn theo cùng giấy phép. Không bảo hành, trong phạm vi pháp luật cho phép (mục 15 và 16).</string>
+    <string name="info_source">Mã nguồn: %1$s</string>
+    <string name="info_contact">Liên hệ: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Điều khoản bổ sung</string>
+    <string name="info_others">Mã, tài nguyên và dữ liệu của các dự án khác</string>
+    <string name="info_others_hint">Chạm vào một mục để đọc giấy phép.</string>
+    <string name="info_close">Đóng</string>
+</resources>

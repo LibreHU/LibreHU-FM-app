@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indonesian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="app_name">Radio FM</string>
+    <string name="notif_channel">Pemutaran radio</string>
+    <string name="widget_description">Stasiun saat ini, dengan tombol sebelumnya, putar, dan berikutnya</string>
+    <string name="play">Putar</string>
+    <string name="pause">Jeda</string>
+    <string name="next">Stasiun berikutnya</string>
+    <string name="previous">Stasiun sebelumnya</string>
+    <string name="seek_up">Cari ke atas</string>
+    <string name="seek_down">Cari ke bawah</string>
+    <string name="step_up">+0,1 MHz</string>
+    <string name="step_down">−0,1 MHz</string>
+    <string name="scan">Pindai pita</string>
+    <string name="scanning">Memindai…</string>
+    <string name="favorites">Favorit</string>
+    <string name="stations">Stasiun</string>
+    <string name="toggle_favorite">Tambah / hapus favorit</string>
+    <string name="no_favorites">Belum ada favorit: setel sebuah stasiun lalu ketuk bintang.</string>
+    <string name="no_stations">Nyalakan radio dan pindai pita untuk menampilkan daftar stasiun.</string>
+    <string name="off">Radio mati</string>
+    <string name="error_power_up">Chip FM tidak menyala (/dev/fm). Lihat catatan pemasangan.</string>
+    <string name="error_driver">Pustaka driver FM tidak tersedia di perangkat ini.</string>
+    <string name="error_focus">Fokus audio ditolak (sumber lain, ada panggilan?).</string>
+    <string name="error_open">Tidak dapat membuka /dev/fm: pasang aplikasi sebagai aplikasi istimewa (lihat README).</string>
+    <string name="settings">Setelan</string>
+    <string name="back">Kembali</string>
+    <string name="apply">Terapkan</string>
+    <string name="cancel">Batal</string>
+    <string name="set_rds">RDS</string>
+    <string name="set_rds_hint">Data yang dikirim stasiun bersama suara dan didekode oleh chip FM: nama stasiun, teks radio, jenis program, info lalu lintas.</string>
+    <string name="set_rds_enable">RDS</string>
+    <string name="set_radio_text">Teks radio (lagu, acara…)</string>
+    <string name="set_pty">Jenis program (berita, pop…)</string>
+    <string name="set_af">Frekuensi alternatif (AF)</string>
+    <string name="set_af_hint">Beralih ke frekuensi lain dari stasiun yang sama saat sinyal melemah</string>
+    <string name="set_preset_names">Beri nama favorit dengan nama RDS</string>
+    <string name="set_rt_plus">Artis dan judul (RT+)</string>
+    <string name="set_rt_plus_hint">Ditampilkan menggantikan teks radio di sini, di widget, di notifikasi, dan di kartu media peluncur, saat stasiun menandainya</string>
+    <string name="set_ta">Pengumuman lalu lintas (TA)</string>
+    <string name="set_ta_hint">Selama pengumuman stasiun: volume penuh saat radio diputar; di atas sumber lain (yang dijeda) saat Anda mendengarkan hal lain dengan radio tetap menyala di latar belakang. Tidak dengan ivi-services dari Jancar.</string>
+    <string name="set_rds_clock">Setel jam dari RDS</string>
+    <string name="set_rds_clock_hint">Saat jam head unit berbeda lebih dari satu menit dari waktu stasiun (tanpa GPS atau waktu jaringan). Beberapa stasiun mengirim waktu yang salah.</string>
+    <string name="set_reception">Penerimaan</string>
+    <string name="set_force_mono">Paksa mono</string>
+    <string name="set_force_mono_hint">Lebih sedikit desis pada stasiun lemah, tanpa stereo</string>
+    <string name="set_force_mono_unsupported">Ditolak oleh driver FM: lapisan kompatibilitas 32-bitnya tidak meneruskan perintah ini sebelum kernel LibreHU r146 (zip kernel-stable / conn-modules-stable, atau modul konektivitas KernelSU).</string>
+    <string name="set_local_search">Pencarian: hanya stasiun kuat (lokal)</string>
+    <string name="set_local_search_hint">Pencarian dan pemindaian hanya berhenti di stasiun lokal (sekitar 25 dBµV), bukan di stasiun jauh (DX)</string>
+    <string name="set_antenna_power">Penguat antena</string>
+    <string name="set_antenna_power_hint">Daya antena (MCU 43) selama radio FM diputar, untuk antena aktif atau penguat antena. Mati: antena pasif, atau penerimaan FM lebih bersih tanpa penguat</string>
+    <string name="set_history">Lagu yang didengar</string>
+    <string name="set_history_hint">Artis dan judul yang ditandai stasiun (RT+), dengan waktunya.</string>
+    <string name="set_history_empty">Belum ada: stasiun harus mengirim RT+.</string>
+    <string name="set_history_clear">Hapus riwayat</string>
+    <string name="ta_announcing">Pengumuman lalu lintas</string>
+    <string name="ta_standby">Pengumuman lalu lintas siaga</string>
+    <string name="ta_stop">Hentikan</string>
+    <string name="alarm_on_air">PERINGATAN sedang mengudara (jenis program 31)</string>
+    <string name="alarm_title">Peringatan: %1$s</string>
+    <string name="alarm_text">Stasiun menyiarkan pesan alarm atau darurat.</string>
+    <string name="notif_alerts">Peringatan radio</string>
+    <string name="set_region">Pita dan wilayah</string>
+    <string name="set_region_hint">Batas pita FM, langkah penyetelan, de-emphasis suara, dan nama jenis program yang dipakai di wilayah itu. Radio dimulai ulang untuk menerapkan perubahan.</string>
+    <string name="set_region_auto">Otomatis (%1$s: %2$s)</string>
+    <string name="set_region_europe">Eropa, Afrika, Asia</string>
+    <string name="set_region_americas">Amerika, Korea Selatan</string>
+    <string name="set_region_brazil">Brasil (pita diperluas)</string>
+    <string name="set_region_japan">Jepang</string>
+    <string name="set_region_current">Dipakai: %1$s–%2$s MHz, langkah %3$d kHz, de-emphasis %4$d µs%5$s</string>
+    <string name="set_audio">Jalur audio</string>
+    <string name="set_audio_hint">Otomatis: patch perangkat keras tuner FM → speaker, seperti aplikasi radio bawaan, jika tidak salinan suara tuner. Diterapkan saat radio dinyalakan berikutnya.</string>
+    <string name="set_audio_auto">Otomatis</string>
+    <string name="set_audio_patch">Patch perangkat keras</string>
+    <string name="set_audio_render">Salinan (render)</string>
+    <string name="set_audio_current">Dipakai: %1$s</string>
+    <string name="set_logos">Logo stasiun</string>
+    <string name="set_logos_hint">Logo dari Radio Browser, basis data stasiun radio yang terbuka dan dikelola komunitas, dicari dari nama RDS stasiun.</string>
+    <string name="set_logos_enable">Tampilkan logo</string>
+    <string name="set_logos_offline">Offline</string>
+    <string name="set_logos_offline_hint">Hanya pustaka yang diunduh, tidak pernah jaringan</string>
+    <string name="set_server">Server</string>
+    <string name="set_server_auto">Otomatis</string>
+    <string name="set_server_list">Daftar server</string>
+    <string name="set_server_loading">Memuat…</string>
+    <string name="set_server_list_failed">Daftar server tidak tersedia (tidak ada jaringan?).</string>
+    <string name="set_server_custom">Server lain (URL API Radio Browser)</string>
+    <string name="set_server_current">Alamat yang dipakai: %1$s</string>
+    <string name="set_country">Negara stasiun</string>
+    <string name="set_country_auto">Perangkat (%1$s)</string>
+    <string name="set_country_other">Negara lain (kode ISO)</string>
+    <string name="set_library">Pustaka offline</string>
+    <string name="set_library_empty">Belum ada logo yang diunduh.</string>
+    <string name="set_library_info">%1$d logo (%2$s), %3$s, diperbarui %4$s</string>
+    <string name="set_library_progress">%1$d / %2$d stasiun</string>
+    <string name="set_library_listing">Mendaftar stasiun…</string>
+    <string name="set_library_all">Semua</string>
+    <string name="set_library_top">%1$d terpopuler</string>
+    <string name="set_library_hint">Mengunduh logo stasiun di %1$s dari server yang dipilih, untuk dipakai tanpa Internet.</string>
+    <string name="set_library_failed">Unduhan gagal (jaringan atau server).</string>
+    <string name="set_library_download">Unduh</string>
+    <string name="set_library_delete">Hapus pustaka</string>
+    <string name="set_logos_clear_cache">Cari ulang logo</string>
+    <string-array name="pty_names">
+        <item>Tidak ada</item>
+        <item>Berita</item>
+        <item>Peristiwa terkini</item>
+        <item>Informasi</item>
+        <item>Olahraga</item>
+        <item>Pendidikan</item>
+        <item>Drama</item>
+        <item>Budaya</item>
+        <item>Sains</item>
+        <item>Beragam</item>
+        <item>Musik pop</item>
+        <item>Musik rock</item>
+        <item>Musik ringan</item>
+        <item>Klasik ringan</item>
+        <item>Klasik</item>
+        <item>Musik lain</item>
+        <item>Cuaca</item>
+        <item>Keuangan</item>
+        <item>Anak-anak</item>
+        <item>Sosial</item>
+        <item>Agama</item>
+        <item>Telepon interaktif</item>
+        <item>Perjalanan</item>
+        <item>Waktu luang</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Musik nasional</item>
+        <item>Lagu lawas</item>
+        <item>Musik folk</item>
+        <item>Dokumenter</item>
+        <item>Uji alarm</item>
+        <item>Alarm</item>
+    </string-array>
+    <string-array name="pty_names_rbds">
+        <item>Tidak ada</item>
+        <item>Berita</item>
+        <item>Informasi</item>
+        <item>Olahraga</item>
+        <item>Bincang-bincang</item>
+        <item>Rock</item>
+        <item>Rock klasik</item>
+        <item>Hit dewasa</item>
+        <item>Soft rock</item>
+        <item>Top 40</item>
+        <item>Country</item>
+        <item>Lagu lawas</item>
+        <item>Musik lembut</item>
+        <item>Nostalgia</item>
+        <item>Jazz</item>
+        <item>Klasik</item>
+        <item>Rhythm and blues</item>
+        <item>Rhythm and blues lembut</item>
+        <item>Bahasa</item>
+        <item>Musik religi</item>
+        <item>Bincang religi</item>
+        <item>Tokoh</item>
+        <item>Publik</item>
+        <item>Kampus</item>
+        <item>Bincang bahasa Spanyol</item>
+        <item>Musik bahasa Spanyol</item>
+        <item>Hip hop</item>
+        <item></item>
+        <item></item>
+        <item>Cuaca</item>
+        <item>Uji darurat</item>
+        <item>Darurat</item>
+    </string-array>
+    <string name="logo_title">Logo untuk %1$s MHz</string>
+    <string name="logo_hint">Ditemukan dari nama RDS di Radio Browser atau di pustaka yang diunduh. Anda bisa memilih gambar untuk frekuensi ini sebagai gantinya.</string>
+    <string name="logo_pick">Pilih gambar…</string>
+    <string name="logo_auto">Logo otomatis</string>
+    <string name="set_log">Log</string>
+    <string name="set_log_hint">Untuk masalah FM: status radio, /dev/fm, baris FM dan audio dari log sistem, serta pesan FM dari kernel, dalam satu file teks untuk dibagikan. Log sistem lengkap memerlukan root (jika tidak, hanya baris aplikasi ini).</string>
+    <string name="set_log_export">Ekspor log</string>
+    <string name="set_log_done">Log disimpan</string>
+    <string name="set_log_failed">Log tidak disimpan</string>
+    <string name="car_setup">Setelan</string>
+    <string name="fm_manual">Manual</string>
+    <string name="fm_station_list">Daftar stasiun</string>
+    <string name="fm_update_list">Perbarui daftar stasiun</string>
+    <string name="fm_stop_search">Hentikan pencarian</string>
+    <string name="fm_searching">Mencari stasiun radio… %1$s MHz</string>
+    <string name="fm_frequencies">Frekuensi</string>
+    <string name="fm_presets">Preset</string>
+    <string name="fm_store_preset">Simpan stasiun</string>
+    <string name="fm_remove_preset">Hapus dari preset</string>
+    <string name="fm_no_presets">Belum ada preset: Opsi → Simpan stasiun.</string>
+    <string name="source_fm">FM</string>
+    <string name="source_web">Internet</string>
+    <string name="web_radio">Radio internet</string>
+    <string name="web_connecting">Menghubungkan…</string>
+    <string name="web_reconnecting">Koneksi terputus, menghubungkan ulang…</string>
+    <string name="web_none">Tidak ada stasiun internet</string>
+    <string name="web_empty_hint">Tambahkan stasiun dengan + (alamat streaming, tautan M3U atau PLS) atau impor file M3U / PLS.</string>
+    <string name="web_stations">Stasiun internet</string>
+    <string name="web_add">Tambah stasiun</string>
+    <string name="web_import">Impor file M3U / PLS</string>
+    <string name="web_no_stations">Belum ada stasiun internet: + menambahkan stasiun dari alamatnya, tombol file mengimpor playlist M3U atau PLS.</string>
+    <string name="web_remove">Hapus</string>
+    <string name="web_remove_confirm">Hapus stasiun ini dari daftar?</string>
+    <string name="web_add_hint">Alamat streaming, atau alamat playlist M3U / PLS (tautan \"dengarkan\" stasiun).</string>
+    <string name="web_address">Alamat</string>
+    <string name="web_name">Nama</string>
+    <string name="web_name_hint">Opsional: jika kosong, host dari alamat</string>
+    <string name="web_add_confirm">Tambah</string>
+    <string name="web_import_none">Tidak ada stasiun ditemukan di file ini (M3U atau PLS dengan alamat http / https).</string>
+    <plurals name="web_imported">
+        <item quantity="other">%d stasiun ditambahkan</item>
+    </plurals>
+    <string name="web_catalog">Katalog</string>
+    <string name="web_region">Wilayah</string>
+    <string name="web_region_all">Semua wilayah</string>
+    <string name="web_region_none">Nasional / tanpa wilayah</string>
+    <string name="web_genre">Genre</string>
+    <string name="web_genre_all">Semua genre</string>
+    <string name="web_region_any">Semua</string>
+    <string name="web_genre_any">Semua</string>
+    <string name="web_search">Cari stasiun</string>
+    <string name="web_catalog_refresh">Unduh ulang daftar</string>
+    <string name="web_catalog_loading">Mengunduh daftar stasiun (Radio Browser)…</string>
+    <string name="web_catalog_failed">Daftar tidak tersedia: tidak ada Internet atau server Radio Browser tidak dapat dijangkau (Setelan → Logo → server).</string>
+    <string name="web_catalog_count">%1$d stasiun · %2$s · Radio Browser (daftar komunitas)</string>
+    <string name="web_streams">%d streaming</string>
+    <string name="web_save">Simpan</string>
+    <string name="web_back_to_fm">Kembali ke FM %s</string>
+    <string name="web_offer">Ada juga di internet: dengarkan streamingnya</string>
+    <string name="web_offer_audio">Ada juga di internet (%s): dengarkan streamingnya</string>
+    <string name="set_web">Radio internet</string>
+    <string name="set_web_best">Suara terbaik</string>
+    <string name="set_web_eco">Hemat data</string>
+    <string name="set_web_quality_hint">Saat stasiun punya beberapa streaming: suara terbaik (FLAC, lalu AAC / MP3 dengan bitrate tertinggi) atau data paling sedikit (bitrate terendah, minimal 48 kbit/s). 128 kbit/s memakai sekitar 58 MB per jam, 320 kbit/s sekitar 144 MB.</string>
+    <string name="set_web_suggest">Sarankan streaming internet stasiun FM</string>
+    <string name="set_web_suggest_hint">Saat stasiun yang didengar di FM juga ada di internet dan internet tersedia, layar FM menawarkan beralih ke streamingnya (satu ketukan). Nama RDS dan negara dikirim ke Radio Browser untuk menemukannya.</string>
+    <string name="web_add_short">Tambah</string>
+    <string name="web_import_short">Impor</string>
+    <string name="web_logo">Logo</string>
+    <string name="web_logo_title">Logo untuk %s</string>
+    <string name="web_playing">Sedang diputar</string>
+    <string name="web_catalog_update">Perbarui</string>
+    <string name="web_catalog_loading_short">Mengunduh…</string>
+    <string name="web_source">Sumber</string>
+    <string name="web_country">Negara</string>
+    <string name="web_back">Kembali</string>
+    <string name="web_region_other">Wilayah lain (%d)</string>
+    <string name="web_genre_other">Genre lain (%d)</string>
+    <string name="web_country_other">Negara lain (%d)</string>
+    <string name="source_dab">DAB+</string>
+    <string name="dab_radio">Radio DAB+</string>
+    <string name="dab_no_dongle">Colokkan dongle USB DAB+</string>
+    <string name="dab_no_dongle_hint">Dongle yang didukung: C100 / DTR-100 (XTRONS, Joying, Pumpkin, Dasaita…), Si4684 (Eonon A503), Siano SMS2160. Antena DAB dicolokkan ke soket SMA dongle.</string>
+    <string name="dab_unsupported">Perangkat USB ini bukan dongle DAB+ yang didukung</string>
+    <string name="dab_not_responding">Dongle DAB+ tidak merespons: menghubungkan ulang…</string>
+    <string name="dab_scanning">Mencari stasiun: kanal %1$s (%2$d/%3$d), %4$d ditemukan</string>
+    <string name="dab_scan">Cari stasiun</string>
+    <string name="dab_tuning">Menyetel…</string>
+    <string name="dab_no_signal">Tidak ada sinyal: mencari stasiun…</string>
+    <string name="dab_weak">Sinyal lemah</string>
+    <string name="dab_unplayable">Stasiun ini tidak dapat diputar</string>
+    <string name="dab_no_stations">Belum ada stasiun DAB+: pindai pita (⟳)</string>
+    <string name="dab_scan_short">Pindai</string>
+    <string name="dab_favourite_short">Favorit</string>
+    <string name="dab_favourite_add">Tambahkan ke favorit</string>
+    <string name="dab_favourite_remove">Hapus dari favorit</string>
+    <string name="info_title">Info</string>
+    <string name="info_version">Versi %1$s</string>
+    <string name="info_based_on">Based on LibreHU – https://github.com/LibreHU</string>
+    <string name="info_copyright">Copyright (C) 2026 kontributor LibreHU.</string>
+    <string name="info_licence">Perangkat lunak bebas: Anda dapat membagikan dan mengubahnya menurut GNU Affero General Public License versi 3 atau (sesuai pilihan Anda) versi yang lebih baru, dengan ketentuan tambahan pasal 7: pertahankan keterangan “Based on LibreHU” dan tandai versi yang diubah sebagai versi ubahan. Siapa pun yang mendistribusikan versi ubahan, atau membiarkannya digunakan dari jarak jauh, wajib memberikan kode sumber lengkapnya dengan lisensi yang sama. Tanpa jaminan, sejauh diizinkan hukum (pasal 15 dan 16).</string>
+    <string name="info_source">Kode sumber: %1$s</string>
+    <string name="info_contact">Kontak: librehu@proton.me</string>
+    <string name="info_licence_text">GNU AGPL v3</string>
+    <string name="info_terms">Ketentuan tambahan</string>
+    <string name="info_others">Kode, sumber daya, dan data proyek lain</string>
+    <string name="info_others_hint">Ketuk salah satu untuk membaca lisensinya.</string>
+    <string name="info_close">Tutup</string>
+</resources>
