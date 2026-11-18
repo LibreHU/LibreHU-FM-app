@@ -157,14 +157,29 @@ class StationLogos(
                 .apply()
         }
 
-        /** Upper case, no accents, single spaces: "Fip " / "FIP" / "fip" are the same station. */
-        fun normalize(s: String): String =
-            Normalizer
-                .normalize(s, Normalizer.Form.NFD)
-                .replace(Regex("\\p{M}+"), "")
-                .uppercase(Locale.ROOT)
-                .replace(Regex("[^A-Z0-9]+"), " ")
-                .trim()
+        private val MARKS = Regex("\\p{M}+")
+        private val NOT_ALNUM = Regex("[^A-Z0-9]+")
+
+        /** Last names normalized (station lists of a country: a few thousand names, each normalized several times). */
+        private val normalized = android.util.LruCache<String, String>(8192)
+
+        /**
+         * Upper case, no accents, single spaces: "Fip " / "FIP" / "fip" are the same station. The regexes are compiled
+         * once and the results kept: compiled at each call, the web catalogue of a big country took 14 s of the main
+         * thread (two ANRs, 18/11/2026).
+         */
+        fun normalize(s: String): String {
+            normalized.get(s)?.let { return it }
+            val n =
+                Normalizer
+                    .normalize(s, Normalizer.Form.NFD)
+                    .replace(MARKS, "")
+                    .uppercase(Locale.ROOT)
+                    .replace(NOT_ALNUM, " ")
+                    .trim()
+            normalized.put(s, n)
+            return n
+        }
 
         /** How well a station called [candidate] matches the RDS name [wanted] (both normalized); 0 = not at all. */
         fun score(
