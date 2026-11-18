@@ -127,13 +127,21 @@ object WebCatalog {
      * Name of a station without the words that tell its stream apart ("France Inter (AAC 192)", "FIP HiFi"): the
      * streams of a station share it.
      */
-    fun nameKey(name: String): String =
-        StationLogos
-            .normalize(name)
-            .split(' ')
-            .filter { it.isNotEmpty() && it !in STREAM_WORDS && !it.matches(BITRATE) }
-            .joinToString(" ")
-            .ifEmpty { StationLogos.normalize(name) }
+    fun nameKey(name: String): String {
+        nameKeys.get(name)?.let { return it }
+        val k =
+            StationLogos
+                .normalize(name)
+                .split(' ')
+                .filter { it.isNotEmpty() && it !in STREAM_WORDS && !it.matches(BITRATE) }
+                .joinToString(" ")
+                .ifEmpty { StationLogos.normalize(name) }
+        nameKeys.put(name, k)
+        return k
+    }
+
+    /** Keys of the last names (each station name is keyed by the regions, the list and the search). */
+    private val nameKeys = android.util.LruCache<String, String>(8192)
 
     /**
      * Sound quality of a stream, for the choice among a station's streams: lossless first, then the bitrate, AAC and
