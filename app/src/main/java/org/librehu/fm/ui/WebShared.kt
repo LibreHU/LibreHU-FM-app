@@ -478,9 +478,20 @@ internal fun rememberCatalogUi(): CatalogUi {
     }
 
     val list = stations.orEmpty()
-    val regions = remember(list, countryName) { WebCatalog.regions(list, countryName) }
-    val genres = remember(list) { WebCatalog.genres(list, max = 200) }
-    val entries = remember(list, region, genre, query, settings.webQuality) { WebCatalog.entries(list, settings.webQuality, region, genre, query, countryName) }
+    // Off the main thread: a big country has thousands of streams, grouped and searched at each change (computed in
+    // the composition, they made two ANRs on 18/11/2026). The last results stay shown while the new ones are made.
+    var regions by remember(country) { mutableStateOf<List<CatalogRegion>>(emptyList()) }
+    var genres by remember(country) { mutableStateOf<List<Pair<String, Int>>>(emptyList()) }
+    var entries by remember(country) { mutableStateOf<List<CatalogEntry>>(emptyList()) }
+    LaunchedEffect(list, countryName) {
+        val r = withContext(Dispatchers.Default) { WebCatalog.regions(list, countryName) }
+        val g = withContext(Dispatchers.Default) { WebCatalog.genres(list, max = 200) }
+        regions = r
+        genres = g
+    }
+    LaunchedEffect(list, region, genre, query, settings.webQuality, countryName) {
+        entries = withContext(Dispatchers.Default) { WebCatalog.entries(list, settings.webQuality, region, genre, query, countryName) }
+    }
     return CatalogUi(
         settings, country, countryName, stations, loading, failed, regions, genres, countries, entries, region, genre, query, pick, more,
         setQuery = { query = it },
